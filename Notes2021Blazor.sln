@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesUtil", "NotesUtil\Note
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50C4E562-FDC5-4914-A47D-8B277F8F915C}"
 	ProjectSection(SolutionItems) = preProject
-		..\Notes2021Blazor.saved\NotesInstallQuickStart.docx = ..\Notes2021Blazor.saved\NotesInstallQuickStart.docx
-		..\Notes2021Blazor.saved\NotesInstallQuickStart.pdf = ..\Notes2021Blazor.saved\NotesInstallQuickStart.pdf
 		Published.zip = Published.zip
 	EndProjectSection
 EndProject
