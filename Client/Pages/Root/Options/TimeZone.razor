@@ -26,14 +26,23 @@ else
                     @currentText
                 </h5>
                 <p>Select your Time Zone:</p>
-                <select class="form-control medium-input" @bind="@myZid" >
+                <select class="form-control medium-input" @bind="@myZid">
                     <option value=""></option>
-                   @foreach(LocalModel item in MyList)
-                   {
-                       <option value="@item.Id">@item.Name</option>
-                   }
+                    @foreach (LocalModel item in MyList)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
                 </select>
-                <br/>
+                <br />
+                <p>Starting Page Size for Pagable Lists:</p>
+                <select class="form-control medium-input" @bind="@pageSize">
+                    <option value="12"></option>
+                    @foreach (LocalModel2 item in MySizes)
+                    {
+                        <option value="@item.Psize">@item.Psize</option>
+                    }
+                </select>
+                <br />
                 <button type="button" @onclick="OnSubmit" class="btn btn-info btn-sm">Submit</button>
             </div>
         </Authorized>
@@ -52,6 +61,9 @@ else
     private int myZid { get; set; }
     private LocalModel stuff { get; set; }
     private List<LocalModel> MyList { get; set; }
+    private List<LocalModel2> MySizes { get; set; }
+    private string pageSize { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,6 +76,10 @@ else
         MyZone = TZones.SingleOrDefault(p => p.Id == UserData.TimeZoneID);
 
         myZid = UserData.TimeZoneID;
+
+        pageSize = (UserData.Ipref2 == 0 ? 12 : UserData.Ipref2).ToString();
+
+        MySizes = new List<LocalModel2> { new LocalModel2("5"), new LocalModel2("10"), new LocalModel2("12"), new LocalModel2("20") };
 
         MyList = new List<LocalModel>();
         foreach(TZone item in TZones)
@@ -79,14 +95,16 @@ else
     private async Task OnSubmit()
     {
         UserData.TimeZoneID = myZid;
+        UserData.Ipref2 = int.Parse(pageSize);
         MyZone = TZones.SingleOrDefault(p => p.Id == UserData.TimeZoneID);
         currentText = "Current Time Zone: " + MyZone.Name + " - " + MyZone.Abbreviation + " - " + MyZone.Offset;
 
         var stringContent = new StringContent(JsonConvert.SerializeObject(UserData), Encoding.UTF8, "application/json");
         HttpResponseMessage result = await Http.PutAsync("api/User/", stringContent);
 
-
         StateHasChanged();
+
+        NavigationManager.NavigateTo(Globals.RootUri, true);
     }
 
 
@@ -99,5 +117,14 @@ else
         }
         public string Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class LocalModel2
+    {
+        public LocalModel2(string psize)
+        {
+            Psize = psize;
+        }
+        public string Psize { get; set; }
     }
 }

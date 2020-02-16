@@ -70,10 +70,13 @@ namespace Notes2021Blazor.Server.Controllers
 
             //idxModel.ExpandOrdinal = 0;
 
-            idxModel.tZone = await LocalManager.GetUserTimeZone(HttpContext, User, _userManager, _db);
             string myname = User.Identity.Name;
             var IdUser = await _userManager.FindByEmailAsync(myname);
             string uid = await _userManager.GetUserIdAsync(IdUser);
+
+            idxModel.UserData = LocalManager.GetUserData(uid, _db);
+
+            idxModel.tZone = await LocalManager.GetUserTimeZone(uid, _db);
 
             List<Mark> marks = await _db.Mark.Where(p => p.UserId == uid).ToListAsync();
             idxModel.isMarked = (marks != null && marks.Count > 0);

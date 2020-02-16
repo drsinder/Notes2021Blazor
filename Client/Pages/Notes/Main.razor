@@ -271,6 +271,12 @@ else
                 return;
             }
 
+            if (Model.UserData == null)
+            {
+                message = "UserData is null";
+                return;
+            }
+
             if (!string.IsNullOrEmpty(Model.message))
                 message = Model.message;
 

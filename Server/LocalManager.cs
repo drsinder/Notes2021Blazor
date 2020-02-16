@@ -12,12 +12,11 @@ namespace Notes2021Blazor.Server
 {
     public static class LocalManager
     {
-        public static UserData GetUserData(UserManager<IdentityUser> userManager, ClaimsPrincipal user, NotesDbContext db)
+        public static UserData GetUserData(string userid, NotesDbContext db)
         {
             UserData aux = null;
             try
             {
-                string userid = userManager.GetUserId(user);
                 aux = db.UserData.SingleOrDefault(p => p.UserId == userid);
             }
             catch
@@ -25,17 +24,13 @@ namespace Notes2021Blazor.Server
             return aux;
         }
 
-        public static async Task<TZone> GetUserTimeZone(HttpContext httpContext,
-            ClaimsPrincipal userx, UserManager<IdentityUser> userManager,
+        public static async Task<TZone> GetUserTimeZone(string uid,
             NotesDbContext db)
         {
-
-
             int tzid = Globals.TimeZoneDefaultID;
             try
             {
-                string userId = userManager.GetUserId(userx);
-                tzid = GetUserData(userManager, userx, db).TimeZoneID;  // get users timezoneid
+                tzid = GetUserData(uid, db).TimeZoneID;  // get users timezoneid
             }
             catch
             {

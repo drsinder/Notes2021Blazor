@@ -9,7 +9,7 @@
         <div class="content-wrapper">
             <div class="row">
                 <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
-                    <GridPageSettings PageSizes="true"></GridPageSettings>
+                    <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
                     <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
                     <GridColumns>
                         <GridColumn Field=@nameof(NoteHeader.NoteOrdinal) HeaderText="#" TextAlign="TextAlign.Left" Width="15" IsPrimaryKey="true"></GridColumn>
@@ -43,6 +43,12 @@ else
     EjsGrid<NoteHeader> MyGrid;
 
     private Timer timer { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Model.UserData.Ipref2 == 0)
+            Model.UserData.Ipref2 = 12;
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {

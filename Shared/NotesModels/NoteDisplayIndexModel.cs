@@ -17,6 +17,7 @@ namespace Notes2021Blazor.Shared
         public List<NoteHeader> AllNotes { get; set; }
         public string linkedText { get; set; }
         public string message { get; set; }
+        public UserData UserData { get; set; }
     }
 
 }

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Compile Remove="App_Code\Jobs.cs" />
+    <Compile Remove="Hubs\ChatHub.cs" />
+    <Compile Remove="Hubs\SysMessageHub.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +34,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\Notes2021Blazor.Client.csproj" />
     <ProjectReference Include="..\Shared\Notes2021Blazor.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Hubs\" />
   </ItemGroup>
 
 </Project>
