@@ -1,0 +1,74 @@
+﻿@page "/admin/userlist"
+
+@using Notes2021Blazor.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IModalService Modal
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        @if (UList == null)
+        {
+            <p class="center"><em>Loading...</em></p>
+        }
+        else
+        {
+            <h3>User List</h3>
+
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (UserData item in UList)
+                        {
+                            <tr>
+                                <td>@item.DisplayName</td>
+                                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                <td>
+                                    <button @onclick="@(() => EditLink(item.UserId))">Edit</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        Access Denied.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private List<UserData> UList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        UList = await Http.GetJsonAsync<List<UserData>>("api/users");
+    }
+
+    protected void EditLink(string Id)
+    {
+        ModalParameters Parameters = new ModalParameters();
+        Parameters.Add("UserId", Id);
+        Modal.OnClose += UserEditClosed;
+
+        Modal.Show<UserEdit>("", Parameters);
+    }
+
+    public void UserEditClosed(ModalResult result)
+    {
+        Modal.OnClose -= UserEditClosed;
+    }
+
+}

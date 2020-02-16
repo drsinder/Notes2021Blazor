@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject ILocalStorageService _localStorage
+<AuthorizeView>
+    <Authorized>
+        <span class="as-link-color">@userName</span>
+        <a href="LogOut"><span class="nav-link oi oi-account-logout" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Register"><span class="nav-link oi oi-account-login" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Register</a>
+        <a href="Login"><span class="nav-link oi oi-account-login" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@functions {
+
+    private string userName;
+    protected override async Task OnInitializedAsync()
+    {
+        userName = await _localStorage.GetItemAsync<string>("userName");
+    }
+}

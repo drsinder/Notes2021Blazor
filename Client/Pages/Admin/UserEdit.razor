@@ -1,0 +1,52 @@
+﻿@using Notes2021Blazor.Shared
+@using Microsoft.AspNetCore.Identity
+
+@inject HttpClient Http
+@inject IModalService Modal
+
+<div class="dialogs">
+    <h3>User Role Editor</h3>
+    <div>
+        @if (Model == null)
+        {
+            <p class="center"><em>Loading...</em></p>
+        }
+        else
+        {
+            @Model.UserData.DisplayName<br />
+            foreach (CheckedUser item in Model.RolesList)
+            {
+                @item.theRole.Name <input type="checkbox" @bind="item.isMember"  /> <span>&nbsp;&nbsp;&nbsp;</span>
+            }
+            <br /><br />
+                  <button type="button" @onclick="@Submit">Submit</button>  <button type="button" @onclick="@Done">Close</button>
+            }
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter] public ModalParameters Parameters { get; set; }
+
+    protected EditUserViewModel Model { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string userId = Parameters.Get<string>("UserId");
+        Model = await Http.GetJsonAsync<EditUserViewModel>("api/useredit/" + userId);
+    }
+
+    private async Task Submit()
+    {
+        await Http.PutJsonAsync("api/useredit/", Model);
+
+        Modal.Cancel();
+    }
+
+
+    private void Done()
+    {
+        Modal.Cancel();
+    }
+
+}

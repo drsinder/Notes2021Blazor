@@ -1,0 +1,260 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: NoteFiles.razor
+    **
+    **  Description:
+    **      Admin list of notefiles
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@page "/admin/notefiles"
+
+@using Notes2021Blazor.Shared
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService _localStorage
+@inject NavigationManager NavigationManager
+@inject IModalService Modal
+
+<h3>Notes Files Admin</h3>
+
+@if (files == null)
+{
+    <p class="center"><em>Loading...</em></p>
+}
+else
+{
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+
+            @message
+            <p>
+                <button @onclick="@(() => CreateNoteFile(0))" class="btn-file">Create Note File</button>
+                @if (todo.Contains("announce"))
+                    {
+                        <button @onclick="CreateAnnounce" class="btn-file">Create Announce</button>
+                    }
+                    @if (todo.Contains("pbnotes"))
+                    {
+                        <button @onclick="CreatePbnotes" class="btn-file">Create Pbnotes</button>
+                    }
+                    @if (todo.Contains("noteshelp"))
+                    {
+                        <button @onclick="CreateNotesHelp" class="btn-file">Create Noteshelp</button>
+                    }
+                    @if (todo.Contains("pad"))
+                    {
+                        <button @onclick="CreatePad" class="btn-file">Create Pad</button>
+                    }
+            </p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            NoteFile Name
+                        </th>
+                        <th>
+                            NoteFile Title
+                        </th>
+                        <th>
+                            Last Edited
+                        </th>
+                        <th>
+                            Owner
+                        </th>
+                        <th>
+                            Id
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (NoteFile file in files)
+                    {
+                        <tr>
+                            <td>
+                                @file.NoteFileName
+                            </td>
+                            <td>
+                                @file.NoteFileTitle
+                            </td>
+                            <td>
+                                @timeZone.Local(file.LastEdited).ToShortTimeString() @timeZone.Local(file.LastEdited).ToShortDateString()
+                            </td>
+                            <td>
+                                @file.Owner.DisplayName
+                            </td>
+                            <td>
+                                @file.Id
+                            </td>
+                            <td>
+                                <button @onclick="@(() => EditNoteFile(file.Id))">Edit</button>
+                                <button @onclick="@(() => NoteFileDetails(file.Id))">Details</button>
+                                <button @onclick="@(() => DeleteNoteFile(file.Id))">Delete</button>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </Authorized>
+        <NotAuthorized>
+            Access denied!
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+@code {
+
+    private List<string> todo { get; set; }
+
+    private List<NoteFile> files { get; set; }
+    private TZone timeZone { get; set; }
+    private string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/AdminPageData");
+        timeZone = model.TimeZone;
+
+        todo = new List<string> { "announce", "pbnotes", "noteshelp", "pad" };
+
+        foreach (NoteFile file in model.NoteFiles)
+        {
+            if (file.NoteFileName == "announce")
+                todo.Remove("announce");
+            if (file.NoteFileName == "pbnotes")
+                todo.Remove("pbnotes");
+            if (file.NoteFileName == "noteshelp")
+                todo.Remove("noteshelp");
+            if (file.NoteFileName == "pad")
+                todo.Remove("pad");
+
+        }
+        files = model.NoteFiles;
+    }
+
+    void CreateNoteFile(int Id)
+    {
+        this.StateHasChanged();
+        var parameters = new ModalParameters();
+        parameters.Add("FileId", Id);
+        Modal.OnClose += HideDialog;
+        Modal.Show<CreateNoteFile>("", parameters);
+    }
+
+    void HideDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialog;
+        this.StateHasChanged();
+
+        if (modalResult.Cancelled)
+            return;
+
+        OnInitializedAsync().GetAwaiter();
+
+        message = modalResult.Data.ToString();
+        this.StateHasChanged();
+        NavigationManager.NavigateTo("admin/notefiles2");
+    }
+
+    void HideDialog2(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialog2;
+    }
+
+    void NoteFileDetails(int Id)
+    {
+
+        NoteFile file = files.Find(p => p.Id == Id);
+
+        var parameters = new ModalParameters();
+        parameters.Add("FileId", Id);
+        parameters.Add("FileName", file.NoteFileName);
+        parameters.Add("FileTitle", file.NoteFileTitle);
+        parameters.Add("LastEdited", file.LastEdited);
+        parameters.Add("NumberArchives", file.NumberArchives);
+        parameters.Add("Owner", file.Owner.DisplayName);
+        Modal.OnClose += HideDialog2;
+        Modal.Show<NoteFileDetails>("", parameters);
+    }
+
+    void EditNoteFile(int Id)
+    {
+
+        NoteFile file = files.Find(p => p.Id == Id);
+
+        var parameters = new ModalParameters();
+        parameters.Add("FileId", Id);
+        parameters.Add("FileName", file.NoteFileName);
+        parameters.Add("FileTitle", file.NoteFileTitle);
+        parameters.Add("LastEdited", file.LastEdited);
+        parameters.Add("NumberArchives", file.NumberArchives);
+        parameters.Add("Owner", file.OwnerId);
+        Modal.OnClose += HideDialog;
+        Modal.Show<EditNoteFile>("", parameters);
+    }
+
+    void DeleteNoteFile(int Id)
+    {
+
+        NoteFile file = files.Find(p => p.Id == Id);
+
+        this.StateHasChanged();
+        var parameters = new ModalParameters();
+        parameters.Add("FileId", Id);
+        parameters.Add("FileName", file.NoteFileName);
+        parameters.Add("FileTitle", file.NoteFileTitle);
+        Modal.OnClose += HideDialog;
+        Modal.Show<DeleteNoteFile>("", parameters);
+    }
+
+
+    private async Task CreateAnnounce()
+    {
+        await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "announce" });
+        this.StateHasChanged();
+        NavigationManager.NavigateTo("admin/notefiles2", true);
+    }
+
+    private async Task CreatePbnotes()
+    {
+        await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "pbnotes" });
+        this.StateHasChanged();
+        NavigationManager.NavigateTo("admin/notefiles2", true);
+    }
+
+    private async Task CreateNotesHelp()
+    {
+        await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "noteshelp" });
+        this.StateHasChanged();
+        NavigationManager.NavigateTo("admin/notefiles2", true);
+    }
+
+    private async Task CreatePad()
+    {
+        await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "pad" });
+        this.StateHasChanged();
+        NavigationManager.NavigateTo("admin/notefiles2", true);
+    }
+
+}
+

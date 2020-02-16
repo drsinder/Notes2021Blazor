@@ -1,0 +1,177 @@
+﻿@using Notes2021Blazor.Shared
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IModalService ModalService
+@inject ILocalStorageService _localStorage
+
+@if (myAccess == null)
+{
+    <p class="center"><em>Loading...</em></p>
+}
+else
+{
+    <div class="dialogs modal-body">
+        <h3>Access Editor</h3>
+        @if (myAccess.ViewAccess || myAccess.EditAccess)
+        {
+            <table class="table">
+                <tr>
+                    <th>User Name</th>
+                    <th>
+                        Read
+                    </th>
+                    <th>
+                        Respond
+                    </th>
+                    <th>
+                        Write
+                    </th>
+                    <th>
+                        Set Tag
+                    </th>
+                    <th>
+                        Delete/Edit
+                    </th>
+                    <th>
+                        View Access
+                    </th>
+                    <th>
+                        Edit Access
+                    </th>
+                    <th></th>
+                </tr>
+                @{
+                    foreach (NoteAccess item in myList)
+                    {
+                        string userName = item.UserID;
+                        if (userName != Globals.AccessOtherId())
+                        {
+                            UserData temp = userList.Find(p => p.UserId == userName);
+                            if (temp != null)
+                            {
+                                userName = temp.DisplayName;
+                            }
+                        }
+                        AccessItem read = new AccessItem { isChecked = item.ReadAccess, which = AccessX.ReadAccess, Item = item, canEdit = myAccess.EditAccess };
+                        AccessItem write = new AccessItem { isChecked = item.Write, which = AccessX.Write, Item = item, canEdit = myAccess.EditAccess };
+                        AccessItem respond = new AccessItem { isChecked = item.Respond, which = AccessX.Respond, Item = item, canEdit = myAccess.EditAccess };
+                        AccessItem settag = new AccessItem { isChecked = item.SetTag, which = AccessX.SetTag, Item = item, canEdit = myAccess.EditAccess };
+                        AccessItem edit = new AccessItem { isChecked = item.DeleteEdit, which = AccessX.DeleteEdit, Item = item, canEdit = myAccess.EditAccess };
+                        AccessItem view = new AccessItem { isChecked = item.ViewAccess, which = AccessX.ViewAccess, Item = item, canEdit = myAccess.EditAccess };
+                        AccessItem edaccess = new AccessItem { isChecked = item.EditAccess, which = AccessX.EditAccess, Item = item, canEdit = myAccess.EditAccess };
+                        <tr>
+                            <td>
+                                @userName
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@read" />
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@respond" />
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@write" />
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@settag" />
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@edit" />
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@view" />
+                            </td>
+                            <td>
+                                <AccessCheckBox Model="@edaccess" />
+                            </td>
+                            @if (item.UserID == Globals.AccessOtherId())
+                            {
+                            }
+                            else if (item.UserID == myAccess.UserID)
+                            {
+                            }
+                            else
+                            {
+                                <td><span><AccessDeleteButton noteAccess="@item" OnClick="ClickHandler" /></span></td>
+                            }
+                        </tr>
+                    }
+                }
+            </table>
+        }
+        else
+        {
+            <p>Not permitted!</p>
+        }
+    <button type="button" @onclick="CreateNew" class="btn btn-primary btn-sm">Create</button> <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button> 
+
+    </div>
+}
+
+
+@code{
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    public int fileId { get; set; }
+    private List<NoteAccess> myList { get; set; }
+    private List<NoteAccess> temp { get; set; }
+    private List<UserData> userList { get; set; }
+    private NoteAccess myAccess { get; set; }
+    private int arcId { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        fileId = Parameters.Get<int>("FileId");
+
+        arcId = await _localStorage.GetItemAsync<int>("ArchiveId");
+
+        temp = await Http.GetJsonAsync<List<NoteAccess>>("api/AccessList/" + fileId);
+        myList = new List<NoteAccess>();
+
+        foreach (NoteAccess item in temp)
+        {
+            if (item.ArchiveId == arcId)
+            {
+                myList.Add(item);
+            }
+        }
+
+        userList = await Http.GetJsonAsync<List<UserData>>("api/Users/");
+
+        myAccess = await Http.GetJsonAsync<NoteAccess>("api/MyAccess/" + fileId);
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+    protected void CreateNew()
+    {
+        ModalService.Close(ModalResult.Ok<List<UserData>>(userList));
+    }
+
+    protected async Task ClickHandler(string newMessage)
+    {
+        arcId = await _localStorage.GetItemAsync<int>("ArchiveId");
+
+        temp = await Http.GetJsonAsync<List<NoteAccess>>("api/AccessList/" + fileId);
+        myList = new List<NoteAccess>();
+
+        foreach (NoteAccess item in temp)
+        {
+            if (item.ArchiveId == arcId)
+            {
+                myList.Add(item);
+            }
+        }
+        StateHasChanged();
+    }
+
+}
+
+

@@ -1,0 +1,68 @@
+﻿@page "/admin/homepagemessage"
+@using Notes2021Blazor.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div>
+            <h3>Home Page Message</h3>
+            @if (MyMessage == null)
+            {
+                <p class="center"><em>Loading...</em></p>
+            }
+            else
+            {
+                <div>
+                    Enter a new Message:
+                    <br /><br />
+                    <input type="text" @bind-value="@MyMessage.Message" class="long-input"/>
+                    <br /><br />
+                    <button type="button" @onclick="Submit">Submit</button>
+                </div>
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        Access denied.
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+
+    private HomePageMessage MyMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        MyMessage = await Http.GetJsonAsync<HomePageMessage>("api/homepagemessage");
+    }
+
+    private async Task Submit()
+    {
+        if (MyMessage.Id == 0 && MyMessage.Message.Length > 0)
+        {
+            // new message
+
+            await Http.PostJsonAsync("api/homepagemessage", MyMessage);
+        }
+        else if (MyMessage.Id > 0)
+        {
+            if (MyMessage.Message.Length == 0)
+            {
+                // delete
+
+                await Http.DeleteAsync("api/homepagemessage");
+            }
+            else
+            {
+                // update message
+
+                await Http.PutJsonAsync("api/homepagemessage", MyMessage);
+            }
+        }
+
+        NavigationManager.NavigateTo(Globals.RootUri);
+    }
+
+}

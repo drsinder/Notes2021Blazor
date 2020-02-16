@@ -1,0 +1,250 @@
+﻿@page "/"
+@layout IndexLayout
+@using Notes2021Blazor.Shared
+@using Blazored.LocalStorage
+@using System.Security.Claims
+@using System.Timers
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthorizationService AuthorizationService
+@inject ILocalStorageService _localStorage
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime
+
+    <div>
+        <h2 class="center">Welcome to Notes 2021 Blazor Edition <img src="favicon.ico" width="32" /></h2>
+
+        @if (model == null)
+        {
+            <p class="center"><em>Loading...</em></p>
+        }
+        else
+        {
+            <h5 class="center">
+                <span id="homepagetime">
+                    @myTime
+                </span>
+            </h5>
+
+            @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
+            {
+                <h5 class="keep-center">@model.Message.Message</h5>
+            }
+        }
+
+
+        @if (fileList == null || nameList == null)
+        {
+            <div class="keep-center">
+                <h2>Authenticating...</h2>
+ 
+            </div>
+        }
+        else
+        {
+            <AuthorizeView>
+                <Authorized Context="Outer">
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-4 roundedindex keep-center">
+                            <EditForm Model="@dummyFile">
+                                <p>
+                                    <label>
+                                        <strong>Enter a NoteFile Name and press Enter:</strong>
+                                        <InputText class="form-control short-input"
+                                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                                   Value="@dummyFile.NoteFileName"
+                                                   ValueExpression="@( () => dummyFile.NoteFileName )" />
+                                    </label>
+                                </p>
+                                Or select a file<br />
+                                <InputSelect id="select1" class="btn btn-file dropdown-toggle form-control short-input"
+                                             ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                             Value="@dummyFile.NoteFileName"
+                                             ValueExpression="@( () => dummyFile.NoteFileName )">
+                                    <option value="none" selected="selected">-- Select from list --</option>
+                                    @foreach (var item in fileList)
+                                    {
+                                        <option value=@item.NoteFileName>@item.NoteFileName</option>
+                                    }
+                                </InputSelect>
+                                <br />Or select a title<br />
+                                <InputSelect id="select2" class="btn btn-title dropdown-toggle form-control short-input"
+                                             ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                             Value="@dummyFile.NoteFileName"
+                                             ValueExpression="@( () => dummyFile.NoteFileName )">
+                                    <option value="none" selected="selected">-- Select from list --</option>
+                                    @foreach (var item in nameList)
+                                    {
+                                        <option value=@item.NoteFileName>@item.NoteFileTitle</option>
+                                    }
+                                </InputSelect>
+                            </EditForm>
+                            <h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Important Files</h4>
+                            <ul>
+                                @foreach (localFile x in impfileList)
+                                {
+                                    string val = x.NoteFileName + " - " + x.NoteFileTitle;
+                                    <li>
+                                        <strong>
+                                            <a href="notes\main\@x.Id">@val</a>
+                                        </strong>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>History Files</h4>
+                            <ul>
+                                @foreach (localFile x in histfileList)
+                                {
+                                    string val = x.NoteFileName + " - " + x.NoteFileTitle;
+                                    <li>
+                                        <strong>
+                                            <a href="notes/main/@x.Id">@val</a>
+                                        </strong>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="keep-center">
+                        <h2>Not Logged In!</h2>
+                        <p>Please register if you have not already.  Then login.  Thanks.</p>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+        }
+    </div>
+
+@functions {
+    private HomePageModel model;
+    private Timer myTimer;
+    private string myTime;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Parameter] public List<localFile> fileList { get; set; }
+    [Parameter] public List<localFile> nameList { get; set; }
+    [Parameter] public localFile dummyFile { get; set; }
+    [Parameter] public List<localFile> impfileList { get; set; }
+    [Parameter] public List<localFile> histfileList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Globals.RootUri = NavigationManager.Uri;
+
+        ClaimsPrincipal user = (await authenticationStateTask).User;
+
+        await _localStorage.SetItemAsync("ArchiveId", 0);
+        await _localStorage.RemoveItemAsync("IsSearch");
+        await _localStorage.RemoveItemAsync("ReturnUri");
+
+        if (user.Identity.IsAuthenticated)
+        {
+            HomePageModel model1 = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
+
+            myTime = model1.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongTimeString()
+                + " " + model1.TimeZone.Abbreviation + " - "
+                + model1.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongDateString();
+
+            myTimer = new Timer(1000);
+            myTimer.Elapsed += OnTimedEvent;
+            myTimer.AutoReset = true;
+            myTimer.Enabled = true;
+
+            model = model1;
+
+            dummyFile = new localFile { Id = 0, NoteFileName = " ", NoteFileTitle = " " };
+            fileList = new List<localFile>();
+            nameList = new List<localFile>();
+            histfileList = new List<localFile>();
+            impfileList = new List<localFile>();
+
+            List<NoteFile> fileList1 = model.NoteFiles.OrderBy(p => p.NoteFileName).ToList();
+            List<NoteFile> nameList1 = model.NoteFiles.OrderBy(p => p.NoteFileTitle).ToList();
+
+
+            for (int i = 0; i < fileList1.Count; i++)
+            {
+                localFile work = new localFile { Id = fileList1[i].Id, NoteFileName = fileList1[i].NoteFileName, NoteFileTitle = fileList1[i].NoteFileTitle };
+                localFile work2 = new localFile { Id = nameList1[i].Id, NoteFileName = nameList1[i].NoteFileName, NoteFileTitle = nameList1[i].NoteFileTitle };
+                fileList.Add(work);
+                nameList.Add(work2);
+
+                string fname = work.NoteFileName;
+                if (fname == "Opbnotes" || fname == "Gnotes")
+                    histfileList.Add(work);
+
+                if (fname == "announce" || fname == "pbnotes" || fname == "noteshelp")
+                    impfileList.Add(work);
+            }
+        }
+        else
+        {
+            model = new HomePageModel();
+            fileList = nameList = new List<localFile>();
+            myTime = "";
+        }
+
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        jsRuntime.InvokeAsync<object>("setselect0", "select1");
+        jsRuntime.InvokeAsync<object>("setselect0", "select2");
+    }
+
+    protected void OnTimedEvent(Object source, ElapsedEventArgs e)
+    {
+        myTime = model.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongTimeString()
+            + " " + model.TimeZone.Abbreviation + " - "
+            + model.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongDateString();
+
+        this.StateHasChanged();
+    }
+
+    private void TextHasChanged(string value)
+    {
+        value = value.Trim().Replace("'\n", "").Replace("'\r", "");
+
+        try
+        {
+            foreach (var item in fileList)
+            {
+                if (value == item.NoteFileName)
+                {
+                    NavigationManager.NavigateTo("notes/main/" + item.Id);
+                    return;
+                }
+            }
+        }
+        catch
+        { }
+    }
+}
+
+@code {
+
+    public class localFile
+    {
+        public int Id { get; set; }
+        public string NoteFileName { get; set; }
+        public string NoteFileTitle { get; set; }
+
+    }
+
+}

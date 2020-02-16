@@ -1,0 +1,76 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: DeleteNoteFile.razor
+    **
+    **  Description:
+    **      Note File Deletion Dialog
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Net.Http
+@using Notes2021Blazor.Shared
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService ModalService
+
+<AuthorizeView Roles="Admin">
+    <Authorized Context="Other">
+        <div class="dialogs">
+            <h3>Delete Note File Id: @FileId</h3>
+            <h4>@fileName</h4>
+            <h4>@fileTitle</h4>
+            <EditForm id="createform" Model="@dummyFile" OnValidSubmit="HandleValidSubmit">
+                <button type="submit">Confirm</button> <button type="button" @onclick="Cancel">Cancel</button>
+            </EditForm>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        Access denied.
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    public CreateFileModel dummyFile = new CreateFileModel();
+
+    int FileId { get; set; }
+    string fileName { get; set; }
+    string fileTitle { get; set; }
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+    protected override void OnInitialized()
+    {
+        FileId = Parameters.Get<int>("FileId");
+        fileName = Parameters.Get<string>("FileName");
+        fileTitle = Parameters.Get<string>("FileTitle");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await Http.DeleteAsync("api/NoteFileAdmin/" + FileId);
+
+        ModalService.Close(ModalResult.Ok($"Delete was submitted successfully."));
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+}

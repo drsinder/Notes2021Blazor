@@ -1,0 +1,51 @@
+﻿@using Notes2021Blazor.Shared
+@using Newtonsoft.Json
+@using System.Text
+@inject HttpClient Http
+@inject IModalService ModalService
+
+<div class="dialogs">
+
+    <h2>Forward Note(s)</h2>
+    <h4>@fv.NoteSubject</h4>
+    <p>Forward to:</p>
+    <input type="text" @bind-value="@fv.ToEmail" />
+    <p>Whole string?:</p>
+    <input type="checkbox" @bind-value="@fv.wholestring" />
+
+    <br /> <br />
+    <button type="button" @onclick="Forwardit" class="btn btn-success btn-sm"><img src="icons/glyphicons-basic-435-forward-email.svg" width="25" class="svgwhite" /> Forward</button>
+    <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">
+        Cancel
+    </button>
+</div>
+
+
+@code{
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+    protected ForwardViewModel fv { get; set; }
+
+    protected override void OnInitialized()
+    {
+        fv = Parameters.Get<ForwardViewModel>("ForwardView");
+    }
+
+    private async Task Forwardit()
+    {
+        if (fv.ToEmail == null || fv.ToEmail.Length < 8 || !fv.ToEmail.Contains("@") || !fv.ToEmail.Contains("."))
+            return;
+
+        var stringContent = new StringContent(JsonConvert.SerializeObject(fv), Encoding.UTF8, "application/json");
+
+        HttpResponseMessage result = await Http.PostAsync("api/Forward/", stringContent);
+
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+}

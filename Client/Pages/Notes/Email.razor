@@ -1,0 +1,26 @@
+﻿<div class="dialogs">
+    <p>Enter the Email address to mail to:</p>
+    
+    <input type="text" @bind-value="@emailaddr" class="short-input" />
+    <br/><br />
+    <button type="button" @onclick="Ok" class="btn btn-success btn-sm"><img src="icons/glyphicons-basic-435-forward-email.svg" width="25" class="svgwhite" /> Ok</button>
+    <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
+
+</div>
+
+@inject IModalService ModalService
+
+@code {
+
+    public string emailaddr { get; set; }
+
+    private void Ok()
+    {
+        ModalService.Close(ModalResult.Ok<string>(emailaddr));
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+}
