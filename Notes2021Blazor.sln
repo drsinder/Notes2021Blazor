@@ -17,6 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2021Client", "Notes202
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesUtil", "NotesUtil\NotesUtil.csproj", "{1629CFB7-9152-4A7A-A4CB-E68762E62895}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50C4E562-FDC5-4914-A47D-8B277F8F915C}"
+	ProjectSection(SolutionItems) = preProject
+		Published.zip = Published.zip
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
