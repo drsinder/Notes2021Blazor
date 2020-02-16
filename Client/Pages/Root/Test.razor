@@ -1,31 +1,21 @@
 ﻿@page "/test"
-@using System
-@using Notes2021Blazor.Shared
-@inject HttpClient Http
+@using Syncfusion.EJ2.Blazor.Buttons
+@using Syncfusion.EJ2.Blazor.Spinner
+<div>
+    <EjsButton @onclick="@Click">Show/Hide Spinner</EjsButton>
+    <div id="container"></div>
+    <EjsSpinner @ref="SpinnerObj" Target="#container">
+    </EjsSpinner>
+</div>
 
+@code{
+    EjsSpinner SpinnerObj;
+    string target { get; set; } = "#container";
 
-<h3>@stuff</h3>
-
-@code {
-    private string stuff { get; set; }
-    private Stringy fv { get; set; }
-
-    protected override async Task OnInitializedAsync()
+    private async Task Click()
     {
-        DateTime now = DateTime.Now.ToLocalTime();
-        DateTime nowU = DateTime.Now.ToUniversalTime();
-        long ticks = now.Ticks;
-
-        bool result = false;
-
-        string inp = "https://localhost:44336/";
-
-        fv = new Stringy { value = inp };
-
-        result = await Http.PostJsonAsync<bool>("api/LinkTest", fv);
-
-
-        stuff = result.ToString();
-        StateHasChanged();
+        SpinnerObj.ShowSpinner(target);
+        await Task.Delay(2000);
+        SpinnerObj.HideSpinner(target);
     }
 }
