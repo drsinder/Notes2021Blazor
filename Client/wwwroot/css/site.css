@@ -361,15 +361,6 @@ iframe.loginclock {
     border-radius: 8px;
 }
 
-.dialoglist {
-    background-color: navajowhite;
-    border-style: groove;
-    border-width: 6px;
-    border-color: darkgray;
-    color: black;
-    border-radius: 8px;
-}
-
 .dialogedit {
     background-color: lightgray;
     border-style: groove;
