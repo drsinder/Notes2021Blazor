@@ -13,8 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Notes\IndexButton.razor" />
     <Content Remove="Pages\Notes\NewBaseNote.razor" />
     <Content Remove="Pages\Notes\NoteEditPanel.razor" />
+    <Content Remove="Pages\Notes\NoteIndex - Copy.razor" />
     <Content Remove="Pages\Notes\SampleHtmlEditor.razor" />
     <Content Remove="Pages\Root\FetchData.razor" />
   </ItemGroup>
@@ -49,7 +51,6 @@
     <None Include="Pages\Notes\Forward.razor" />
     <None Include="Pages\Notes\HelpDialog.razor" />
     <None Include="Pages\Notes\HelpDialog2.razor" />
-    <None Include="Pages\Notes\IndexButton.razor" />
     <None Include="Pages\Notes\IndexHeader.razor" />
     <None Include="Pages\Notes\ListMenu.razor" />
     <None Include="Pages\Notes\Main.razor" />

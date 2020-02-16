@@ -20,22 +20,24 @@
         }
         else
         {
-            <h2>
-                Note Editor - @noteFile.NoteFileName <span>-</span> @noteFile.NoteFileTitle
-            </h2>
-            <EditForm id="createform" Model="@tvm" OnValidSubmit="HandleValidSubmit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <strong>Subject</strong>
-                <InputText id="name" @bind-Value="tvm.MySubject" class="form-control long-input" />
-                <strong>Tags</strong>
-                <InputText id="title" @bind-Value="tvm.TagLine" class="form-control long-input" />
-                <strong>Director Message</strong>
-                <InputText id="title" @bind-Value="tvm.DirectorMessage" class="form-control long-input" />
-                <strong>Note Body</strong>
-                <InputTextArea id="mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
-                <br /><button type="submit" class="btn btn-success btn-sm">Submit</button> <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
-            </EditForm>
+            <div class="dialogedit">
+                <h2>
+                    Note Editor - @noteFile.NoteFileName <span>-</span> @noteFile.NoteFileTitle
+                </h2>
+                <EditForm id="createform" Model="@tvm" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <strong>Subject</strong>
+                    <InputText id="name" @bind-Value="tvm.MySubject" class="form-control long-input" />
+                    <strong>Tags</strong>
+                    <InputText id="title" @bind-Value="tvm.TagLine" class="form-control long-input" />
+                    <strong>Director Message</strong>
+                    <InputText id="title" @bind-Value="tvm.DirectorMessage" class="form-control long-input" />
+                    <strong>Note Body</strong>
+                    <InputTextArea id="mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
+                    <br /><button type="submit" class="btn btn-success btn-sm">Submit</button> <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
+                </EditForm>
+            </div>
         }
     </Authorized>
     <NotAuthorized>

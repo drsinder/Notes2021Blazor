@@ -60,10 +60,10 @@ else
                 {
                     <div><br /></div>
                     <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
-                    <div class="topmenu">
+                    @*<div class="topmenu">
                         <ListMenu Model="@Model" OnClick="ClickHandler" />
-                    </div>
-                    <NoteIndex Model="@Model" OnClick="ClickHandler" />
+                    </div>*@
+                    <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
                     @*<ListMenu Model="@Model" OnClick="ClickHandler" />*@
                     <br /><br />
                     <div class="arrow1">
@@ -274,6 +274,11 @@ else
             if (!string.IsNullOrEmpty(Model.message))
                 message = Model.message;
 
+            if (Model.Notes.Count > 0)
+                currentHeader = Model.Notes[0];
+            else
+                currentHeader = new NoteHeader { NoteOrdinal = 1 };
+
             message = null;
 
             basenoteCount = Model.Notes.Count;
@@ -352,7 +357,7 @@ else
 
     protected void TimerTick(Object source, ElapsedEventArgs e)
     {
-        timer.Interval = 15000;
+        timer.Interval = 5000;
         jsRuntime.InvokeAsync<object>("setfocus", "arrow1");
     }
 
@@ -462,7 +467,7 @@ else
 
     protected void ListFiles()
     {
-        NavigationManager.NavigateTo("notes/notesfiles");
+        NavigationManager.NavigateTo("notes/notesfiles", true);
     }
 
     protected async Task KeyPressed(KeyboardEventArgs eventArgs)

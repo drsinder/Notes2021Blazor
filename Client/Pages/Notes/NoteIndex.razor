@@ -1,57 +1,74 @@
 ﻿@using Notes2021Blazor.Shared
+@using Syncfusion.EJ2.Blazor.Grids
+@using System.Timers
 
-<table class="table">
-    <tr>
-        <th>#</th>
-        <th>Subject</th>
-        <th>Writer</th>
-        <th>Date/Time</th>
-        <th>Responses</th>
-        <th></th>
-    </tr>
-    @if (@Model.myAccess.ReadAccess)
-    {
-        foreach (var item in Model.Notes)
-        {
-            string when = Model.tZone.Local(item.CreateDate) + " " + Model.tZone.Abbreviation;
-            string idx = "Base" + (item.NoteOrdinal + 1);
-            <tr class="noteindex">
-                <td><span id="@idx"><IndexButton text="@item.NoteOrdinal.ToString()" noteId="@item.Id" OnClick="Display" /></span></td>
-                <td><IndexButton text="@item.NoteSubject" noteId="@item.Id" OnClick="Display" /></td>
-                <td><IndexButton text="@item.AuthorName" noteId="@item.Id" OnClick="Display" /></td>
-                <td><IndexButton text="@when" noteId="@item.Id" OnClick="Display" /></td>
-                @if (item.ResponseCount > 0)
-                {
-                    <td><IndexButton text="@item.ResponseCount.ToString()" noteId="@item.Id" OnClick="Display" /></td>
-                }
-                else
-                {
-                    <td></td>
-                }
-                <td><IndexButton text="View" noteId="@item.Id" OnClick="Display" /></td>
-            </tr>
-        }
-    }
-    else if (@Model.myAccess.Write)
-    {
-        <tr>
-            <td><h3>You may not read this file, but you may write to it.</h3></td>
-        </tr>
-    }
-    else
-    {
-        <tr>
-            <td><h3>You may not read this file.</h3></td>
-        </tr>
-    }
-</table>
+@if (@Model.myAccess.ReadAccess)
+{
+    <ListMenu Model="@Model" OnClick="ClickHandler" />
+    <div class="col-lg-12 control-section dialoglist">
+        <div class="content-wrapper">
+            <div class="row">
+                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
+                    <GridPageSettings PageSizes="true"></GridPageSettings>
+                    <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
+                    <GridColumns>
+                        <GridColumn Field=@nameof(NoteHeader.NoteOrdinal) HeaderText="#" TextAlign="TextAlign.Left" Width="15" IsPrimaryKey="true"></GridColumn>
+                        <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
+                        <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                        <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" Format="MM/dd/yyyy h:mm tt UCT" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                        <GridColumn Field=@nameof(NoteHeader.ResponseCount) HeaderText="Responses" TextAlign="TextAlign.Left" Width="40"></GridColumn>
+                    </GridColumns>
+                </EjsGrid>
+            </div>
+        </div>
+    </div>
+}
+else if (@Model.myAccess.Write)
+{
+    <ListMenu Model="@Model" OnClick="ClickHandler" />
+    <h3>You may not read this file, but you may write to it.</h3>
+}
+
+else
+{
+    <h3>You may not read this file.</h3>
+}
+
 
 @code{
     [Parameter] public NoteDisplayIndexModel Model { get; set; }
+    [Parameter] public int FirstOrdinal { get; set; }
     [Parameter] public EventCallback<string> OnClick { get; set; }
 
-    protected void Display(string newMessage)
+    EjsGrid<NoteHeader> MyGrid;
+
+    private Timer timer { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        OnClick.InvokeAsync(newMessage);
+        timer = new Timer(500);
+        timer.Elapsed += TimerTick;
+        timer.Enabled = true;
     }
+
+    protected void TimerTick(Object source, ElapsedEventArgs e)
+    {
+        timer.Enabled = false;
+        int pSize = MyGrid.PageSettings.PageSize;
+        int page = (int)(((FirstOrdinal - 1) / pSize) + 1.98);
+        if (page == MyGrid.PageSettings.CurrentPage)  // prevent infinite loop
+            return;
+        MyGrid.GoToPage(page);
+    }
+
+    protected void DisplayIt(RowSelectEventArgs<NoteHeader> args)
+    {
+        OnClick.InvokeAsync("Note:" + args.Data.Id);
+    }
+
+    protected void ClickHandler(string message)
+    {
+        OnClick.InvokeAsync(message);
+    }
+
 }

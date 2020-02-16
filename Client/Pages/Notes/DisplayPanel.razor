@@ -19,9 +19,7 @@ else if (editing)
 }
 else
 {
-    @*<div class="modal-dialog-scrollable">
-            <BlazoredModal />
-        </div>*@
+<div class="dialognote modal-body">
     <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
     <hr id="premenu" />
     <DisplayMenu Model="@Model" OnClick="ClickHandler" />
@@ -64,566 +62,567 @@ else
                     </EditForm>
 
                     <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                </div>
+            </div>
         </div>
-    </div>
 }
 
-@functions
+                @functions
 {
-    [Parameter] public NoteDisplayIndexModel Model { get; set; }
-    [Parameter] public NoteHeader currentHeader { get; set; }
-    [Parameter] public int Id { get; set; }
-    [Parameter] public List<NoteHeader> SeqBases { get; set; }
-    [Parameter] public List<Sequencer> trackers { get; set; }
-    [Parameter] public int seqIndx { get; set; }
-    [Parameter] public EventCallback<string> OnClick { get; set; }
-    [Parameter] public bool isSearch { get; set; }
-    [Parameter] public List<NoteHeader> SearchResults { get; set; }
+            [Parameter] public NoteDisplayIndexModel Model { get; set; }
+                [Parameter] public NoteHeader currentHeader { get; set; }
+                [Parameter] public int Id { get; set; }
+                [Parameter] public List<NoteHeader> SeqBases { get; set; }
+                [Parameter] public List<Sequencer> trackers { get; set; }
+                [Parameter] public int seqIndx { get; set; }
+                [Parameter] public EventCallback<string> OnClick { get; set; }
+                [Parameter] public bool isSearch { get; set; }
+                [Parameter] public List<NoteHeader> SearchResults { get; set; }
 
 
-    protected bool newnoteFlag { get; set; }
-    protected bool editing { get; set; }
+                protected bool newnoteFlag { get; set; }
+                protected bool editing { get; set; }
 
-    private Timer timer { get; set; }
+                private Timer timer { get; set; }
 
-    public string respX { get; set; }
+                public string respX { get; set; }
 
-    public NoteContent currentContent { get; set; }
+                public NoteContent currentContent { get; set; }
 
-    public List<Tags> tags;
+                public List<Tags> tags;
 
-    private string curN { get; set; }
+                private string curN { get; set; }
 
-    private LocalInput myInput { get; set; }
+                private LocalInput myInput { get; set; }
 
-    private int seqBaseIndx { get; set; }
-    private int seqRespOrd { get; set; }
-
-
-    protected async override Task OnParametersSetAsync()
-    {
-        Model.myHeader = currentHeader;
-        myInput = new LocalInput();
-        myInput.isAutoFocus = true;
-        seqBaseIndx = 0;
-        seqRespOrd = 0;
-
-        newnoteFlag = false;
-        editing = false;
-
-        if (isSearch && SearchResults.Count > 0)
-        {
-            currentHeader = SearchResults[0];
-            Model.myHeader = currentHeader;
-        }
-
-        DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
-
-        currentContent = dm.content;
-        tags = dm.tags;
+                private int seqBaseIndx { get; set; }
+                private int seqRespOrd { get; set; }
 
 
-        respX = "";
-        if (currentHeader.ResponseCount > 0)
-            respX = " - " + currentHeader.ResponseCount + " Responses ";
-
-        curN = "" + currentHeader.NoteOrdinal;
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            curN += "." + currentHeader.ResponseOrdinal;
-        }
-
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            timer = new Timer(1000);
-            timer.Elapsed += TimerTick;
-            timer.Enabled = true;
-        }
-        await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
-    }
-
-    protected void TimerTick(Object source, ElapsedEventArgs e)
-    {
-        timer.Interval = 5000;
-        jsRuntime.InvokeAsync<object>("setfocus", "arrow2");
-    }
-
-    protected void StartTimer()
-    {
-        timer = new Timer(1000);
-        timer.Elapsed += TimerTick;
-        timer.Enabled = true;
-    }
-
-    protected void StopTimer()
-    {
-        timer.Enabled = false;
-        timer.Stop();
-    }
-
-    public async Task ClickHandler(string newMessage)
-    {
-        switch (newMessage)
-        {
-            case "ShowHelp": ShowHelp(); break;
-            case "NextBaseNote": await NextBaseNote(); break;
-            case "PreviousBaseNote": await PreviousBaseNote(); break;
-            case "NextNote": await TextHasChanged(""); break;
-            case "PreviousNote": await PreviousNote(); break;
-            case "NewResponse":
-                newnoteFlag = true;
-                this.StateHasChanged();
-                break;
-            case "Edit":
-                editing = true;
-                this.StateHasChanged();
-                break;
-            case "Delete": DeleteNote(); break;
-            case "Forward": Forward(); break;
-            case "Done": Done(); break;
-            case "Html": Html(); break;
-            case "html": html(); break;
-            case "mail": mail(); break;
-            case "Search":
-                StopTimer();
-                await OnClick.InvokeAsync(newMessage);
-                break;
-            case "Mark":
-                await Markit();
-                break;
-
-            default:
-                await OnClick.InvokeAsync(newMessage);
-                break;
-        }
-    }
-
-    protected void DeleteNote()
-    {
-        var parameters = new ModalParameters();
-        parameters.Add("NoteId", currentHeader.Id);
-        parameters.Add("FileId", Model.noteFile.Id);
-        var options = new ModalOptions() { HideCloseButton = false };
-        Modal.OnClose += HideDialog;
-        Modal.Show<DeleteNote>("", parameters, options);
-    }
-
-    protected async Task KeyPressed(KeyboardEventArgs eventArgs)
-    {
-        switch (eventArgs.Key)
-        {
-            case "Z": ShowHelp(); break;
-            case "E":
-                if (@Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
-                    editing = true;
-                StateHasChanged();
-                break;
-            case "D":
-                if (@Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
-                    DeleteNote();
-                break;
-            case "Enter":
-                if (!eventArgs.ShiftKey)
-                    await TextHasChanged("");
-                else
-                    await NextBaseNote();
-                break;
-            case "b":
-                await PreviousNote();
-                break;
-            case "B":
-                await PreviousBaseNote();
-                break;
-            case "N":
-                newnoteFlag = true;
-                this.StateHasChanged();
-                break;
-            case "L":
-            case "I":
-                Done();
-                break;
-            case " ":
-                if (eventArgs.ShiftKey)
+                protected async override Task OnParametersSetAsync()
                 {
-                    if (!isSearch)
-                        return;
+                    Model.myHeader = currentHeader;
+                    myInput = new LocalInput();
+                    myInput.isAutoFocus = true;
+                    seqBaseIndx = 0;
+                    seqRespOrd = 0;
 
-                    SearchResults.RemoveAt(0);
-                    if (SearchResults.Count == 0)
+                    newnoteFlag = false;
+                    editing = false;
+
+                    if (isSearch && SearchResults.Count > 0)
                     {
-                        ShowMessage("Search Complete!");
-                        isSearch = false;
+                        currentHeader = SearchResults[0];
+                        Model.myHeader = currentHeader;
+                    }
+
+                    DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
+
+                    currentContent = dm.content;
+                    tags = dm.tags;
+
+
+                    respX = "";
+                    if (currentHeader.ResponseCount > 0)
+                        respX = " - " + currentHeader.ResponseCount + " Responses ";
+
+                    curN = "" + currentHeader.NoteOrdinal;
+                    if (currentHeader.ResponseOrdinal > 0)
+                    {
+                        curN += "." + currentHeader.ResponseOrdinal;
+                    }
+
+                }
+
+                protected override async Task OnAfterRenderAsync(bool firstRender)
+                {
+                    if (firstRender)
+                    {
+                        timer = new Timer(1000);
+                        timer.Elapsed += TimerTick;
+                        timer.Enabled = true;
+                    }
+                    await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
+                }
+
+                protected void TimerTick(Object source, ElapsedEventArgs e)
+                {
+                    timer.Interval = 5000;
+                    jsRuntime.InvokeAsync<object>("setfocus", "arrow2");
+                }
+
+                protected void StartTimer()
+                {
+                    timer = new Timer(1000);
+                    timer.Elapsed += TimerTick;
+                    timer.Enabled = true;
+                }
+
+                protected void StopTimer()
+                {
+                    timer.Enabled = false;
+                    timer.Stop();
+                }
+
+                public async Task ClickHandler(string newMessage)
+                {
+                    switch (newMessage)
+                    {
+                        case "ShowHelp": ShowHelp(); break;
+                        case "NextBaseNote": await NextBaseNote(); break;
+                        case "PreviousBaseNote": await PreviousBaseNote(); break;
+                        case "NextNote": await TextHasChanged(""); break;
+                        case "PreviousNote": await PreviousNote(); break;
+                        case "NewResponse":
+                            newnoteFlag = true;
+                            this.StateHasChanged();
+                            break;
+                        case "Edit":
+                            editing = true;
+                            this.StateHasChanged();
+                            break;
+                        case "Delete": DeleteNote(); break;
+                        case "Forward": Forward(); break;
+                        case "Done": Done(); break;
+                        case "Html": Html(); break;
+                        case "html": html(); break;
+                        case "mail": mail(); break;
+                        case "Search":
+                            StopTimer();
+                            await OnClick.InvokeAsync(newMessage);
+                            break;
+                        case "Mark":
+                            await Markit();
+                            break;
+
+                        default:
+                            await OnClick.InvokeAsync(newMessage);
+                            break;
+                    }
+                }
+
+                protected void DeleteNote()
+                {
+                    var parameters = new ModalParameters();
+                    parameters.Add("NoteId", currentHeader.Id);
+                    parameters.Add("FileId", Model.noteFile.Id);
+                    var options = new ModalOptions() { HideCloseButton = false };
+                    Modal.OnClose += HideDialog;
+                    Modal.Show<DeleteNote>("", parameters, options);
+                }
+
+                protected async Task KeyPressed(KeyboardEventArgs eventArgs)
+                {
+                    switch (eventArgs.Key)
+                    {
+                        case "Z": ShowHelp(); break;
+                        case "E":
+                            if (@Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
+                                editing = true;
+                            StateHasChanged();
+                            break;
+                        case "D":
+                            if (@Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
+                                DeleteNote();
+                            break;
+                        case "Enter":
+                            if (!eventArgs.ShiftKey)
+                                await TextHasChanged("");
+                            else
+                                await NextBaseNote();
+                            break;
+                        case "b":
+                            await PreviousNote();
+                            break;
+                        case "B":
+                            await PreviousBaseNote();
+                            break;
+                        case "N":
+                            newnoteFlag = true;
+                            this.StateHasChanged();
+                            break;
+                        case "L":
+                        case "I":
+                            Done();
+                            break;
+                        case " ":
+                            if (eventArgs.ShiftKey)
+                            {
+                                if (!isSearch)
+                                    return;
+
+                                SearchResults.RemoveAt(0);
+                                if (SearchResults.Count == 0)
+                                {
+                                    ShowMessage("Search Complete!");
+                                    isSearch = false;
+                                    return;
+                                }
+
+                                currentHeader = SearchResults[0];
+                                await SetNote();
+                            }
+                            else
+                            {
+                                if (seqIndx == -1)
+                                    break;
+
+                                await ContinueSeq();
+                            }
+                            break;
+                        case "F":
+                            Forward();
+                            break;
+                        case "H":
+                            Html();
+                            break;
+                        case "h":
+                            html();
+                            break;
+                        case "m":
+                            mail();
+                            break;
+                        case "S":
+                            StopTimer();
+                            await OnClick.InvokeAsync("Search");
+                            break;
+                        case "M":
+                            await Markit();
+                            break;
+
+                        default:
+
+                            //var parameters = new ModalParameters();
+                            //parameters.Add("Message", eventArgs.Key);
+                            //var options = new ModalOptions() { HideCloseButton = false };
+                            //Modal.OnClose += HideDialog;
+                            //Modal.Show<MessageBox>("", parameters, options);
+
+                            break;
+                    }
+                }
+
+                protected async Task ContinueSeq()
+                {
+                    // first check for responses
+                    NoteHeader x = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal
+                            && p.ResponseOrdinal > currentHeader.ResponseOrdinal
+                            && p.LastEdited > trackers[seqIndx].LastTime)
+                            .OrderBy(p => p.ResponseOrdinal).FirstOrDefault();
+
+                    if (x != null) // found a response
+                    {
+                        currentHeader = x;
+                        await SetNote();
                         return;
                     }
 
-                    currentHeader = SearchResults[0];
+                    // else goto next base
+
+                    seqBaseIndx++;
+                    if (seqBaseIndx >= SeqBases.Count)  // finished with this file
+                    {
+                        await OnClick.InvokeAsync("SeqFileDone");
+                        return;
+                    }
+
+                    currentHeader = SeqBases[seqBaseIndx];
                     await SetNote();
                 }
-                else
+
+                protected async Task SetNote()
                 {
-                    if (seqIndx == -1)
-                        break;
+                    DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
 
-                    await ContinueSeq();
+                    currentContent = dm.content;
+                    tags = dm.tags;
+
+                    respX = "";
+                    if (currentHeader.ResponseOrdinal > 0)
+                    {
+                        NoteHeader bnh = Model.Notes.Find(p => p.Id == currentHeader.BaseNoteId);
+                        respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
+                    }
+                    else if (currentHeader.ResponseCount > 0)
+                        respX = " - " + currentHeader.ResponseCount + " Responses ";
+
+
+                    curN = "" + currentHeader.NoteOrdinal;
+                    if (currentHeader.ResponseOrdinal > 0)
+                    {
+                        curN += "." + currentHeader.ResponseOrdinal;
+                    }
+                    Model.myHeader = currentHeader;
+                    this.StateHasChanged();
                 }
-                break;
-            case "F":
-                Forward();
-                break;
-            case "H":
-                Html();
-                break;
-            case "h":
-                html();
-                break;
-            case "m":
-                mail();
-                break;
-            case "S":
-                StopTimer();
-                await OnClick.InvokeAsync("Search");
-                break;
-            case "M":
-                await Markit();
-                break;
 
-            default:
+                protected async Task PreviousBaseNote()
+                {
+                    if (currentHeader.NoteOrdinal == 1)
+                        return;
+                    currentHeader = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal - 1 && p.ResponseOrdinal == 0);
+                    if (currentHeader == null)
+                        return;
+                    await SetNote();
+                }
 
-                //var parameters = new ModalParameters();
-                //parameters.Add("Message", eventArgs.Key);
-                //var options = new ModalOptions() { HideCloseButton = false };
-                //Modal.OnClose += HideDialog;
-                //Modal.Show<MessageBox>("", parameters, options);
+                protected async Task NextBaseNote()
+                {
+                    NoteHeader newbase = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1 && p.ResponseOrdinal == 0);
+                    if (newbase == null)
+                        return;
+                    currentHeader = newbase;
+                    await SetNote();
+                }
 
-                break;
-        }
-    }
+                protected async Task PreviousNote()
+                {
+                    if (currentHeader.ResponseOrdinal == 0)
+                    {
+                        await PreviousBaseNote();
+                        return;
+                    }
+                    NoteHeader newbase = Model.AllNotes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal == currentHeader.ResponseOrdinal - 1);
+                    if (newbase == null)
+                        return;
 
-    protected async Task ContinueSeq()
-    {
-        // first check for responses
-        NoteHeader x = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal
-                && p.ResponseOrdinal > currentHeader.ResponseOrdinal
-                && p.LastEdited > trackers[seqIndx].LastTime)
-                .OrderBy(p => p.ResponseOrdinal).FirstOrDefault();
+                    currentHeader = newbase;
+                    await SetNote();
+                }
 
-        if (x != null) // found a response
-        {
-            currentHeader = x;
-            await SetNote();
-            return;
-        }
+                private void Done()
+                {
+                    OnClick.InvokeAsync("Done:" + currentHeader.NoteOrdinal);
+                }
 
-        // else goto next base
+                private async Task TextHasChanged(string typedInput)
+                {
+                    int fileId = Id;
+                    int iOrd = currentHeader.NoteOrdinal;
+                    int iResp = currentHeader.ResponseOrdinal;
+                    long iNoteId = currentHeader.Id;
+                    int noteOrd = 1;
+                    NoteHeader nc;
+                    NoteHeader bnh = Model.Notes.Find(p => p.Id == currentHeader.BaseNoteId);
+                    bool ax = false;
+                    bool plus = false;
+                    bool minus = false;
 
-        seqBaseIndx++;
-        if (seqBaseIndx >= SeqBases.Count)  // finished with this file
-        {
-            await OnClick.InvokeAsync("SeqFileDone");
-            return;
-        }
+                    typedInput = typedInput.Trim().Replace("'\n", "").Replace("'\r", "").Trim();
 
-        currentHeader = SeqBases[seqBaseIndx];
-        await SetNote();
-    }
+                    if (string.IsNullOrEmpty(typedInput) || string.IsNullOrWhiteSpace(typedInput))
+                    {
+                        // next note
+                        NoteHeader searcher = Model.AllNotes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal == currentHeader.ResponseOrdinal + 1);
+                        if (searcher != null)  // found a response
+                        {
+                            nc = searcher;
+                            bnh = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal);
 
-    protected async Task SetNote()
-    {
-        DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
+                            goto beyond;
+                        }
+                        searcher = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1);
+                        if (searcher != null) // found a base
+                        {
+                            nc = bnh = searcher;
+                            goto beyond;
+                        }
+                        Done();  // reached the end
+                    }
 
-        currentContent = dm.content;
-        tags = dm.tags;
+                    if (typedInput.StartsWith("+"))
+                        plus = true;
+                    if (typedInput.StartsWith("-"))
+                        minus = true;
+                    typedInput = typedInput.Replace("+", "").Replace("-", "");
 
-        respX = "";
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            NoteHeader bnh = Model.Notes.Find(p => p.Id == currentHeader.BaseNoteId);
-            respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
-        }
-        else if (currentHeader.ResponseCount > 0)
-            respX = " - " + currentHeader.ResponseCount + " Responses ";
+                    if (typedInput.Contains("."))
+                    {
+                        string[] splits = typedInput.Split(new[] { '.' });
+                        if (splits.Length != 2)
+                        {
+                            return;
+                        }
+                        if (string.IsNullOrEmpty(splits[0]) || string.IsNullOrWhiteSpace(splits[0]))
+                            noteOrd = iOrd;
+                        else
+                            ax = !int.TryParse(splits[0], out noteOrd);
+                        bool bx = !int.TryParse(splits[1], out var respOrd);
+                        if (ax || bx)
+                        {
+                            return;
+                        }
 
+                        if (noteOrd == iOrd && (plus || minus))
+                        {
+                            if (plus)
+                                respOrd += iResp;
+                            else
+                                respOrd = iResp - respOrd;
 
-        curN = "" + currentHeader.NoteOrdinal;
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            curN += "." + currentHeader.ResponseOrdinal;
-        }
-        Model.myHeader = currentHeader;
-        this.StateHasChanged();
-    }
+                            if (respOrd < 0)
+                                respOrd = 0;
+                            bnh = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
 
-    protected async Task PreviousBaseNote()
-    {
-        if (currentHeader.NoteOrdinal == 1)
-            return;
-        currentHeader = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal - 1 && p.ResponseOrdinal == 0);
-        if (currentHeader == null)
-            return;
-        await SetNote();
-    }
+                            if (respOrd > bnh.ResponseCount) respOrd = bnh.ResponseCount;
+                        }
 
-    protected async Task NextBaseNote()
-    {
-        NoteHeader newbase = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1 && p.ResponseOrdinal == 0);
-        if (newbase == null)
-            return;
-        currentHeader = newbase;
-        await SetNote();
-    }
+                        nc = Model.AllNotes.Find(p => p.NoteOrdinal == noteOrd && p.ResponseOrdinal == respOrd);
+                    }
+                    else
+                    {
+                        if (!int.TryParse(typedInput, out noteOrd))
+                        {
+                            return;
+                        }
 
-    protected async Task PreviousNote()
-    {
-        if (currentHeader.ResponseOrdinal == 0)
-        {
-            await PreviousBaseNote();
-            return;
-        }
-        NoteHeader newbase = Model.AllNotes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal == currentHeader.ResponseOrdinal - 1);
-        if (newbase == null)
-            return;
+                        if (!plus && !minus && (noteOrd == 0))
+                        {
+                            Done();
+                        }
+                        if (plus)
+                            noteOrd += iOrd;
+                        else if (minus)
+                            noteOrd = iOrd - noteOrd;
 
-        currentHeader = newbase;
-        await SetNote();
-    }
+                        if (noteOrd < 1) noteOrd = 1;
 
-    private void Done()
-    {
-        OnClick.InvokeAsync("Done:" + currentHeader.NoteOrdinal);
-    }
+                        long cnt = Model.AllNotes.LongCount();
 
-    private async Task TextHasChanged(string typedInput)
-    {
-        int fileId = Id;
-        int iOrd = currentHeader.NoteOrdinal;
-        int iResp = currentHeader.ResponseOrdinal;
-        long iNoteId = currentHeader.Id;
-        int noteOrd = 1;
-        NoteHeader nc;
-        NoteHeader bnh = Model.Notes.Find(p => p.Id == currentHeader.BaseNoteId);
-        bool ax = false;
-        bool plus = false;
-        bool minus = false;
+                        if (noteOrd > cnt) noteOrd = (int)cnt;
 
-        typedInput = typedInput.Trim().Replace("'\n", "").Replace("'\r", "").Trim();
+                        nc = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
+                        bnh = nc;
+                    }
 
-        if (string.IsNullOrEmpty(typedInput) || string.IsNullOrWhiteSpace(typedInput))
-        {
-            // next note
-            NoteHeader searcher = Model.AllNotes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal == currentHeader.ResponseOrdinal + 1);
-            if (searcher != null)  // found a response
-            {
-                nc = searcher;
-                bnh = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal);
+                    if (nc == null)
+                    {
+                        return;
+                    }
 
-                goto beyond;
-            }
-            searcher = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1);
-            if (searcher != null) // found a base
-            {
-                nc = bnh = searcher;
-                goto beyond;
-            }
-            Done();  // reached the end
-        }
+                beyond:
 
-        if (typedInput.StartsWith("+"))
-            plus = true;
-        if (typedInput.StartsWith("-"))
-            minus = true;
-        typedInput = typedInput.Replace("+", "").Replace("-", "");
+                    currentHeader = nc;
 
-        if (typedInput.Contains("."))
-        {
-            string[] splits = typedInput.Split(new[] { '.' });
-            if (splits.Length != 2)
-            {
-                return;
-            }
-            if (string.IsNullOrEmpty(splits[0]) || string.IsNullOrWhiteSpace(splits[0]))
-                noteOrd = iOrd;
-            else
-                ax = !int.TryParse(splits[0], out noteOrd);
-            bool bx = !int.TryParse(splits[1], out var respOrd);
-            if (ax || bx)
-            {
-                return;
-            }
+                    DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
 
-            if (noteOrd == iOrd && (plus || minus))
-            {
-                if (plus)
-                    respOrd += iResp;
-                else
-                    respOrd = iResp - respOrd;
+                    currentContent = dm.content;
+                    tags = dm.tags;
 
-                if (respOrd < 0)
-                    respOrd = 0;
-                bnh = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
+                    respX = "";
+                    if (currentHeader.ResponseOrdinal > 0)
+                    {
+                        respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
+                    }
+                    else if (bnh.ResponseCount > 0)
+                        respX = " - " + bnh.ResponseCount + " Responses ";
 
-                if (respOrd > bnh.ResponseCount) respOrd = bnh.ResponseCount;
-            }
+                    curN = "" + bnh.NoteOrdinal;
+                    if (currentHeader.ResponseOrdinal > 0)
+                    {
+                        curN += "." + currentHeader.ResponseOrdinal;
+                    }
+                    Model.myHeader = currentHeader;
+                    this.StateHasChanged();
+                }
 
-            nc = Model.AllNotes.Find(p => p.NoteOrdinal == noteOrd && p.ResponseOrdinal == respOrd);
-        }
-        else
-        {
-            if (!int.TryParse(typedInput, out noteOrd))
-            {
-                return;
-            }
+                private void ShowMessage(string message)
+                {
+                    var parameters = new ModalParameters();
+                    parameters.Add("Message", message);
+                    Modal.OnClose += HideDialog;
+                    Modal.Show<MessageBox>("", parameters);
+                }
 
-            if (!plus && !minus && (noteOrd == 0))
-            {
-                Done();
-            }
-            if (plus)
-                noteOrd += iOrd;
-            else if (minus)
-                noteOrd = iOrd - noteOrd;
+                private void ShowHelp()
+                {
+                    var parameters = new ModalParameters();
+                    Modal.OnClose += HideDialog;
+                    var options = new ModalOptions() { HideCloseButton = false };
+                    Modal.Show<HelpDialog2>("", parameters, options);
+                }
 
-            if (noteOrd < 1) noteOrd = 1;
+                void HideDialog(ModalResult modalResult)
+                {
+                    Modal.OnClose -= HideDialog;
+                    StartTimer();
+                }
 
-            long cnt = Model.AllNotes.LongCount();
+                private void Forward()
+                {
+                    StopTimer();
+                    var parameters = new ModalParameters();
+                    ForwardViewModel fv = new ForwardViewModel();
+                    fv.NoteID = currentHeader.Id;
+                    fv.FileID = currentHeader.NoteFileId;
+                    fv.ArcID = currentHeader.ArchiveId;
+                    fv.NoteOrdinal = currentHeader.NoteOrdinal;
+                    fv.NoteSubject = currentHeader.NoteSubject;
 
-            if (noteOrd > cnt) noteOrd = (int)cnt;
+                    if (currentHeader.ResponseCount > 0 || currentHeader.BaseNoteId > 0)
+                        fv.hasstring = true;
 
-            nc = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
-            bnh = nc;
-        }
+                    parameters.Add("ForwardView", fv);
 
-        if (nc == null)
-        {
-            return;
-        }
+                    Modal.OnClose += HideDialog;
+                    var options = new ModalOptions() { HideCloseButton = false };
+                    Modal.Show<Forward>("", parameters, options);
+                }
 
-    beyond:
+                private void Html()
+                {
+                    OnClick.InvokeAsync("Html:" + currentHeader.NoteOrdinal);
+                }
 
-        currentHeader = nc;
+                private void html()
+                {
+                    OnClick.InvokeAsync("html:" + currentHeader.NoteOrdinal);
+                }
 
-        DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
+                private void mail()
+                {
+                    StopTimer();
+                    OnClick.InvokeAsync("mail:" + currentHeader.NoteOrdinal);
+                }
 
-        currentContent = dm.content;
-        tags = dm.tags;
+                private async Task Markit()
+                {
+                    List<Mark> list = await Http.GetJsonAsync<List<Mark>>("api/Mark");
 
-        respX = "";
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
-        }
-        else if (bnh.ResponseCount > 0)
-            respX = " - " + bnh.ResponseCount + " Responses ";
+                    if (list != null && list.Count > 0)
+                    {
+                        List<Mark> list2 = list.Where(p => p.NoteFileId == currentHeader.NoteFileId
+                            && p.ArchiveId == currentHeader.ArchiveId
+                            && p.NoteOrdinal == currentHeader.NoteOrdinal)
+                            .ToList();
 
-        curN = "" + bnh.NoteOrdinal;
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            curN += "." + currentHeader.ResponseOrdinal;
-        }
-        Model.myHeader = currentHeader;
-        this.StateHasChanged();
-    }
+                        if (list2 != null && list2.Count > 0)
+                        {
+                            ShowMessage("Already Marked for Output");
+                            return;
+                        }
+                    }
 
-    private void ShowMessage(string message)
-    {
-        var parameters = new ModalParameters();
-        parameters.Add("Message", message);
-        Modal.OnClose += HideDialog;
-        Modal.Show<MessageBox>("", parameters);
-    }
+                    Mark myMark = new Mark();
+                    myMark.UserId = "Temp";
+                    myMark.NoteFileId = currentHeader.NoteFileId;
+                    myMark.ArchiveId = currentHeader.ArchiveId;
+                    myMark.NoteHeaderId = currentHeader.Id;
+                    myMark.NoteOrdinal = currentHeader.NoteOrdinal;
+                    myMark.MarkOrdinal = 1;
+                    myMark.ResponseOrdinal = -1;
 
-    private void ShowHelp()
-    {
-        var parameters = new ModalParameters();
-        Modal.OnClose += HideDialog;
-        var options = new ModalOptions() { HideCloseButton = false };
-        Modal.Show<HelpDialog2>("", parameters, options);
-    }
+                    await Http.PostJsonAsync("api/Mark", myMark);
 
-    void HideDialog(ModalResult modalResult)
-    {
-        Modal.OnClose -= HideDialog;
-        StartTimer();
-    }
+                    Model.isMarked = true;
 
-    private void Forward()
-    {
-        StopTimer();
-        var parameters = new ModalParameters();
-        ForwardViewModel fv = new ForwardViewModel();
-        fv.NoteID = currentHeader.Id;
-        fv.FileID = currentHeader.NoteFileId;
-        fv.ArcID = currentHeader.ArchiveId;
-        fv.NoteOrdinal = currentHeader.NoteOrdinal;
-        fv.NoteSubject = currentHeader.NoteSubject;
+                    ShowMessage("Marked for Output");
+                }
 
-        if (currentHeader.ResponseCount > 0 || currentHeader.BaseNoteId > 0)
-            fv.hasstring = true;
+                protected class LocalInput
+                {
+                    public string typedValue { get; set; }
+                    public bool isAutoFocus { get; set; }
+                }
 
-        parameters.Add("ForwardView", fv);
-
-        Modal.OnClose += HideDialog;
-        var options = new ModalOptions() { HideCloseButton = false };
-        Modal.Show<Forward>("", parameters, options);
-    }
-
-    private void Html()
-    {
-        OnClick.InvokeAsync("Html:" + currentHeader.NoteOrdinal);
-    }
-
-    private void html()
-    {
-        OnClick.InvokeAsync("html:" + currentHeader.NoteOrdinal);
-    }
-
-    private void mail()
-    {
-        StopTimer();
-        OnClick.InvokeAsync("mail:" + currentHeader.NoteOrdinal);
-    }
-
-    private async Task Markit()
-    {
-        List<Mark> list = await Http.GetJsonAsync<List<Mark>>("api/Mark");
-
-        if (list != null && list.Count > 0)
-        {
-            List<Mark> list2 = list.Where(p => p.NoteFileId == currentHeader.NoteFileId
-                && p.ArchiveId == currentHeader.ArchiveId
-                && p.NoteOrdinal == currentHeader.NoteOrdinal)
-                .ToList();
-
-            if (list2 != null && list2.Count > 0)
-            {
-                ShowMessage("Already Marked for Output");
-                return;
-            }
-        }
-
-        Mark myMark = new Mark();
-        myMark.UserId = "Temp";
-        myMark.NoteFileId = currentHeader.NoteFileId;
-        myMark.ArchiveId = currentHeader.ArchiveId;
-        myMark.NoteHeaderId = currentHeader.Id;
-        myMark.NoteOrdinal = currentHeader.NoteOrdinal;
-        myMark.MarkOrdinal = 1;
-        myMark.ResponseOrdinal = -1;
-
-        await Http.PostJsonAsync("api/Mark", myMark);
-
-        Model.isMarked = true;
-
-        ShowMessage("Marked for Output");
-    }
-
-    protected class LocalInput
-    {
-        public string typedValue { get; set; }
-        public bool isAutoFocus { get; set; }
-    }
-
-}
+                }

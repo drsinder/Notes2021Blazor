@@ -43,49 +43,22 @@ else
 {
     <AuthorizeView Roles="User">
         <Authorized>
-
             @message
-             <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            NoteFile Name
-                        </th>
-                        <th>
-                            NoteFile Title
-                        </th>
-                        <th>
-                            Last Edited
-                        </th>
-                        <th>Marks</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (NoteFile file in files)
-                    {
-                        bool marked = marks.Where(p => p.NoteFileId == file.Id).Any();
-                        <tr>
-                            <td>
-                                @file.NoteFileName
-                            </td>
-                            <td>
-                                @file.NoteFileTitle
-                            </td>
-                            <td>
-                                @timeZone.Local(file.LastEdited).ToShortTimeString() @timeZone.Local(file.LastEdited).ToShortDateString()
-                            </td>
-                            <td>@if(marked)
-                                @marked</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" @onclick="@(() => ViewNoteFile(file.Id))">View</button>
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
+            <div class="col-lg-12 control-section dialoglist">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <EjsGrid @ref="MyGrid" EnableAltRow="true" DataSource="@files" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
+                            <GridPageSettings PageSizes="true"></GridPageSettings>
+                            <GridEvents RowSelected="DisplayIt" TValue="NoteFile"></GridEvents>
+                            <GridColumns>
+                                <GridColumn Field=@nameof(NoteFile.NoteFileName) HeaderText="NoteFile Name" TextAlign="TextAlign.Left" Width="80" IsPrimaryKey="true"></GridColumn>
+                                <GridColumn Field=@nameof(NoteFile.NoteFileTitle) HeaderText="NoteFile Title" TextAlign="TextAlign.Left" Width="150"></GridColumn>
+                                <GridColumn Field=@nameof(NoteFile.LastEdited) HeaderText="Date/Time" Format="MM/dd/yyyy h:mm tt UCT" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                            </GridColumns>
+                        </EjsGrid>
+                    </div>
+                </div>
+            </div>
         </Authorized>
         <NotAuthorized>
             Access denied!
@@ -95,29 +68,26 @@ else
 
 @code {
 
-    private List<string> todo { get; set; }
+    EjsGrid<NoteFile> MyGrid;
 
     private List<NoteFile> files { get; set; }
     private TZone timeZone { get; set; }
     private string message;
-    private List<Mark> marks { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
-        timeZone = model.TimeZone;
-
-        marks = await Http.GetJsonAsync<List<Mark>>("api/Mark");
-
         files = model.NoteFiles;
     }
 
+    protected void DisplayIt(RowSelectEventArgs<NoteFile> args)
+    {
+        ViewNoteFile(args.Data.Id);
+    }
 
     void ViewNoteFile(int Id)
     {
         _localStorage.SetItemAsync("ArchiveId", 0);
-
-
         NavigationManager.NavigateTo("notes/main/" + Id);
     }
 
