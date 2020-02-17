@@ -14,11 +14,9 @@
 
   <ItemGroup>
     <Content Remove="Pages\Admin\SystemMessage.razor" />
-    <Content Remove="Pages\Notes\IndexButton.razor" />
     <Content Remove="Pages\Notes\NewBaseNote.razor" />
     <Content Remove="Pages\Notes\NoteEditPanel.razor" />
     <Content Remove="Pages\Notes\NoteIndex - Copy.razor" />
-    <Content Remove="Pages\Notes\NoteIndexOld.razor" />
     <Content Remove="Pages\Notes\SampleHtmlEditor.razor" />
     <Content Remove="Pages\Root\Chat.razor" />
     <Content Remove="Pages\Root\FetchData.razor" />

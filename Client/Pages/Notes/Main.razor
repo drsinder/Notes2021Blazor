@@ -60,7 +60,17 @@ else
                 {
                     <div><br /></div>
                     <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
-                    <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                    if (!Model.UserData.Pref1)
+                    {
+                        <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                    }
+                    else
+                    {
+                        <div class="topmenu">
+                            <ListMenu Model="@Model" OnClick="ClickHandler" />
+                        </div>
+                        <NoteIndexOld Model="@Model" OnClick="ClickHandler" />
+                    }
                     <br /><br />
                     <div class="arrow1">
                         <div>
