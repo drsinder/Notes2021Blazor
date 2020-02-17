@@ -26,7 +26,7 @@ else
 
             <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
             <hr id="premenu" />
-            <div class="@MainClass">
+            <div>
                 <DisplayMenu Model="@Model" OnClick="ClickHandler" />
                 <div class="noteheader">
                     <p>
@@ -51,28 +51,13 @@ else
                     </h4>
                 </div>
             </div>
-            <div class="@MainClass">
+            <div>
                 <div class="notebody" @onmousedown="StopTimer">
                     @((MarkupString)currentContent.NoteBody)
                 </div>
             </div>
-            <div class="@PrinterClass">
-                <h2>Click the print icon in the bar below.</h2>
-                <div class="control-section">
-                    <div class="control-wrapper">
-                        <div class="control-section">
-                            <EjsRichTextEditor @ref="@RteObj" ShowCharCount="false" EditorMode="EditorMode.HTML" MaxLength="200000">
-                                <ChildContent>
-                                    <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
-                                </ChildContent>
-                            </EjsRichTextEditor>
-                        </div>
-                    </div>
-                </div>
-                <button @onclick="ClosePrint" class="btn btn-info btn-sm">Close Printer</button>
-            </div>
-            <div class="arrow2">
-                <div class="@MainClass">
+             <div class="arrow2">
+                <div>
                     <EditForm Model="@myInput" Context="EditBox">
                         <InputText id="arrow2" autofocus="@myInput.isAutoFocus" @onkeypress="KeyPressed"
                                    ValueChanged="@( (string val) => TextHasChanged(val) )"
@@ -83,7 +68,7 @@ else
                         </div>
                     </div>
                 </div>
-                <div class="@MainClass">
+                <div>
                     <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
                 </div>
             </div>
@@ -122,22 +107,11 @@ else
     private int seqRespOrd { get; set; }
     private string stuff { get; set; }
 
-    private string PrinterClass { get; set; }
-    private string MainClass { get; set; }
-
     public object[] Tools = new object[]{
        "Print"
     };
 
     EjsRichTextEditor RteObj;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        PrinterClass = "printerhidden";
-        MainClass = "printershown";
-    }
 
     protected async override Task OnParametersSetAsync()
     {
@@ -182,10 +156,6 @@ else
             timer = new Timer(1000);
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
-
-            //timer2 = new Timer(1000);
-            //timer2.Elapsed += TimerTick2;
-            //timer2.Enabled = true;
         }
 
         await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
@@ -228,24 +198,10 @@ else
         sb.Append("</div>");
         stuff = sb.ToString();
 
-        PrinterClass = "printershown";
-        MainClass = "printerhidden";
-
-        timer2 = new Timer(500);
-        timer2.Elapsed += TimerTick2;
-        timer2.Enabled = true;
-    }
-
-    protected void TimerTick2(Object source, ElapsedEventArgs e)
-    {
-        timer2.Enabled = false;
-        this.RteObj.ExecuteCommand(CommandName.InsertHTML, stuff);
-    }
-
-    protected void ClosePrint()
-    {
-        PrinterClass = "printerhidden";
-        MainClass = "printershown";
+        var parameters = new ModalParameters();
+        parameters.Add("PrintStuff", stuff);
+        Modal.OnClose += HideDialog;
+        Modal.Show<PrintDlg>("", parameters);
     }
 
     protected void StartTimer()
