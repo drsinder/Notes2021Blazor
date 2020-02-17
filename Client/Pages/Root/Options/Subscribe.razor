@@ -43,8 +43,6 @@ else
 {
     <AuthorizeView Roles="User">
         <Authorized>
-
-            @message
              <table class="table">
                 <thead>
                     <tr>
@@ -97,7 +95,6 @@ else
 
     private List<NoteFile> files { get; set; }
     private TZone timeZone { get; set; }
-    private string message;
     private List<Subscription> subscriptions { get; set; }
 
     protected override async Task OnInitializedAsync()

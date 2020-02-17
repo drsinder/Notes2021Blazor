@@ -43,7 +43,6 @@ else
 {
     <AuthorizeView Roles="User">
         <Authorized>
-            @message
             <div class="col-lg-12 control-section dialognote">
                 <div class="content-wrapper">
                     <div class="row">
@@ -72,7 +71,6 @@ else
 
     private List<NoteFile> files { get; set; }
     private TZone timeZone { get; set; }
-    private string message;
 
     protected override async Task OnInitializedAsync()
     {

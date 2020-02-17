@@ -24,7 +24,7 @@
     private string Email { get; set; }
 
 
-    protected async override Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         isEmail = false;
         isCollapsible = true;

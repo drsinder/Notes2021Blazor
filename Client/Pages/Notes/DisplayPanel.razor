@@ -1,6 +1,5 @@
 ﻿@using Notes2021Blazor.Shared
 @using System.Timers
-@using Syncfusion.EJ2.Blazor.RichTextEditor
 @using System.Text
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
@@ -59,7 +58,7 @@ else
              <div class="arrow2">
                 <div>
                     <EditForm Model="@myInput" Context="EditBox">
-                        <InputText id="arrow2" autofocus="@myInput.isAutoFocus" @onkeypress="KeyPressed"
+                        <InputText id="arrow2" @onkeypress="KeyPressed"
                                    ValueChanged="@( (string val) => TextHasChanged(val) )"
                                    Value="@myInput.typedValue"
                                    ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
@@ -86,7 +85,6 @@ else
     [Parameter] public bool isSearch { get; set; }
     [Parameter] public List<NoteHeader> SearchResults { get; set; }
 
-
     protected bool newnoteFlag { get; set; }
     protected bool editing { get; set; }
 
@@ -107,17 +105,10 @@ else
     private int seqRespOrd { get; set; }
     private string stuff { get; set; }
 
-    public object[] Tools = new object[]{
-       "Print"
-    };
-
-    EjsRichTextEditor RteObj;
-
     protected async override Task OnParametersSetAsync()
     {
         Model.myHeader = currentHeader;
         myInput = new LocalInput();
-        myInput.isAutoFocus = true;
         seqBaseIndx = 0;
         seqRespOrd = 0;
 
@@ -135,8 +126,6 @@ else
         currentContent = dm.content;
         tags = dm.tags;
 
-
-
         respX = "";
         if (currentHeader.ResponseCount > 0)
             respX = " - " + currentHeader.ResponseCount + " Responses ";
@@ -146,7 +135,6 @@ else
         {
             curN += "." + currentHeader.ResponseOrdinal;
         }
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -157,7 +145,6 @@ else
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
         }
-
         await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
     }
 
@@ -344,13 +331,11 @@ else
                 break;
 
             default:
-
                 //var parameters = new ModalParameters();
                 //parameters.Add("Message", eventArgs.Key);
                 //var options = new ModalOptions() { HideCloseButton = false };
                 //Modal.OnClose += HideDialog;
                 //Modal.Show<MessageBox>("", parameters, options);
-
                 break;
         }
     }
@@ -369,16 +354,13 @@ else
             await SetNote();
             return;
         }
-
         // else goto next base
-
         seqBaseIndx++;
         if (seqBaseIndx >= SeqBases.Count)  // finished with this file
         {
             await OnClick.InvokeAsync("SeqFileDone");
             return;
         }
-
         currentHeader = SeqBases[seqBaseIndx];
         await SetNote();
     }
@@ -407,11 +389,6 @@ else
         }
         Model.myHeader = currentHeader;
         this.StateHasChanged();
-
-        //timer2 = new Timer(1000);
-        //timer2.Elapsed += TimerTick2;
-        //timer2.Enabled = true;
-
     }
 
     protected async Task PreviousBaseNote()
@@ -680,7 +657,6 @@ else
     protected class LocalInput
     {
         public string typedValue { get; set; }
-        public bool isAutoFocus { get; set; }
     }
 
 }

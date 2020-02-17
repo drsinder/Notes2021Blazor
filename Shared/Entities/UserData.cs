@@ -19,7 +19,7 @@ namespace Notes2021Blazor.Shared
         [PersonalData]
         public int TimeZoneID { get; set; }
 
-        public int Ipref2 { get; set; }
+        public int Ipref2 { get; set; } // user choosen page size
 
         public int Ipref3 { get; set; }
 
@@ -34,11 +34,9 @@ namespace Notes2021Blazor.Shared
         public int Ipref8 { get; set; }
 
 
-        [Display(Name = "Hide Note Menu")]
         [PersonalData]
-        public bool Pref1 { get; set; }
+        public bool Pref1 { get; set; } // false = use paged note index, true= scrolled
 
-        [Display(Name = "Update time on Home page")]
         [PersonalData]
         public bool Pref2 { get; set; }
 

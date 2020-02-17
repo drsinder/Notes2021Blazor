@@ -2,7 +2,6 @@
 @page "/notes/display/{fileId}"
 @page "/notes/enterandshow/{fileId}"
 @page "/notes/sequence/"
-@*@attribute [Authorize]*@
 
 @using Notes2021Blazor.Shared
 @using Blazored.LocalStorage
@@ -222,7 +221,7 @@ else
                     await MarkMine();
                     break;
                 case "OutputMarked":
-                    await OutputMarkedAsk();
+                    OutputMarkedAsk();
                     break;
                 default:
                     ShowMessage(newMessage + " Clicked");
@@ -527,7 +526,7 @@ else
                 break;
             case "O":
                 if (Model.isMarked)
-                    await OutputMarkedAsk();
+                    OutputMarkedAsk();
                 break;
 
 
@@ -1010,7 +1009,7 @@ else
 
     }
 
-    private async Task OutputMarkedAsk()
+    private void OutputMarkedAsk()
     {
         StopTimer();
         var parameters = new ModalParameters();
@@ -1018,7 +1017,7 @@ else
         Modal.Show<OutputDlg>("", parameters);
     }
 
-    void HideDialogOutputAsk(ModalResult modalResult)
+    private void HideDialogOutputAsk(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogOutputAsk;
         StartTimer();
