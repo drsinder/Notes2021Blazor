@@ -1,7 +1,7 @@
 ﻿@using Notes2021Blazor.Shared
 @using System.Timers
-@*@using Syncfusion.EJ2.Blazor.RichTextEditor
-@using System.Text*@
+@using Syncfusion.EJ2.Blazor.RichTextEditor
+@using System.Text
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject IModalService Modal
@@ -21,37 +21,40 @@ else if (editing)
 }
 else
 {
-<div>
-    <div class="dialognote modal-body">
-        <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
-        <hr id="premenu" />
-        <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-        <div class="noteheader">
-            <p>
-                <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            </p>
+    <div>
+        <div class="dialognote modal-body">
+            <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
+            <hr id="premenu" />
+            <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+            <div class="noteheader">
+                <p>
+                    <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </p>
 
-            <h4>
-                Subject: @currentHeader.NoteSubject <br />
-                Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
-                @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-                {
-                    <br /><span>Director Message: @currentContent.DirectorMessage</span>
-                }
-                @if (tags != null && tags.Count > 0)
-                {
-                    string tl = "Tags: ";
-                    foreach (Tags tag in tags)
-                        tl += tag.Tag + " ";
-                    <br /><span>@tl</span>
-                }
-            </h4>
-        </div>
-        <div class="notebody" @onmousedown="StopTimer">
+                <h4>
+                    Subject: @currentHeader.NoteSubject <br />
+                    Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
+                    @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
+                    @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+                    {
+                        <br /><span>Director Message: @currentContent.DirectorMessage</span>
+                    }
+                    @if (tags != null && tags.Count > 0)
+                    {
+                        string tl = "Tags: ";
+                        foreach (Tags tag in tags)
+                            tl += tag.Tag + " ";
+                        <br /><span>@tl</span>
+                    }
+                </h4>
+            </div>
+            <div class="notebody" @onmousedown="StopTimer">
 
-            @((MarkupString)currentContent.NoteBody)
-            @*<div class="control-section">
+                @((MarkupString)currentContent.NoteBody)
+            </div>
+            <div class="@MyClass">
+                <h2>Click the print icon in the bar below.</h2>
+                <div class="control-section">
                     <div class="control-wrapper">
                         <div class="control-section">
                             <EjsRichTextEditor @ref="@RteObj" ShowCharCount="false" EditorMode="EditorMode.HTML" MaxLength="200000">
@@ -62,10 +65,8 @@ else
                         </div>
                     </div>
                 </div>
-            </div>*@
-
-            @*<DisplayMenu Model="@Model" OnClick="ClickHandler" />*@
-
+                <button @onclick="ClosePrint" class="btn btn-info btn-sm">Close Printer</button>
+            </div>
             <div class="arrow2">
                 <div>
                     <EditForm Model="@myInput" Context="EditBox">
@@ -73,17 +74,15 @@ else
                                    ValueChanged="@( (string val) => TextHasChanged(val) )"
                                    Value="@myInput.typedValue"
                                    ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
-                            </EditForm>
-
-                            <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
-                        </div>
-                    </div>
+                     </EditForm>
+                    <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
                 </div>
-                <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
             </div>
         </div>
-        }
-        
+        <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
+    </div>
+}
+
 
 @functions
 {
@@ -118,11 +117,20 @@ else
     private int seqRespOrd { get; set; }
     private string stuff { get; set; }
 
+    private string MyClass { get; set; }
+
     public object[] Tools = new object[]{
        "Print"
     };
 
-    //EjsRichTextEditor RteObj;
+    EjsRichTextEditor RteObj;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        MyClass = "printerhidden";
+    }
 
     protected async override Task OnParametersSetAsync()
     {
@@ -182,40 +190,54 @@ else
         jsRuntime.InvokeAsync<object>("setfocus", "arrow2");
     }
 
-    //protected void TimerTick2(Object source, ElapsedEventArgs e)
-    //{
-    //    timer2.Enabled = false; ;
-    //    StringBuilder sb = new StringBuilder();
+    protected void Print()
+    {
+        StringBuilder sb = new StringBuilder();
 
-    //    sb.Append("<h4 class=\"text-center\">" + Model.noteFile.NoteFileTitle + "</h4>");
-    //    sb.Append("<div class=\"noteheader\"><p> <span class=\"keep-right\">Note: ");
-    //    sb.Append(currentHeader.NoteOrdinal + " " + respX);
-    //    sb.Append("&nbsp;&nbsp;&nbsp;&nbsp;</span></p><h4>Subject: ");
-    //    sb.Append(@currentHeader.NoteSubject);
-    //    sb.Append("<br />Author: ");
-    //    sb.Append((Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) + " " + (Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) + " " + Model.tZone.Abbreviation);
-    //    if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-    //    {
-    //        sb.Append("<br /><span>Director Message: ");
-    //        sb.Append(currentContent.DirectorMessage);
-    //        sb.Append("</span>");
-    //    }
-    //    if (tags != null && tags.Count > 0)
-    //    {
-    //        sb.Append(" <br /><span>Tags: ");
-    //        foreach (Tags tag in tags)
-    //        {
-    //            sb.Append(tag.Tag + " ");
-    //        }
-    //        sb.Append("</span>");
-    //    }
-    //    sb.Append("</h4></div><div class=\"notebody\" @onmousedown=\"StopTimer\">");
-    //    sb.Append(currentContent.NoteBody);
-    //    sb.Append("</div>");
-    //    stuff = sb.ToString();
+        sb.Append("<h4 class=\"text-center\">" + Model.noteFile.NoteFileTitle + "</h4>");
+        sb.Append("<div class=\"noteheader\"><p> <span class=\"keep-right\">Note: ");
+        sb.Append(currentHeader.NoteOrdinal + " " + respX);
+        sb.Append("&nbsp;&nbsp;&nbsp;&nbsp;</span></p><h4>Subject: ");
+        sb.Append(@currentHeader.NoteSubject);
+        sb.Append("<br />Author: ");
+        sb.Append((Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) + " " + (Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) + " " + Model.tZone.Abbreviation);
+        if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+        {
+            sb.Append("<br /><span>Director Message: ");
+            sb.Append(currentContent.DirectorMessage);
+            sb.Append("</span>");
+        }
+        if (tags != null && tags.Count > 0)
+        {
+            sb.Append(" <br /><span>Tags: ");
+            foreach (Tags tag in tags)
+            {
+                sb.Append(tag.Tag + " ");
+            }
+            sb.Append("</span>");
+        }
+        sb.Append("</h4></div><div class=\"notebody\" >");
+        sb.Append(currentContent.NoteBody);
+        sb.Append("</div>");
+        stuff = sb.ToString();
 
-    //    this.RteObj.ExecuteCommand(CommandName.InsertHTML, stuff);
-    //}
+        MyClass = "printershown";
+
+        timer2 = new Timer(500);
+        timer2.Elapsed += TimerTick2;
+        timer2.Enabled = true;
+    }
+
+    protected void TimerTick2(Object source, ElapsedEventArgs e)
+    {
+        timer2.Enabled = false;
+        this.RteObj.ExecuteCommand(CommandName.InsertHTML, stuff);
+    }
+
+    protected void ClosePrint()
+    {
+        MyClass = "printerhidden";
+    }
 
     protected void StartTimer()
     {

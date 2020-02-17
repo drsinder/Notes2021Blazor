@@ -189,6 +189,14 @@ app {
 
 /****************/
 
+.printershown {
+    display: block;
+}
+
+.printerhidden {
+    display: none;
+}
+
 a:link,
 a:visited {
     color: blue;
