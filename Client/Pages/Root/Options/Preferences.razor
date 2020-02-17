@@ -1,4 +1,4 @@
-﻿@page "/options/timezone"
+﻿@page "/options/preferences"
 
 @using Notes2021Blazor.Shared
 @using Blazored.LocalStorage
@@ -35,7 +35,7 @@ else
                 </select>
                 <br />
                 <p>Starting Page Size for Pagable Lists:</p>
-                <select class="form-control medium-input" @bind="@pageSize">
+                <select class="form-control short-input" @bind="@pageSize">
                     <option value="12"></option>
                     @foreach (LocalModel2 item in MySizes)
                     {

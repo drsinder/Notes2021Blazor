@@ -70,7 +70,7 @@
     <None Include="Pages\Root\Options\SCheckBox.razor" />
     <None Include="Pages\Root\Options\SubCheckBox.razor" />
     <None Include="Pages\Root\Options\Subscribe.razor" />
-    <None Include="Pages\Root\Options\TimeZone.razor" />
+    <None Include="Pages\Root\Options\Preferences.razor" />
     <None Include="Pages\Root\Options\Tracker.razor" />
     <None Include="Pages\Root\Register.razor" />
     <None Include="Pages\Root\Schema.razor" />
