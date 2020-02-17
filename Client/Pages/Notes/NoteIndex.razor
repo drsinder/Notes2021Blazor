@@ -11,6 +11,23 @@
                 <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
                     <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
                     <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
+                    <GridTemplates>
+                        <DetailTemplate>
+                            @{
+                                var current = (context as NoteHeader);
+                                List<NoteHeader> Resp = Model.AllNotes.Where(p => p.NoteOrdinal == current.NoteOrdinal && p.ResponseOrdinal != 0).OrderBy(p => p.ResponseOrdinal).ToList();
+                            }
+                            <EjsGrid @ref="MyGrid2" DataSource="@Resp" AllowPaging="false" AllowSelection="true" EnableHover="true">
+                                <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
+                                <GridColumns>
+                                    <GridColumn Field=@nameof(NoteHeader.ResponseOrdinal) HeaderText="Resp. #" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
+                                    <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
+                                    <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                                    <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" Format="MM/dd/yyyy h:mm tt UCT" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                                </GridColumns>
+                            </EjsGrid>
+                        </DetailTemplate>
+                    </GridTemplates>
                     <GridColumns>
                         <GridColumn Field=@nameof(NoteHeader.NoteOrdinal) HeaderText="#" TextAlign="TextAlign.Left" Width="15" IsPrimaryKey="true"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
@@ -41,6 +58,7 @@ else
     [Parameter] public EventCallback<string> OnClick { get; set; }
 
     EjsGrid<NoteHeader> MyGrid;
+    EjsGrid<NoteHeader> MyGrid2;
 
     private Timer timer { get; set; }
 
