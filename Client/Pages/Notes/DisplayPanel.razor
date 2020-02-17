@@ -23,36 +23,40 @@ else
 {
     <div>
         <div class="dialognote modal-body">
+
             <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
             <hr id="premenu" />
-            <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-            <div class="noteheader">
-                <p>
-                    <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                </p>
+            <div class="@MainClass">
+                <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+                <div class="noteheader">
+                    <p>
+                        <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </p>
 
-                <h4>
-                    Subject: @currentHeader.NoteSubject <br />
-                    Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                    @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
-                    @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-                    {
-                        <br /><span>Director Message: @currentContent.DirectorMessage</span>
-                    }
-                    @if (tags != null && tags.Count > 0)
-                    {
-                        string tl = "Tags: ";
-                        foreach (Tags tag in tags)
-                            tl += tag.Tag + " ";
-                        <br /><span>@tl</span>
-                    }
-                </h4>
+                    <h4>
+                        Subject: @currentHeader.NoteSubject <br />
+                        Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
+                        @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
+                        @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+                        {
+                            <br /><span>Director Message: @currentContent.DirectorMessage</span>
+                        }
+                        @if (tags != null && tags.Count > 0)
+                        {
+                            string tl = "Tags: ";
+                            foreach (Tags tag in tags)
+                                tl += tag.Tag + " ";
+                            <br /><span>@tl</span>
+                        }
+                    </h4>
+                </div>
             </div>
-            <div class="notebody" @onmousedown="StopTimer">
-
-                @((MarkupString)currentContent.NoteBody)
+            <div class="@MainClass">
+                <div class="notebody" @onmousedown="StopTimer">
+                    @((MarkupString)currentContent.NoteBody)
+                </div>
             </div>
-            <div class="@MyClass">
+            <div class="@PrinterClass">
                 <h2>Click the print icon in the bar below.</h2>
                 <div class="control-section">
                     <div class="control-wrapper">
@@ -68,21 +72,22 @@ else
                 <button @onclick="ClosePrint" class="btn btn-info btn-sm">Close Printer</button>
             </div>
             <div class="arrow2">
-                <div>
+                <div class="@MainClass">
                     <EditForm Model="@myInput" Context="EditBox">
                         <InputText id="arrow2" autofocus="@myInput.isAutoFocus" @onkeypress="KeyPressed"
                                    ValueChanged="@( (string val) => TextHasChanged(val) )"
                                    Value="@myInput.typedValue"
                                    ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
-                     </EditForm>
-                    <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                            </EditForm>
+                            <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                        </div>
+                    </div>
+                </div>
+                <div class="@MainClass">
+                    <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
                 </div>
             </div>
-        </div>
-        <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
-    </div>
-}
-
+        }
 
 @functions
 {
@@ -117,7 +122,8 @@ else
     private int seqRespOrd { get; set; }
     private string stuff { get; set; }
 
-    private string MyClass { get; set; }
+    private string PrinterClass { get; set; }
+    private string MainClass { get; set; }
 
     public object[] Tools = new object[]{
        "Print"
@@ -129,7 +135,8 @@ else
     {
         base.OnInitialized();
 
-        MyClass = "printerhidden";
+        PrinterClass = "printerhidden";
+        MainClass = "printershown";
     }
 
     protected async override Task OnParametersSetAsync()
@@ -221,7 +228,8 @@ else
         sb.Append("</div>");
         stuff = sb.ToString();
 
-        MyClass = "printershown";
+        PrinterClass = "printershown";
+        MainClass = "printerhidden";
 
         timer2 = new Timer(500);
         timer2.Elapsed += TimerTick2;
@@ -236,7 +244,8 @@ else
 
     protected void ClosePrint()
     {
-        MyClass = "printerhidden";
+        PrinterClass = "printerhidden";
+        MainClass = "printershown";
     }
 
     protected void StartTimer()
