@@ -5,6 +5,7 @@
 @using System.Text
 @using Newtonsoft.Json
 @using System.Timers
+@using Syncfusion.EJ2.Blazor.RichTextEditor
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ILocalStorageService _localStorage
@@ -34,8 +35,30 @@
                     <strong>Director Message</strong>
                     <InputText id="title" @bind-Value="tvm.DirectorMessage" class="form-control long-input" />
                     <strong>Note Body</strong>
-                    <InputTextArea id="mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
+                    @if (!AltEdit)
+                    {
+                        <div class="@TinyClass">
+                            <InputTextArea id="mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="@EjsClass">
+                            <div class="control-section">
+                                <div class="control-wrapper">
+                                    <div class="control-section">
+                                        <EjsRichTextEditor @ref="@RteObj" @bind-Value="@tvm.MyNote" EditorMode="EditorMode.HTML" ShowCharCount="true" MaxLength="100000">
+                                            <ChildContent>
+                                                <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
+                                            </ChildContent>
+                                        </EjsRichTextEditor>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <br /><button type="submit" class="btn btn-success btn-sm">Submit</button> <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
+                    @*<span class="@TinyClass"><br/><button type="button" @onclick="Switch" class="btn btn-info btn-sm">Switch Editors</button></span>*@
                 </EditForm>
             </div>
         }
@@ -44,6 +67,24 @@
         Access Denied!
     </NotAuthorized>
 </AuthorizeView>
+<style>
+    .e-code-mirror::before {
+        content: '\e345';
+    }
+
+    .e-html-preview::before {
+        content: '\e350';
+    }
+
+    .CodeMirror-linenumber,
+    .CodeMirror-gutters {
+        display: none;
+    }
+
+    .sb-header {
+        z-index: 100;
+    }
+</style>
 
 @code {
     [Parameter] public NoteDisplayIndexModel Model { get; set; }
@@ -60,8 +101,40 @@
 
     private Timer timer { get; set; }
 
+    private bool AltEdit { get; set; }
+
+    EjsRichTextEditor RteObj;
+
+    public object[] Tools = new object[]{"Undo", "Redo", "|",
+        "Bold", "Italic", "Underline", "StrikeThrough",
+        "FontName", "FontSize", "FontColor", "BackgroundColor",
+        "LowerCase", "UpperCase", "|",
+        "Formats", "Alignments", "OrderedList", "UnorderedList",
+        "Outdent", "Indent", "|",
+        "CreateTable", "CreateLink", "Image", "|", "ClearFormat", "Print",
+        "SourceCode"
+    };
+
+    private string TinyClass { get; set; }
+    private string EjsClass { get; set; }
+
+
     protected override void OnParametersSet()
     {
+        AltEdit = Model.UserData.Pref2;
+
+        if (AltEdit)
+        {
+            EjsClass = "printershown";
+            TinyClass = "printerhidden";
+        }
+        else
+        {
+            EjsClass = "printerhidden";
+            TinyClass = "printershown";
+        }
+
+
         tvm = new TextViewModel();
         tvm.MyNote = "";
 
@@ -93,19 +166,17 @@
 
     protected void TimerTick(Object source, ElapsedEventArgs e)
     {
+        jsRuntime.InvokeAsync<object>("inittinymce", "").GetAwaiter();
         timer.Enabled = false;
         jsRuntime.InvokeAsync<object>("tinyfocus", "mynote");
     }
 
-    //protected async Task ShowEditor()
-    //{
-    //    await jsRuntime.InvokeAsync<object>("inittinymce", "");
-    //    StateHasChanged();
-    //}
-
     protected async Task HandleValidSubmit()
     {
-        tvm.MyNote = await jsRuntime.InvokeAsync<string>("gettinymcecontent", "");
+        if (!AltEdit)
+        {
+            tvm.MyNote = await jsRuntime.InvokeAsync<string>("gettinymcecontent", "");
+        }
 
         if (NoteContent == null || EditHeader == null)  // new note
         {
@@ -142,7 +213,29 @@
         {
             NavigationManager.NavigateTo("notes/enterandshow/" + EditHeader.Id, true);
         }
-        //OnClick.InvokeAsync("CancelEdit");
+    }
+
+    protected async Task Switch()
+    {
+        AltEdit = !AltEdit;
+        if (AltEdit)
+        {
+            EjsClass = "printershown";
+            TinyClass = "printerhidden";
+            //StateHasChanged();
+            tvm.MyNote = await jsRuntime.InvokeAsync<string>("gettinymcecontent", "");
+            await this.RteObj.ExecuteCommand(CommandName.InsertHTML, tvm.MyNote);
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("inittinymce", "");
+            EjsClass = "printerhidden";
+            TinyClass = "printershown";
+            timer = new Timer(1000);
+            timer.Elapsed += TimerTick;
+            timer.Enabled = true;
+        }
+        StateHasChanged();
     }
 }
 
