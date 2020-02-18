@@ -17,11 +17,11 @@ namespace Notes2021Blazor.Server.Controllers
     [Route("api/[controller]")]
     [Route("api/[controller]/{file}")]
     [ApiController]
-    public class ImagesController : ControllerBase
+    public class UImagesController : ControllerBase
     {
         private NotesDbContext _db;
 
-        public ImagesController(NotesDbContext env)
+        public UImagesController(NotesDbContext env)
         {
             this._db = env;
         }
