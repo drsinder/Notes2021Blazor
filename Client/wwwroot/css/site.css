@@ -416,7 +416,7 @@ div.arrow2 {
 
 div.topmenu {
     position: fixed;
-    top: 47px;
+    top: 0;
     z-index: 2;
 }
 
