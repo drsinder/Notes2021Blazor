@@ -9,7 +9,6 @@ namespace Notes2021Blazor.Shared
         public static TimeSpan Uptime()
         {
             return DateTime.Now.ToUniversalTime() - StartupDateTime;
-
         }
 
         public static string RootUri { get; set; }

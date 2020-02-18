@@ -1,15 +1,17 @@
 ﻿@page "/about"
+@using Notes2021Blazor.Shared
+@inject HttpClient Http
 
 <h2>About Notes 2021 Blazor Edition</h2>
 <p>
-    Notes 2021 is a set of forums inspired by the <a href="https://en.wikipedia.org/wiki/PLATO_%28computer_system%29">PLATO</a>
+    Notes 2021 is a set of forums inspired by the <a href="https://en.wikipedia.org/wiki/PLATO_%28computer_system%29" target="_blank">PLATO</a>
     (later known as NovaNET) communications system.
     The purpose of PLATO was to provide Computer Based Education facilities.
     The origin of PLATO goes back to 1960 at the Computer-based Education Research Lab (CERL) at the University of Illinois.
     By 1973 a need was recognized for a means for users of PLATO to communicate in a durable and structured format.
     At this time David R. Woolley created "lesson" "notes".  Mr. Woolley describes "notes"
-    <a href="http://just.thinkofit.com/plato-the-emergence-of-online-community/">here</a>.
-    His original implementation remains available on <a href="http://cyber1.org">Cyber1</a>.
+    <a href="http://just.thinkofit.com/plato-the-emergence-of-online-community/ target="_blank"">here</a>.
+    His original implementation remains available on <a href="http://cyber1.org" target="_blank">Cyber1</a>.
 </p>
 
 <p>
@@ -39,19 +41,36 @@
     A prior effort, 3.0, was written using Microsoft ASP.NET MVC 5. Version 2021 derives
     from 3.0 but uses a new foundation, CORE 3.1.1 with Blazor, which permits greater flexibility.
 </p>
-
 <p>
-    See also <a href="http://www.platohistory.org/">http://www.platohistory.org/</a> and
-    <a href="http://friendlyorangeglow.com/">http://friendlyorangeglow.com/</a>
+    Uses components from the Community Edition of <a href="https://www.syncfusion.com/" target="_blank">Syncfusion</a> Essential Studio 2019 Volume 4.
+</p>
+<p>
+    See also <a href="http://www.platohistory.org/" target="_blank">http://www.platohistory.org/</a> and
+    <a href="http://friendlyorangeglow.com/" target="_blank">http://friendlyorangeglow.com/</a>
 </p>
 <hr />
 <a href="SampleImages">See some sample images from NovaNet's Notes</a>
 <hr />
 <a href="Schema">Notes 2021 Database Schema for the curious</a>
 <hr />
-@*<h4>@ViewData["Alive"]</h4>
-<h4>@ViewData["Stats"]</h4>
-<h4>
-    Primary system administrator:  @Globals.PrimeAdminName -
-    <a href="mailto:@Globals.PrimeAdminEmail">@Globals.PrimeAdminEmail</a>
-</h4>*@
+
+@if (model != null)
+{
+    <h5>Server active:  @upTime.ToString("hh\\:mm\\:ss") </h5>
+    <h5>
+        Primary system administrator:  @model.PrimeAdminName -
+        <a href="mailto:@model.PrimeAdminEmail">@model.PrimeAdminEmail</a>
+    </h5>
+}
+
+@code{
+    private AboutModel model { get; set; }
+    private TimeSpan upTime { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await Http.GetJsonAsync<AboutModel>("api/About");
+
+        upTime = DateTime.Now.ToUniversalTime() - model.StartupDateTime;
+    }
+}
