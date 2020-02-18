@@ -38,9 +38,9 @@ namespace Notes2021Blazor.Shared
         public bool Pref1 { get; set; } // false = use paged note index, true= scrolled
 
         [PersonalData]
-        public bool Pref2 { get; set; }
+        public bool Pref2 { get; set; } // use alternate editor
 
-        public bool Pref3 { get; set; }
+        public bool Pref3 { get; set; } // show responses by default
 
         public bool Pref4 { get; set; }
 

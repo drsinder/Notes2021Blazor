@@ -67,10 +67,24 @@ else
                         </div>
                     </div>
                 </div>
-                <div>
-                    <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
-                </div>
+        <div>
+            <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
+            @if (currentHeader.ResponseCount > 0)
+            {
+                <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle Reponses</button>
+            }
+        </div>
             </div>
+
+    if (currentHeader.ResponseCount > 0 && SubNotes )
+    {
+        List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
+        foreach(NoteHeader response in responses)
+        {
+            <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@OnClick"
+                          isSearch="@isSearch" SearchResults="@SearchResults"></DisplayPanel>
+        }
+    }
 }
 
 
@@ -85,6 +99,8 @@ else
     [Parameter] public EventCallback<string> OnClick { get; set; }
     [Parameter] public bool isSearch { get; set; }
     [Parameter] public List<NoteHeader> SearchResults { get; set; }
+
+    [Parameter] public bool SubNotes { get; set; } = false;
 
     protected bool newnoteFlag { get; set; }
     protected bool editing { get; set; }
@@ -112,6 +128,7 @@ else
         myInput = new LocalInput();
         seqBaseIndx = 0;
         seqRespOrd = 0;
+        SubNotes = Model.UserData.Pref3;
 
         newnoteFlag = false;
         editing = false;
@@ -655,6 +672,12 @@ else
         Model.isMarked = true;
 
         ShowMessage("Marked for Output");
+    }
+
+    private void Toggle()
+    {
+        SubNotes = !SubNotes;
+        StateHasChanged();
     }
 
     protected class LocalInput
