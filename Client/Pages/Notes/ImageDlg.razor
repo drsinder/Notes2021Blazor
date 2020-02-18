@@ -1,0 +1,75 @@
+﻿@using Notes2021Blazor.Shared
+@using Syncfusion.EJ2.Blazor.Grids
+@inject HttpClient Http
+@inject IModalService ModalService
+
+    <div class="dialogs modal-body">
+        <h3>Image Browser</h3>
+
+        <div class="col-lg-12 control-section dialoglist">
+            <div class="content-wrapper">
+                <div class="row">
+                    <EjsGrid @ref="MyGrid" DataSource="@MyFiles" AllowPaging="true" AllowSelection="true" EnableHover="true"  Width="700"  >
+                        <GridPageSettings PageSizes="true"></GridPageSettings>
+                        <GridEvents TValue="SQLFile"></GridEvents>
+                        <GridTemplates>
+                            <DetailTemplate>
+                                @{
+                                    SQLFile current = (context as SQLFile);
+                                    string url = FileUrl + current.FileName;
+                                }
+                                <table class="detailtable" width="100%">
+                                    <colgroup>
+                                        <col width="50%">
+                                        <col width="50%">
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td rowspan="4">
+                                                <img src="@url" width="330"  />
+                                            </td>
+                                            <td>
+                                                Location:<br />@url
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                    @*<image src=@url></image>*@
+                            </DetailTemplate>
+                        </GridTemplates>
+                        <GridColumns>
+                            <GridColumn Field=@nameof(SQLFile.FileName) HeaderText="File Name" TextAlign="TextAlign.Left" IsPrimaryKey="true"></GridColumn>
+                        </GridColumns>
+                    </EjsGrid>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
+
+    </div>
+
+
+@code {
+
+
+    List<SQLFile> MyFiles { get; set; }
+
+    EjsGrid<SQLFile> MyGrid;
+    EjsGrid<SQLFileContent> MyGrid2;
+
+    private string FileUrl { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        FileUrl = (await Http.GetJsonAsync<Stringy>("api/ProductionUrl")).value + "File/";
+
+        MyFiles = await Http.GetJsonAsync<List<SQLFile>>("api/UImages/GetFiles");
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+}

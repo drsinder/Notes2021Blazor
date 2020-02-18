@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Notes2021Blazor.Shared;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Notes2021Blazor.Server.Controllers
 {

@@ -30,18 +30,16 @@ namespace Notes2021Blazor.Server.Controllers
             this.hostingEnv = env;
         }
 
-        //[HttpGet("[action]")]
-        //public async Task<FileResult> Get(string filename)
-        //{
-        //    SQLFile myFile = await _db.SQLFile.SingleAsync(p => p.FileName == filename);
+        [HttpGet("[action]")]
+        public async Task<List<SQLFile>> GetFiles()
+        {
+            return await _db.SQLFile.ToListAsync();
+        }
 
-        //    FileResult mystuff = File((await (_db.SQLFileContent.SingleAsync(m => m.SQLFileId == myFile.FileId))).Content,
-        //        System.Net.Mime.MediaTypeNames.Application.Octet,
-        //        myFile.FileName);
-
-        //    return mystuff;
-        //}
-
+        public async Task<List<SQLFileContent>> GetContent()
+        {
+            return await _db.SQLFileContent.ToListAsync();
+        }
 
         [HttpPost("[action]")]
         public async Task Save(IList<IFormFile> UploadFiles)

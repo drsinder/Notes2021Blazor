@@ -57,11 +57,13 @@
                             </div>
                         </div>
                     }
-                    <br /><button type="submit" class="btn btn-success btn-sm">Submit</button> <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
+                    <br /><button type="submit" class="btn btn-success btn-sm">Submit</button> 
+                    <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
+                    <button type="button" @onclick="Browse" class="btn btn-info btn-sm">Image Browser</button>
                     <EjsUploader ID="UploadFiles" AllowedExtensions=".jpg, .png, .gif">
                         <UploaderAsyncSettings SaveUrl="api/UImages/Save"></UploaderAsyncSettings>
                     </EjsUploader>
-                    <p>Reference uploaded files as @Globals.PathBase/File/(filename)</p>
+                    <p>Reference uploaded files as @FileUrl</p>
 
                     @*<span class="@TinyClass"><br/><button type="button" @onclick="Switch" class="btn btn-info btn-sm">Switch Editors</button></span>*@
                 </EditForm>
@@ -123,8 +125,9 @@
     private string TinyClass { get; set; }
     private string EjsClass { get; set; }
 
+    private string FileUrl { get; set; }
 
-    protected override void OnParametersSet()
+    protected async override Task OnParametersSetAsync()
     {
         AltEdit = Model.UserData.Pref2;
 
@@ -139,6 +142,8 @@
             TinyClass = "printershown";
         }
 
+        FileUrl = (await Http.GetJsonAsync<Stringy>("api/ProductionUrl")).value;
+        FileUrl += "File/YourFileNameHere";
 
         tvm = new TextViewModel();
         tvm.MyNote = "";
@@ -178,6 +183,9 @@
 
     protected async Task HandleValidSubmit()
     {
+        if (string.IsNullOrEmpty(tvm.MySubject))
+            tvm.MySubject = "*untitled*";  // must have title
+
         if (!AltEdit)
         {
             tvm.MyNote = await jsRuntime.InvokeAsync<string>("gettinymcecontent", "");
@@ -242,5 +250,18 @@
         }
         StateHasChanged();
     }
+
+    private void Browse()
+    {
+        var parameters = new ModalParameters();
+        Modal.OnClose += HideDialog;
+        Modal.Show<ImageDlg>("", parameters);
+    }
+
+    void HideDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialog;
+    }
+
 }
 
