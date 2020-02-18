@@ -94,6 +94,7 @@ namespace Notes2021.Areas.Identity.Pages.Account
                     aux.UserId = uId;
                     aux.DisplayName = Input.DisplayName;
                     aux.TimeZoneID = Globals.TimeZoneDefaultID;
+                    aux.Ipref2 = 12;
 
                     _db.UserData.Add(aux);
                     await _db.SaveChangesAsync();

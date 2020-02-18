@@ -38,6 +38,11 @@ namespace Notes2021Blazor.Server.Controllers
         [HttpPut]
         public async Task Put(NoteAccess item)
         {
+            IdentityUser me = await _userManager.FindByNameAsync(User.Identity.Name);
+            NoteAccess myAccess = await AccessManager.GetAccess(_db, me.Id, item.NoteFileId, item.ArchiveId);
+            if (!myAccess.EditAccess)
+                return;
+
             NoteAccess work = await _db.NoteAccess.Where(p => p.NoteFileId == item.NoteFileId
                 && p.ArchiveId == item.ArchiveId && p.UserID == item.UserID)
                 .FirstOrDefaultAsync();
@@ -59,6 +64,11 @@ namespace Notes2021Blazor.Server.Controllers
         [HttpPost]
         public async Task Post(NoteAccess item)
         {
+            IdentityUser me = await _userManager.FindByNameAsync(User.Identity.Name);
+            NoteAccess myAccess = await AccessManager.GetAccess(_db, me.Id, item.NoteFileId, item.ArchiveId);
+            if (!myAccess.EditAccess)
+                return;
+
             NoteAccess work = await _db.NoteAccess.Where(p => p.NoteFileId == item.NoteFileId
                 && p.ArchiveId == item.ArchiveId && p.UserID == item.UserID)
                 .FirstOrDefaultAsync();
@@ -94,6 +104,10 @@ namespace Notes2021Blazor.Server.Controllers
             // also can not delete self
             string userName = this.HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             IdentityUser user = await _userManager.FindByNameAsync(userName);
+            NoteAccess myAccess = await AccessManager.GetAccess(_db, user.Id, fid, aid);
+            if (!myAccess.EditAccess)
+                return;
+
             if (uid == user.Id)
                 return;     // can not delete self"
 

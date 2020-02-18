@@ -184,7 +184,7 @@
     protected async Task HandleValidSubmit()
     {
         if (string.IsNullOrEmpty(tvm.MySubject))
-            tvm.MySubject = "*untitled*";  // must have title
+            tvm.MySubject = "*none*";  // must have title
 
         if (!AltEdit)
         {

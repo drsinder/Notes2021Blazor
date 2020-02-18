@@ -20,7 +20,7 @@
             <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="OutputMarked">Output Marked</button>
         }
         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="ListHelp"><strong>Z for HELP.</strong></button>
-        @if (@Model.myAccess.EditAccess)
+        @if (@Model.myAccess.EditAccess || Model.myAccess.ViewAccess)
         {
             <span>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="link" @onclick="AccessControls">Access Controls</button></span>
         }

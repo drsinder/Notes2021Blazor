@@ -107,18 +107,21 @@ else
                         <GridColumn HeaderText="Delete" TextAlign="TextAlign.Center">
                             <Template>
                                 @{
-                                    var item = (context as NoteAccess);
-                                    if (item.UserID == Globals.AccessOtherId())
+                                    if (myAccess.EditAccess)
                                     {
-                                    }
-                                    else if (item.UserID == myAccess.UserID)
-                                    {
-                                    }
-                                    else
-                                    {
+                                        var item = (context as NoteAccess);
+                                        if (item.UserID == Globals.AccessOtherId())
+                                        {
+                                        }
+                                        else if (item.UserID == myAccess.UserID)
+                                        {
+                                        }
+                                        else
+                                        {
                                         <AccessDeleteButton noteAccess="@item" OnClick="ClickHandler" />
+                                            }
+                                        }
                                     }
-                                }
                             </Template>
                         </GridColumn>
                     </GridColumns>
@@ -126,8 +129,11 @@ else
             </div>
         </div>
     </div>
-
-    <button type="button" @onclick="CreateNew" class="btn btn-primary btn-sm">Create</button> <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
+    @if (myAccess.EditAccess)
+    {
+        <button type="button" @onclick="CreateNew" class="btn btn-primary btn-sm">Create</button>
+    }
+    <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
 
 </div>
 }

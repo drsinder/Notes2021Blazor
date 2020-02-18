@@ -42,6 +42,7 @@ namespace Notes2021Blazor.Server.Controllers
                 UserId = me.Id,
                 DisplayName = model.DisplayName,
                 TimeZoneID = Globals.TimeZoneDefaultID,
+                Ipref2 = 12,
                 MyGuid = Guid.NewGuid().ToString()
             };
             _db.UserData.Add(userData);

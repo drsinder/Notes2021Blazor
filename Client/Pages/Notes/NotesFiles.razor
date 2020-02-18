@@ -47,13 +47,13 @@ else
                 <div class="content-wrapper">
                     <div class="row">
                         <EjsGrid @ref="MyGrid" EnableAltRow="true" DataSource="@files" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
-                            <GridPageSettings PageSizes="true"></GridPageSettings>
+                            <GridPageSettings PageSize="UserData.Ipref2" PageSizes="true"></GridPageSettings>
                             <GridEvents RowSelected="DisplayIt" TValue="NoteFile"></GridEvents>
                             <GridColumns>
                                 <GridColumn Field=@nameof(NoteFile.NoteFileName) HeaderText="NoteFile Name" TextAlign="TextAlign.Left" Width="80" IsPrimaryKey="true"></GridColumn>
                                 <GridColumn Field=@nameof(NoteFile.NoteFileTitle) HeaderText="NoteFile Title" TextAlign="TextAlign.Left" Width="150"></GridColumn>
 
-                                <GridColumn Field=@nameof(NoteFile.LastEdited) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                <GridColumn HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
                                     <Template Context="inner">
                                         @{
                                             var itemx = (inner as NoteFile);
@@ -82,12 +82,14 @@ else
 
     private List<NoteFile> files { get; set; }
     private TZone timeZone { get; set; }
+    private UserData UserData { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
         files = model.NoteFiles;
         timeZone = model.TimeZone;
+        UserData = model.UserData;
     }
 
     protected void DisplayIt(RowSelectEventArgs<NoteFile> args)
