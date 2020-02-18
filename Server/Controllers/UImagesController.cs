@@ -11,30 +11,36 @@ using System.IO;
 using Microsoft.AspNetCore.Http.Features;
 using Notes2021Blazor.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Notes2021Blazor.Server.Controllers
 {
+    //[Authorize(Roles = "User")]
     [Route("api/[controller]")]
-    [Route("api/[controller]/{file}")]
+    [Route("api/[controller]/{filename}")]
     [ApiController]
     public class UImagesController : ControllerBase
     {
         private NotesDbContext _db;
+        private IWebHostEnvironment hostingEnv;
 
-        public UImagesController(NotesDbContext env)
+        public UImagesController(NotesDbContext db, IWebHostEnvironment env)
         {
-            this._db = env;
+            this._db = db;
+            this.hostingEnv = env;
         }
 
-        [HttpGet]
-        public async Task<FileResult> Get(string filename)
-        {
-            SQLFile myFile = await _db.SQLFile.SingleAsync(p => p.FileName == filename);
+        //[HttpGet("[action]")]
+        //public async Task<FileResult> Get(string filename)
+        //{
+        //    SQLFile myFile = await _db.SQLFile.SingleAsync(p => p.FileName == filename);
 
-            return File((await (_db.SQLFileContent.SingleAsync(m => m.SQLFileId == myFile.FileId))).Content,
-                System.Net.Mime.MediaTypeNames.Application.Octet,
-                myFile.FileName);
-        }
+        //    FileResult mystuff = File((await (_db.SQLFileContent.SingleAsync(m => m.SQLFileId == myFile.FileId))).Content,
+        //        System.Net.Mime.MediaTypeNames.Application.Octet,
+        //        myFile.FileName);
+
+        //    return mystuff;
+        //}
 
 
         [HttpPost("[action]")]
@@ -86,8 +92,7 @@ namespace Notes2021Blazor.Server.Controllers
                     await _db.SaveChangesAsync();
 
 
-                    //filename = hostingEnv.ContentRootPath + $@"\{filename}";
-                    //size += (int)file.Length;
+                    //filename = hostingEnv.ContentRootPath + "\\wwwroot" + $@"\{filename}";
                     //if (!System.IO.File.Exists(filename))
                     //{
                     //    using (FileStream fs = System.IO.File.Create(filename))
