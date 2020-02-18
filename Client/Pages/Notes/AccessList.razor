@@ -13,108 +13,130 @@
 }
 else
 {
-    <div class="dialogs modal-body">
-        <h3>Access Editor</h3>
-        @if (myAccess.ViewAccess || myAccess.EditAccess)
-        {
-            <table class="table">
-                <tr>
-                    <th>User Name</th>
-                    <th>
-                        Read
-                    </th>
-                    <th>
-                        Respond
-                    </th>
-                    <th>
-                        Write
-                    </th>
-                    <th>
-                        Set Tag
-                    </th>
-                    <th>
-                        Delete/Edit
-                    </th>
-                    <th>
-                        View Access
-                    </th>
-                    <th>
-                        Edit Access
-                    </th>
-                    <th></th>
-                </tr>
-                @{
-                    foreach (NoteAccess item in myList)
-                    {
-                        string userName = item.UserID;
-                        if (userName != Globals.AccessOtherId())
-                        {
-                            UserData temp = userList.Find(p => p.UserId == userName);
-                            if (temp != null)
-                            {
-                                userName = temp.DisplayName;
-                            }
-                        }
-                        AccessItem read = new AccessItem { isChecked = item.ReadAccess, which = AccessX.ReadAccess, Item = item, canEdit = myAccess.EditAccess };
-                        AccessItem write = new AccessItem { isChecked = item.Write, which = AccessX.Write, Item = item, canEdit = myAccess.EditAccess };
-                        AccessItem respond = new AccessItem { isChecked = item.Respond, which = AccessX.Respond, Item = item, canEdit = myAccess.EditAccess };
-                        AccessItem settag = new AccessItem { isChecked = item.SetTag, which = AccessX.SetTag, Item = item, canEdit = myAccess.EditAccess };
-                        AccessItem edit = new AccessItem { isChecked = item.DeleteEdit, which = AccessX.DeleteEdit, Item = item, canEdit = myAccess.EditAccess };
-                        AccessItem view = new AccessItem { isChecked = item.ViewAccess, which = AccessX.ViewAccess, Item = item, canEdit = myAccess.EditAccess };
-                        AccessItem edaccess = new AccessItem { isChecked = item.EditAccess, which = AccessX.EditAccess, Item = item, canEdit = myAccess.EditAccess };
-                        <tr>
-                            <td>
-                                @userName
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@read" />
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@respond" />
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@write" />
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@settag" />
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@edit" />
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@view" />
-                            </td>
-                            <td>
-                                <AccessCheckBox Model="@edaccess" />
-                            </td>
-                            @if (item.UserID == Globals.AccessOtherId())
-                            {
-                            }
-                            else if (item.UserID == myAccess.UserID)
-                            {
-                            }
-                            else
-                            {
-                                <td><span><AccessDeleteButton noteAccess="@item" OnClick="ClickHandler" /></span></td>
-                            }
-                        </tr>
-                    }
-                }
-            </table>
-        }
-        else
-        {
-            <p>Not permitted!</p>
-        }
-    <button type="button" @onclick="CreateNew" class="btn btn-primary btn-sm">Create</button> <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button> 
+<div class="dialogs modal-body">
+    <h3>Access Editor</h3>
 
+    <div class="col-lg-12 control-section dialoglist">
+        <div class="content-wrapper">
+            <div class="row">
+                <EjsGrid @ref="MyGrid" DataSource="@myList" AllowPaging="true">
+                    <GridPageSettings PageSizes="true"></GridPageSettings>
+                    <GridColumns>
+                        <GridColumn HeaderText="User Name" TextAlign="TextAlign.Left">
+                            <Template>
+                                @{
+                                    var current = (context as NoteAccess);
+                                    string userName = current.UserID;
+                                    if (userName != Globals.AccessOtherId())
+                                    {
+                                        UserData temp = userList.Find(p => p.UserId == userName);
+                                        if (temp != null)
+                                        {
+                                            userName = temp.DisplayName;
+                                        }
+                                    }
+                                    <div>
+                                        @userName
+                                    </div>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Read" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem read = new AccessItem { isChecked = item.ReadAccess, which = AccessX.ReadAccess, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@read" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Write" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem write = new AccessItem { isChecked = item.Write, which = AccessX.Write, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@write" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Respond" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem resp = new AccessItem { isChecked = item.Respond, which = AccessX.Respond, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@resp" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Set Tag" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem settag = new AccessItem { isChecked = item.SetTag, which = AccessX.SetTag, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@settag" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Delete/Edit" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem settag = new AccessItem { isChecked = item.DeleteEdit, which = AccessX.DeleteEdit, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@settag" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="View Access" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem settag = new AccessItem { isChecked = item.ViewAccess, which = AccessX.ViewAccess, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@settag" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Edit Access" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    AccessItem settag = new AccessItem { isChecked = item.EditAccess, which = AccessX.EditAccess, Item = item, canEdit = myAccess.EditAccess };
+                                    <AccessCheckBox Model="@settag" />
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="Delete" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var item = (context as NoteAccess);
+                                    if (item.UserID == Globals.AccessOtherId())
+                                    {
+                                    }
+                                    else if (item.UserID == myAccess.UserID)
+                                    {
+                                    }
+                                    else
+                                    {
+                                        <AccessDeleteButton noteAccess="@item" OnClick="ClickHandler" />
+                                    }
+                                }
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </EjsGrid>
+            </div>
+        </div>
     </div>
-}
 
+    <button type="button" @onclick="CreateNew" class="btn btn-primary btn-sm">Create</button> <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
+
+</div>
+}
 
 @code{
 
     [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    EjsGrid<NoteAccess> MyGrid;
 
     public int fileId { get; set; }
     private List<NoteAccess> myList { get; set; }
@@ -170,8 +192,6 @@ else
             }
         }
         StateHasChanged();
+        MyGrid.Refresh();
     }
-
 }
-
-
