@@ -71,7 +71,8 @@ else
                     <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
                 </div>
             </div>
-        }
+}
+
 
 @functions
 {
@@ -129,6 +130,8 @@ else
         respX = "";
         if (currentHeader.ResponseCount > 0)
             respX = " - " + currentHeader.ResponseCount + " Responses ";
+        else if (currentHeader.ResponseOrdinal > 0)
+            respX = " Response " + currentHeader.ResponseOrdinal;
 
         curN = "" + currentHeader.NoteOrdinal;
         if (currentHeader.ResponseOrdinal > 0)
