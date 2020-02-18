@@ -52,7 +52,18 @@ else
                             <GridColumns>
                                 <GridColumn Field=@nameof(NoteFile.NoteFileName) HeaderText="NoteFile Name" TextAlign="TextAlign.Left" Width="80" IsPrimaryKey="true"></GridColumn>
                                 <GridColumn Field=@nameof(NoteFile.NoteFileTitle) HeaderText="NoteFile Title" TextAlign="TextAlign.Left" Width="150"></GridColumn>
-                                <GridColumn Field=@nameof(NoteFile.LastEdited) HeaderText="Date/Time" Format="MM/dd/yyyy h:mm tt UCT" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+
+                                <GridColumn Field=@nameof(NoteFile.LastEdited) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                    <Template Context="inner">
+                                        @{
+                                            var itemx = (inner as NoteFile);
+                                            DateTime curTimex = timeZone.Local(itemx.LastEdited);
+                                            string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString() + " " + timeZone.Abbreviation;
+                                            <span>@tellx</span>
+                                        }
+                                    </Template>
+                                </GridColumn>
+
                             </GridColumns>
                         </EjsGrid>
                     </div>
@@ -76,6 +87,7 @@ else
     {
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
         files = model.NoteFiles;
+        timeZone = model.TimeZone;
     }
 
     protected void DisplayIt(RowSelectEventArgs<NoteFile> args)

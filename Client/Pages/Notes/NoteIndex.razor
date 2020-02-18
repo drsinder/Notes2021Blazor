@@ -23,7 +23,18 @@
                                     <GridColumn Field=@nameof(NoteHeader.ResponseOrdinal) HeaderText="Resp. #" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-                                    <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" Format="MM/dd/yyyy h:mm tt UCT" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+
+                                    <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                        <Template Context="inner">
+                                            @{
+                                                var itemx = (inner as NoteHeader);
+                                                DateTime curTimex = Model.tZone.Local(itemx.CreateDate);
+                                                string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString() + " " + Model.tZone.Abbreviation;
+                                                <span>@tellx</span>
+                                            }
+                                        </Template>
+                                    </GridColumn>
+
                                 </GridColumns>
                             </EjsGrid>
                         </DetailTemplate>
@@ -32,7 +43,16 @@
                         <GridColumn Field=@nameof(NoteHeader.NoteOrdinal) HeaderText="#" TextAlign="TextAlign.Left" Width="15" IsPrimaryKey="true"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-                        <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" Format="MM/dd/yyyy h:mm tt UCT" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                        <GridColumn HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                            <Template>
+                                @{
+                                    var item = (context as NoteHeader);
+                                    DateTime curTime = Model.tZone.Local(item.CreateDate);
+                                    string tell = curTime.ToShortDateString() + " " + curTime.ToShortTimeString() + " " + Model.tZone.Abbreviation;
+                                    <span>@tell</span>
+                                }
+                            </Template>
+                        </GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.ResponseCount) HeaderText="Responses" TextAlign="TextAlign.Left" Width="40"></GridColumn>
                     </GridColumns>
                 </EjsGrid>
