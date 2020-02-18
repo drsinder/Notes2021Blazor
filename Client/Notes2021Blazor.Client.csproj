@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
 	<BlazorLinkOnBuild>false</BlazorLinkOnBuild>
     <RazorLangVersion>3.0</RazorLangVersion>
+    <UserSecretsId>1a4884d2-dbf6-43c3-8236-9bca94d98681</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
