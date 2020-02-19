@@ -2,7 +2,7 @@
 **
 **  Copyright (c) 2019, Dale Sinder
 **
-**  Name: Forward.cs
+**  Name: ForwardViewModel.cs
 **
 **  Description:
 **      Forward View Model

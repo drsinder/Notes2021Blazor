@@ -2,10 +2,10 @@
 **
 **  Copyright (c) 2020, Dale Sinder
 **
-**  Name: Import.cs
+**  Name: Importer.cs
 **
 **  Description:
-**      Notes Import for Notes 2021
+**      Notes Importer for Notes 2021
 **
 **  This program is free software: you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License version 3 as
