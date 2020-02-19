@@ -1,4 +1,28 @@
-﻿@using System.Net.Http
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: DeleteNote.razor
+    **
+    **  Description:
+    **      Waits for confirmation and deletes note.
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using System.Net.Http
 @using Notes2021Blazor.Shared
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
@@ -8,7 +32,7 @@
 <div class="dialogs">
     <h3>Delete Note?</h3>
     <EditForm id="deleteform" Model="noteId" OnValidSubmit="HandleValidSubmit">
-        <button type="submit" class="btn btn-danger btn-sm"><img src="icons/glyphicons-basic-638-triangle-alert.svg" width="25" class="svgwhite" />Confirm</button> 
+        <button type="submit" class="btn btn-danger btn-sm"><img src="icons/glyphicons-basic-638-triangle-alert.svg" width="25" class="svgwhite" />Confirm</button>
         <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
     </EditForm>
 </div>

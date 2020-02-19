@@ -1,4 +1,28 @@
-﻿@page "/admin/createlinked"
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: CreateLinked.razor
+    **
+    **  Description:
+    **      Create a link between file on another system
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@page "/admin/createlinked"
 @using Notes2021Blazor.Shared
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Authorization
@@ -82,7 +106,7 @@ else
             return;
         }
 
-        if (string.IsNullOrEmpty(remoteFile) )
+        if (string.IsNullOrEmpty(remoteFile))
         {
             ShowMessage("Enter a remote file!");
             return;
@@ -100,7 +124,7 @@ else
         Stringy test2 = new Stringy { value = appUri + "/" + remoteFile };
         bool result2 = await Http.PutJsonAsync<bool>("api/LinkTest", test2);
 
-        if (!result2 )
+        if (!result2)
         {
             ShowMessage("Remote file does not exist.");
             return;

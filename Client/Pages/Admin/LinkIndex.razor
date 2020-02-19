@@ -1,4 +1,28 @@
-﻿@page "/admin/linkedfiles"
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: LinkIndex.razor
+    **
+    **  Description:
+    **      List of linked files
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@page "/admin/linkedfiles"
 @using Notes2021Blazor.Shared
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Authorization
@@ -72,48 +96,48 @@ else
     </AuthorizeView>
 }
 
- @code {
+@code {
 
-     private List<LinkedFile> Model { get; set; }
+    private List<LinkedFile> Model { get; set; }
 
-     private int deleteId { get; set; }
+    private int deleteId { get; set; }
 
-     protected override async Task OnInitializedAsync()
-     {
-         Model = await Http.GetJsonAsync<List<LinkedFile>>("api/Linked");
-     }
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await Http.GetJsonAsync<List<LinkedFile>>("api/Linked");
+    }
 
-     protected void Create()
-     {
-         NavigationManager.NavigateTo("admin/createlinked");
-     }
+    protected void Create()
+    {
+        NavigationManager.NavigateTo("admin/createlinked");
+    }
 
-     protected void DeleteLink(int id)
-     {
-         deleteId = id;
-         Confirm();         
-     }
+    protected void DeleteLink(int id)
+    {
+        deleteId = id;
+        Confirm();
+    }
 
-     protected void EditLink(int id)
-     {
-         NavigationManager.NavigateTo("admin/editlinked/" + id);
-     }
+    protected void EditLink(int id)
+    {
+        NavigationManager.NavigateTo("admin/editlinked/" + id);
+    }
 
-     private void Confirm()
-     {
-         var parameters = new ModalParameters();
-         Modal.OnClose += HideDialog;
-         Modal.Show<ConfirmDelete>("", parameters);
-     }
+    private void Confirm()
+    {
+        var parameters = new ModalParameters();
+        Modal.OnClose += HideDialog;
+        Modal.Show<ConfirmDelete>("", parameters);
+    }
 
-     public void HideDialog(ModalResult modalResult)
-     {
-         Modal.OnClose -= HideDialog;
-         if (modalResult.Cancelled)
-             return;
+    public void HideDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialog;
+        if (modalResult.Cancelled)
+            return;
 
-         Http.DeleteAsync("api/Linked/" + deleteId);
-         NavigationManager.NavigateTo("admin/linkedfiles", true);
-     }
+        Http.DeleteAsync("api/Linked/" + deleteId);
+        NavigationManager.NavigateTo("admin/linkedfiles", true);
+    }
 
- }
+}

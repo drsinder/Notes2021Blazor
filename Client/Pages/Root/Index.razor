@@ -1,4 +1,28 @@
-﻿@page "/"
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: Index.razor
+    **
+    **  Description:
+    **      Root of the app
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@page "/"
 @layout IndexLayout
 @using Notes2021Blazor.Shared
 @using Blazored.LocalStorage
@@ -12,127 +36,127 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
 
-    <div>
-        <h2 class="center">Welcome to Notes 2021 Blazor Edition <img src="favicon.ico" width="32" /></h2>
+<div>
+    <h2 class="center">Welcome to Notes 2021 Blazor Edition <img src="favicon.ico" width="32" /></h2>
 
-        @if (model == null)
+    @if (model == null)
+    {
+        <p class="center"><em>Loading...</em></p>
+    }
+    else
+    {
+        <h5 class="center">
+            <span id="homepagetime">
+                @myTime
+            </span>
+        </h5>
+
+        @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
         {
-            <p class="center"><em>Loading...</em></p>
+            <h5 class="keep-center">@model.Message.Message</h5>
         }
-        else
-        {
-            <h5 class="center">
-                <span id="homepagetime">
-                    @myTime
-                </span>
-            </h5>
-
-            @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
-            {
-                <h5 class="keep-center">@model.Message.Message</h5>
-            }
-        }
+    }
 
 
-        @if (fileList == null || nameList == null)
-        {
-    <div class="keep-center">
-        <div class="loading-section">
-            <h2>Authorizing....</h2>
-            <div class="loader mt-5">
-                <div class="loader-dot dot1"></div>
-                <div class="loader-dot dot2"></div>
-                <div class="loader-dot dot3"></div>
+    @if (fileList == null || nameList == null)
+    {
+        <div class="keep-center">
+            <div class="loading-section">
+                <h2>Authorizing....</h2>
+                <div class="loader mt-5">
+                    <div class="loader-dot dot1"></div>
+                    <div class="loader-dot dot2"></div>
+                    <div class="loader-dot dot3"></div>
+                </div>
             </div>
         </div>
-    </div>
-        }
-        else
-        {
-            <AuthorizeView>
-                <Authorized Context="Outer">
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-4 roundedindex keep-center">
-                            <EditForm Model="@dummyFile">
-                                <p>
-                                    <label>
-                                        <strong>Enter a NoteFile Name and press Enter:</strong>
-                                        <InputText class="form-control short-input"
-                                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                                   Value="@dummyFile.NoteFileName"
-                                                   ValueExpression="@( () => dummyFile.NoteFileName )" />
-                                    </label>
-                                </p>
-                                Or select a file<br />
-                                <InputSelect id="select1" class="btn btn-file dropdown-toggle form-control short-input"
-                                             ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                             Value="@dummyFile.NoteFileName"
-                                             ValueExpression="@( () => dummyFile.NoteFileName )">
-                                    <option value="none" selected="selected">-- Select from list --</option>
-                                    @foreach (var item in fileList)
-                                    {
-                                        <option value=@item.NoteFileName>@item.NoteFileName</option>
-                                    }
-                                </InputSelect>
-                                <br />Or select a title<br />
-                                <InputSelect id="select2" class="btn btn-title dropdown-toggle form-control short-input"
-                                             ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                             Value="@dummyFile.NoteFileName"
-                                             ValueExpression="@( () => dummyFile.NoteFileName )">
-                                    <option value="none" selected="selected">-- Select from list --</option>
-                                    @foreach (var item in nameList)
-                                    {
-                                        <option value=@item.NoteFileName>@item.NoteFileTitle</option>
-                                    }
-                                </InputSelect>
-                            </EditForm>
-                            <h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>
-                        </div>
+    }
+    else
+    {
+        <AuthorizeView>
+            <Authorized Context="Outer">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-4 roundedindex keep-center">
+                        <EditForm Model="@dummyFile">
+                            <p>
+                                <label>
+                                    <strong>Enter a NoteFile Name and press Enter:</strong>
+                                    <InputText class="form-control short-input"
+                                               ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                               Value="@dummyFile.NoteFileName"
+                                               ValueExpression="@( () => dummyFile.NoteFileName )" />
+                                </label>
+                            </p>
+                            Or select a file<br />
+                            <InputSelect id="select1" class="btn btn-file dropdown-toggle form-control short-input"
+                                         ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                         Value="@dummyFile.NoteFileName"
+                                         ValueExpression="@( () => dummyFile.NoteFileName )">
+                                <option value="none" selected="selected">-- Select from list --</option>
+                                @foreach (var item in fileList)
+                                {
+                                    <option value=@item.NoteFileName>@item.NoteFileName</option>
+                                }
+                            </InputSelect>
+                            <br />Or select a title<br />
+                            <InputSelect id="select2" class="btn btn-title dropdown-toggle form-control short-input"
+                                         ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                         Value="@dummyFile.NoteFileName"
+                                         ValueExpression="@( () => dummyFile.NoteFileName )">
+                                <option value="none" selected="selected">-- Select from list --</option>
+                                @foreach (var item in nameList)
+                                {
+                                    <option value=@item.NoteFileName>@item.NoteFileTitle</option>
+                                }
+                            </InputSelect>
+                        </EditForm>
+                        <h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>
                     </div>
-                    <div class="row">
-                        <div class="col-md-1">
-                        </div>
-                        <div class="col-md-4">
-                            <h4>Important Files</h4>
-                            <ul>
-                                @foreach (localFile x in impfileList)
-                                {
-                                    string val = x.NoteFileName + " - " + x.NoteFileTitle;
-                                    <li>
-                                        <strong>
-                                            <a href="notes\main\@x.Id">@val</a>
-                                        </strong>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                        <div class="col-md-4">
-                            <h4>History Files</h4>
-                            <ul>
-                                @foreach (localFile x in histfileList)
-                                {
-                                    string val = x.NoteFileName + " - " + x.NoteFileTitle;
-                                    <li>
-                                        <strong>
-                                            <a href="notes/main/@x.Id">@val</a>
-                                        </strong>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Important Files</h4>
+                        <ul>
+                            @foreach (localFile x in impfileList)
+                            {
+                                string val = x.NoteFileName + " - " + x.NoteFileTitle;
+                                <li>
+                                    <strong>
+                                        <a href="notes\main\@x.Id">@val</a>
+                                    </strong>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>History Files</h4>
+                        <ul>
+                            @foreach (localFile x in histfileList)
+                            {
+                                string val = x.NoteFileName + " - " + x.NoteFileTitle;
+                                <li>
+                                    <strong>
+                                        <a href="notes/main/@x.Id">@val</a>
+                                    </strong>
+                                </li>
+                            }
+                        </ul>
+                    </div>
 
-                    </div>
-                </Authorized>
-                <NotAuthorized>
-                    <div class="keep-center">
-                        <h2>Not Logged In!</h2>
-                        <p>Please register if you have not already.  Then login.  Thanks.</p>
-                    </div>
-                </NotAuthorized>
-            </AuthorizeView>
-        }
-    </div>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="keep-center">
+                    <h2>Not Logged In!</h2>
+                    <p>Please register if you have not already.  Then login.  Thanks.</p>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    }
+</div>
 
 @functions {
     private HomePageModel model;

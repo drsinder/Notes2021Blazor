@@ -1,4 +1,29 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: NavMenu.razor
+    **
+    **  Description:
+    **      Side bar nav menu
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+
+@using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @*@inject IModalService Modal*@
 
@@ -47,10 +72,10 @@
                     </NavLink>
                 </li>
                 @*<li class="nav-item px-3">
-                    <NavLink class="nav-link" href="chat">
-                        <span class="oi oi-chat" aria-hidden="true"></span> Chat
-                    </NavLink>
-                </li>*@
+                        <NavLink class="nav-link" href="chat">
+                            <span class="oi oi-chat" aria-hidden="true"></span> Chat
+                        </NavLink>
+                    </li>*@
             </Authorized>
         </AuthorizeView>
         <AuthorizeView Roles="Admin">

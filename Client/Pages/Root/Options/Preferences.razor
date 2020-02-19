@@ -1,4 +1,28 @@
-﻿@page "/options/preferences"
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: Preferences.razor
+    **
+    **  Description:
+    **      Set user preferences
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@page "/options/preferences"
 
 @using Notes2021Blazor.Shared
 @using Blazored.LocalStorage
@@ -89,7 +113,7 @@ else
         MySizes = new List<LocalModel2> { new LocalModel2("0", "All"), new LocalModel2("5"), new LocalModel2("10"), new LocalModel2("12"), new LocalModel2("20") };
 
         MyList = new List<LocalModel>();
-        foreach(TZone item in TZones)
+        foreach (TZone item in TZones)
         {
             LocalModel x = new LocalModel(item.Id.ToString(), item.Name + " - " + item.Abbreviation + " - " + item.Offset);
             MyList.Add(x);
@@ -117,7 +141,7 @@ else
 
     public class LocalModel
     {
-        public LocalModel (string id, string name)
+        public LocalModel(string id, string name)
         {
             Id = id;
             Name = name;

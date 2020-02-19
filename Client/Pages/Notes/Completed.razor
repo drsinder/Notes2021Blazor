@@ -1,10 +1,34 @@
-﻿@using Notes2021Blazor.Shared
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: Completed.razor
+    **
+    **  Description:
+    **      shows dialog that an operation completed
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
 @inject IModalService ModalService
 @inject NavigationManager NavigationManager
 
 <div class="dialogs modal-body">
     <h3>Completed!</h3>
-    <br/>
+    <br />
     <button type="button" @onclick="Ok" class="btn btn-success btn-sm">Ok</button>
 </div>
 

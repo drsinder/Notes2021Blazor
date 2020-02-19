@@ -1,4 +1,28 @@
-﻿@inherits LayoutComponentBase
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: IndexLayout.razor
+    **
+    **  Description:
+    **      Layout of the main index of the app
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@inherits LayoutComponentBase
 @*@using Microsoft.AspNetCore.SignalR.Client*@
 @inject NavigationManager NavigationManager
 @inject IModalService Modal
@@ -9,9 +33,9 @@
 
 <div class="main bigpix">
     @*<div class="top-row px-4">
-        <LoginDisplay />
-        <a href="about" class="ml-md-auto">About</a>
-    </div>*@
+            <LoginDisplay />
+            <a href="about" class="ml-md-auto">About</a>
+        </div>*@
 
     <div class="content px-4">
         @Body
@@ -23,38 +47,38 @@
 
 @*@functions{
 
-    HubConnection hubConnection;
-    string userInput;
-    string messageInput;
+        HubConnection hubConnection;
+        string userInput;
+        string messageInput;
 
-    protected override async Task OnInitializedAsync()
-    {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/SysMessageHub"))
-            .Build();
-
-        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        protected override async Task OnInitializedAsync()
         {
-            // popup message
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri("/SysMessageHub"))
+                .Build();
 
-            var parameters = new ModalParameters();
-            parameters.Add("Message", message);
-            Modal.OnClose += HidePopUp;
-            Modal.Show<SysMessageBox>("", parameters);
-        });
+            hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+            {
+                // popup message
 
-        await hubConnection.StartAsync();
-    }
+                var parameters = new ModalParameters();
+                parameters.Add("Message", message);
+                Modal.OnClose += HidePopUp;
+                Modal.Show<SysMessageBox>("", parameters);
+            });
 
-    public void HidePopUp(ModalResult x)
-    {
-        Modal.OnClose -= HidePopUp;
-    }
+            await hubConnection.StartAsync();
+        }
 
-    Task Send() => hubConnection.SendAsync("SendMessage", userInput, messageInput);
+        public void HidePopUp(ModalResult x)
+        {
+            Modal.OnClose -= HidePopUp;
+        }
 
-    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+        Task Send() => hubConnection.SendAsync("SendMessage", userInput, messageInput);
+
+        public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
 
 
-}*@
+    }*@
 

@@ -11,16 +11,22 @@
     <Compile Remove="EmailSender.cs" />
     <Compile Remove="Globals.cs" />
     <Compile Remove="Startup.cs" />
+    <Compile Remove="Utils\Exporter.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Pages\Admin\SystemMessage.razor" />
+    <Content Remove="Pages\Notes\Enter.razor" />
     <Content Remove="Pages\Notes\NewBaseNote.razor" />
     <Content Remove="Pages\Notes\NoteEditPanel.razor" />
     <Content Remove="Pages\Notes\NoteIndex - Copy.razor" />
     <Content Remove="Pages\Notes\SampleHtmlEditor.razor" />
     <Content Remove="Pages\Root\Chat.razor" />
+    <Content Remove="Pages\Root\Counter.razor" />
     <Content Remove="Pages\Root\FetchData.razor" />
+    <Content Remove="Pages\Root\Options\Index.razor" />
+    <Content Remove="Shared\SurveyPrompt.razor" />
+    <Content Remove="Shared\TimeZoneDlg.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,7 +53,6 @@
     <None Include="Pages\Notes\DisplayMenu.razor" />
     <None Include="Pages\Notes\DisplayPanel.razor" />
     <None Include="Pages\Notes\Email.razor" />
-    <None Include="Pages\Notes\Enter.razor" />
     <None Include="Pages\Notes\ExportUtil1.razor" />
     <None Include="Pages\Notes\Forward.razor" />
     <None Include="Pages\Notes\HelpDialog.razor" />
@@ -61,13 +66,11 @@
     <None Include="Pages\Notes\OutputDlg.razor" />
     <None Include="Pages\Notes\SearchDlg.razor" />
     <None Include="Pages\Root\About.razor" />
-    <None Include="Pages\Root\Counter.razor" />
     <None Include="Pages\Root\Help.razor" />
     <None Include="Pages\Root\Index.razor" />
     <None Include="Pages\Root\License.razor" />
     <None Include="Pages\Root\Login.razor" />
     <None Include="Pages\Root\Logout.razor" />
-    <None Include="Pages\Root\Options\Index.razor" />
     <None Include="Pages\Root\Options\SCheckBox.razor" />
     <None Include="Pages\Root\Options\SubCheckBox.razor" />
     <None Include="Pages\Root\Options\Subscribe.razor" />
@@ -78,7 +81,6 @@
     <None Include="Pages\Root\Test.razor" />
     <None Include="Shared\MainLayout.razor" />
     <None Include="Shared\NavMenu.razor" />
-    <None Include="Shared\SurveyPrompt.razor" />
     <None Include="wwwroot\css\bootstrap\bootstrap.min.css.map" />
     <None Include="wwwroot\css\open-iconic\FONT-LICENSE" />
     <None Include="wwwroot\css\open-iconic\font\fonts\open-iconic.svg" />
@@ -223,6 +225,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Notes2021Blazor.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>
