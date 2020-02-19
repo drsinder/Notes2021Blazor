@@ -67,49 +67,49 @@ else
                     @((MarkupString)currentContent.NoteBody)
                 </div>
             </div>
-        }
-        else
-        {
-            <div class="control-section keep-center">
-                <h4>Progress: @sliderValueText</h4>
-                <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
-                    <LinearGaugeContainer Width="30"
-                                          Offset="0"
-                                          BackgroundColor="#e0e0e0">
-                    </LinearGaugeContainer>
-                    <LinearGaugeAxes>
-                        <LinearGaugeAxis Maximum="@baseNotes">
-                            <LinearGaugeMajorTicks Color="white" Height="0">
-                            </LinearGaugeMajorTicks>
-                            <LinearGaugeMinorTicks Color="white" Height="0">
-                            </LinearGaugeMinorTicks>
-                            <LinearGaugeLine Width="0"></LinearGaugeLine>
-                            <LinearGaugeAxisLabelStyle Offset="-55">
-                            </LinearGaugeAxisLabelStyle>
-                            <LinearGaugePointers>
-                                <LinearGaugePointer Value="@currNote"
-                                                    Height="30"
-                                                    Type="Point.Bar"
-                                                    Color="green">
-                                </LinearGaugePointer>
-                            </LinearGaugePointers>
-                        </LinearGaugeAxis>
-                    </LinearGaugeAxes>
-                </EjsLinearGauge>
-            </div>
-        }
-        <div class="arrow2">
-            <div>
-                <EditForm Model="@myInput" Context="EditBox">
-                    <InputText id="arrow2" @onkeypress="KeyPressed"
-                               ValueChanged="@( (string val) => TextHasChanged(val) )"
-                               Value="@myInput.typedValue"
-                               ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
-                        </EditForm>
-                        <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+            <div class="arrow2">
+                <div>
+                    <EditForm Model="@myInput" Context="EditBox">
+                        <InputText id="arrow2" @onkeypress="KeyPressed"
+                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                   Value="@myInput.typedValue"
+                                   ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
+                            </EditForm>
+                            <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                        </div>
                     </div>
-                </div>
-            </div>
+                }
+                else
+                {
+                    <div class="control-section keep-center">
+                        <h4>Progress: @sliderValueText</h4>
+                        <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
+                            <LinearGaugeContainer Width="30"
+                                                  Offset="0"
+                                                  BackgroundColor="#CCC">
+                            </LinearGaugeContainer>
+                            <LinearGaugeAxes>
+                                <LinearGaugeAxis Maximum="@baseNotes">
+                                    <LinearGaugeMajorTicks Color="white" Height="5">
+                                    </LinearGaugeMajorTicks>
+                                    <LinearGaugeMinorTicks Color="white" Height="2">
+                                    </LinearGaugeMinorTicks>
+                                    <LinearGaugeLine Width="0"></LinearGaugeLine>
+                                    <LinearGaugeAxisLabelStyle Offset="-55">
+                                    </LinearGaugeAxisLabelStyle>
+                                    <LinearGaugePointers>
+                                        <LinearGaugePointer Value="@currNote"
+                                                            Height="30"
+                                                            Type="Point.Bar"
+                                                            Color="#3C0">
+                                        </LinearGaugePointer>
+                                    </LinearGaugePointers>
+                                </LinearGaugeAxis>
+                            </LinearGaugeAxes>
+                        </EjsLinearGauge>
+                    </div>
+                }
+    </div>
         <div>
             @if (!PrintFile)
             {
