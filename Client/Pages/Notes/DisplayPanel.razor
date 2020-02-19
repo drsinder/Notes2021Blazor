@@ -101,8 +101,9 @@ else
     [Parameter] public EventCallback<string> OnClick { get; set; }
     [Parameter] public bool isSearch { get; set; }
     [Parameter] public List<NoteHeader> SearchResults { get; set; }
+    [Parameter] public bool PrintFile { get; set; } = false;
 
-    [Parameter] public bool SubNotes { get; set; } = false;
+    public bool SubNotes { get; set; } = false;
 
     protected bool newnoteFlag { get; set; }
     protected bool editing { get; set; }
@@ -156,6 +157,11 @@ else
         if (currentHeader.ResponseOrdinal > 0)
         {
             curN += "." + currentHeader.ResponseOrdinal;
+        }
+
+        if (PrintFile)
+        {
+            await PrintString();
         }
     }
 
@@ -257,7 +263,20 @@ else
         }
 
         currentHeader = baseHeader;
-        SetNote().GetAwaiter();
+        await SetNote();
+
+        if (PrintFile)
+        {
+            NoteHeader next = Model.Notes.SingleOrDefault(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1);
+            if (next != null)
+            {
+                currentHeader = next;
+                baseHeader = next;
+                await SetNote();
+                goto reloop;
+            }
+        }
+
 
         stuff = sb.ToString();
 

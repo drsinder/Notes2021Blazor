@@ -42,6 +42,12 @@ else
             {
 
             }
+            else if (printfile)
+            {
+                <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
+                              trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
+                              isSearch="isSearch" SearchResults="results" PrintFile="true" />
+            }
             else if (mode == 0)  // index mode
             {
                 if (!string.IsNullOrEmpty(message))
@@ -144,6 +150,8 @@ else
     private List<NoteHeader> results { get; set; }
 
     private bool isSearch { get; set; }
+
+    private bool printfile { get; set; }
 
     protected async Task ClickHandler(string newMessage)
     {
@@ -368,6 +376,7 @@ else
 
     protected void TimerTick(Object source, ElapsedEventArgs e)
     {
+        printfile = false;
         timer.Interval = 5000;
         jsRuntime.InvokeAsync<object>("setfocus", "arrow1");
     }
@@ -528,7 +537,9 @@ else
                 if (Model.isMarked)
                     OutputMarkedAsk();
                 break;
-
+            case "P":
+                PrintFile();
+                break;
 
             default:
                 //var parameters = new ModalParameters();
@@ -597,6 +608,18 @@ else
         newnoteFlag = false;
         //NavigationManager.NavigateTo("notes/main/" + Id);
         this.StateHasChanged();
+    }
+
+    private void PrintFile()
+    {
+        StopTimer();
+        currentHeader = Model.Notes[0];
+        printfile = true;
+        timer = new Timer(3000);
+        timer.Elapsed += TimerTick;
+        timer.Enabled = true;
+
+        StateHasChanged();
     }
 
     private void SetFocus()
