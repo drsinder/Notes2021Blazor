@@ -338,7 +338,7 @@ else
 
         var parameters = new ModalParameters();
         parameters.Add("PrintStuff", stuff);
-        Modal.OnClose += HideDialog;
+        Modal.OnClose += HidePrintDialog;
         Modal.Show<PrintDlg>("", parameters);
     }
 
@@ -733,6 +733,16 @@ else
     {
         Modal.OnClose -= HideDialog;
         StartTimer();
+    }
+
+    void HidePrintDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HidePrintDialog;
+        if (PrintFile)
+        {
+            Done();
+            return;
+        }
     }
 
     private void Forward()
