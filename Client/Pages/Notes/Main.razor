@@ -1,4 +1,53 @@
-﻿@page "/notes/main/{fileId}"
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: Main.razor
+    **
+    **  Description:
+    **     Main index of a note file.  A work horse page. Has a lot of
+    **     children and grandchildren...  Along with DisplayPanel these two
+    **     do most of the work of handling a note file.
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+@*------------------------------------------------------------------------------
+    **
+    ** A lot of things happen here.  Some are done for the Display Panel
+    ** when it send a message.
+    **
+    ** The main entry point /notes/main/ shows the index
+    ** /notes/display I'm not entirely sure this is still used.
+    **      used to be used to switch from index mode to display a note mode
+    ** /notes/enterandshow does the required file entry stuff and then
+    **      displays a note
+    ** /notes/sequence starts sequencing a file (tracking recent notes)
+    **
+    ** We can operate in three modes depending on the value of *mode*:
+    **  -1 = show nothing
+    **  0 = index mode
+    **  > 0 show that noteID
+    ** Also *newnoteFlag* = true starts a new note in the editor: NoteEditorPanel
+    ** *printfile* = true invokes whole file print in DisplayPanel
+    **
+    ** Messages are received from child and grandchild components and handled here
+    **      See ClickHandler
+    **
+    **--------------------------------------------------------------------------*@
+
+@page "/notes/main/{fileId}"
 @page "/notes/display/{fileId}"
 @page "/notes/enterandshow/{fileId}"
 @page "/notes/sequence/"
@@ -363,7 +412,7 @@ else
     {
         if (firstRender)
         {
-            timer = new Timer(1000);
+            timer = new Timer(1000);        // we can not put focus in the nav box here so defer it
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
 
@@ -606,7 +655,6 @@ else
     {
         mode = 0;
         newnoteFlag = false;
-        //NavigationManager.NavigateTo("notes/main/" + Id);
         this.StateHasChanged();
     }
 
@@ -659,7 +707,6 @@ else
         StartTimer();
         NavigationManager.NavigateTo(NavigationManager.Uri, true);
     }
-
 
     private void ShowMessage(string message)
     {

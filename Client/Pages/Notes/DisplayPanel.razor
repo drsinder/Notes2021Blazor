@@ -25,7 +25,7 @@
     **
     ** This component handles display of a single note, a string of notes,
     ** navigation between notes without returning to the index, printing of
-    ** single notes, note strings, and whole files.
+    ** single notes, note strings, and whole files.  Also makes coffee! :)
     **
     **--------------------------------------------------------------------------*@
 
@@ -165,7 +165,7 @@ else
         List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
         foreach (NoteHeader response in responses)
         {
-            <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@OnClick"
+            <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@ClickHandler"
                           isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
         }
 
@@ -404,6 +404,12 @@ else
 
     protected void StopTimer()
     {
+        if (!FocusTimer)
+        {
+            // try to kill parent focus timer
+            OnClick.InvokeAsync("StopTimer");
+            return;
+        }
         timer.Enabled = false;
         timer.Stop();
     }
@@ -441,6 +447,9 @@ else
                 break;
             case "Mark":
                 await Markit();
+                break;
+            case "StopTimer":
+                StopTimer();
                 break;
 
             default:
