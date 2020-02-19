@@ -26,7 +26,10 @@ else
             <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
             <hr id="premenu" />
             <div>
-                <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+                @if (!PrintFile)
+                {
+                    <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+                }
                 <div class="noteheader">
                     <p>
                         <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -68,17 +71,20 @@ else
                     </div>
                 </div>
         <div>
-            <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
-            <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
-            @if (currentHeader.ResponseCount > 0)
+            @if (!PrintFile)
             {
-                <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
-                <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle Reponses</button>
+                <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
+                <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
+                @if (currentHeader.ResponseCount > 0)
+                {
+                    <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
+                    <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle Reponses</button>
+                }
             }
         </div>
             </div>
 
-    if (currentHeader.ResponseCount > 0 && SubNotes )
+    if (currentHeader.ResponseCount > 0 && SubNotes && !PrintFile)
     {
         List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
         foreach(NoteHeader response in responses)
