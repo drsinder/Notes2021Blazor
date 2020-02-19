@@ -68,9 +68,11 @@ else
                     </div>
                 </div>
         <div>
-            <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button> <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
+            <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
+            <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
             @if (currentHeader.ResponseCount > 0)
             {
+                <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
                 <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle Reponses</button>
             }
         </div>
@@ -210,6 +212,61 @@ else
         Modal.OnClose += HideDialog;
         Modal.Show<PrintDlg>("", parameters);
     }
+
+    protected async Task PrintString()
+    {
+        NoteHeader baseHeader = currentHeader;
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.Append("<h4 class=\"text-center\">" + Model.noteFile.NoteFileTitle + "</h4>");
+
+    reloop:
+
+        sb.Append("<div class=\"noteheader\"><p> <span class=\"keep-right\">Note: ");
+        sb.Append(currentHeader.NoteOrdinal + " " + respX);
+        sb.Append("&nbsp;&nbsp;&nbsp;&nbsp;</span></p><h4>Subject: ");
+        sb.Append(currentHeader.NoteSubject);
+        sb.Append("<br />Author: ");
+        sb.Append(currentHeader.AuthorName + "    ");
+        sb.Append((Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) + " " + (Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) + " " + Model.tZone.Abbreviation);
+        if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+        {
+            sb.Append("<br /><span>Director Message: ");
+            sb.Append(currentContent.DirectorMessage);
+            sb.Append("</span>");
+        }
+        if (tags != null && tags.Count > 0)
+        {
+            sb.Append(" <br /><span>Tags: ");
+            foreach (Tags tag in tags)
+            {
+                sb.Append(tag.Tag + " ");
+            }
+            sb.Append("</span>");
+        }
+        sb.Append("</h4></div><div class=\"notebody\" >");
+        sb.Append(currentContent.NoteBody);
+        sb.Append("</div>");
+
+        if (currentHeader.ResponseOrdinal < baseHeader.ResponseCount)
+        {
+            currentHeader = Model.AllNotes.Single(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal == currentHeader.ResponseOrdinal + 1);
+            await SetNote();
+            goto reloop;
+        }
+
+        currentHeader = baseHeader;
+        SetNote().GetAwaiter();
+
+        stuff = sb.ToString();
+
+        var parameters = new ModalParameters();
+        parameters.Add("PrintStuff", stuff);
+        Modal.OnClose += HideDialog;
+        Modal.Show<PrintDlg>("", parameters);
+    }
+
 
     protected void StartTimer()
     {
