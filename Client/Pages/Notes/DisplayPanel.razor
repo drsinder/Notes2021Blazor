@@ -700,7 +700,7 @@ else
         // check for starting with + or -
         if (typedInput.StartsWith("+"))
             plus = true;
-        if (typedInput.StartsWith("-"))
+        else if (typedInput.StartsWith("-"))
             minus = true;
 
         // strip + and -
@@ -759,7 +759,7 @@ else
             if (plus)
                 noteOrd += iOrd;
             else if (minus)
-                noteOrd -= noteOrd;
+                noteOrd = iOrd - noteOrd;
 
             // lower bounds check
             if (noteOrd < 1)
@@ -787,27 +787,6 @@ else
         currentHeader = nc;
 
         await SetNote();  // set important stuff before we go on
-
-        //DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
-
-        //currentContent = dm.content;
-        //tags = dm.tags;
-
-        //respX = "";
-        //if (currentHeader.ResponseOrdinal > 0)
-        //{
-        //    respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
-        //}
-        //else if (bnh.ResponseCount > 0)
-        //    respX = " - " + bnh.ResponseCount + " Responses ";
-
-        //curN = "" + bnh.NoteOrdinal;
-        //if (currentHeader.ResponseOrdinal > 0)
-        //{
-        //    curN += "." + currentHeader.ResponseOrdinal;
-        //}
-        //Model.myHeader = currentHeader;
-        //this.StateHasChanged();
     }
 
     private void ShowMessage(string message)
