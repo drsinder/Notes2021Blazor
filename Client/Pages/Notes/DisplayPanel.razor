@@ -160,7 +160,6 @@ else
 
     private int seqBaseIndx { get; set; }
     private int seqRespOrd { get; set; }
-    private string stuff { get; set; }
 
     private Double baseNotes { get; set; }
     private Double currNote { get; set; }
@@ -256,7 +255,7 @@ else
         sb.Append("</h4></div><div class=\"notebody\" >");
         sb.Append(currentContent.NoteBody);
         sb.Append("</div>");
-        stuff = sb.ToString();
+        string stuff = sb.ToString();
 
         var parameters = new ModalParameters();
         parameters.Add("PrintStuff", stuff);
@@ -326,7 +325,7 @@ else
         }
 
 
-        stuff = sb.ToString();
+        string stuff = sb.ToString();
 
         var parameters = new ModalParameters();
         parameters.Add("PrintStuff", stuff);
