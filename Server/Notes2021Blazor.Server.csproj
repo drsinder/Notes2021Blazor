@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Remove="App_Code\Jobs.cs" />
+    <Compile Remove="Controllers\WeatherForecastController.cs" />
     <Compile Remove="Hubs\ChatHub.cs" />
     <Compile Remove="Hubs\SysMessageHub.cs" />
   </ItemGroup>
