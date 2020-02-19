@@ -3,52 +3,59 @@
 @inject HttpClient Http
 @inject IModalService ModalService
 
-    <div class="dialogs modal-body">
-        <h3>Image Browser</h3>
+<div class="dialogs modal-body">
+    <h3>Image Browser</h3>
 
-        <div class="col-lg-12 control-section dialoglist">
-            <div class="content-wrapper">
-                <div class="row">
-                    <EjsGrid @ref="MyGrid" DataSource="@MyFiles" AllowPaging="true" AllowSelection="true" EnableHover="true"  Width="700"  >
-                        <GridPageSettings PageSizes="true"></GridPageSettings>
-                        <GridEvents TValue="SQLFile"></GridEvents>
-                        <GridTemplates>
-                            <DetailTemplate>
-                                @{
-                                    SQLFile current = (context as SQLFile);
-                                    string url = FileUrl + current.FileName;
-                                }
-                                <table class="detailtable" width="100%">
-                                    <colgroup>
-                                        <col width="50%">
-                                        <col width="50%">
-                                    </colgroup>
-                                    <tbody>
-                                        <tr>
-                                            <td rowspan="4">
-                                                <img src="@url" width="330"  />
-                                            </td>
-                                            <td>
-                                                Location:<br />@url
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+    <div class="col-lg-12 control-section dialoglist">
+        <div class="content-wrapper">
+            <div class="row">
+                <EjsGrid @ref="MyGrid" DataSource="@MyFiles" AllowPaging="true" AllowSelection="true" EnableHover="true" Width="700">
+                    <GridPageSettings PageSizes="true"></GridPageSettings>
+                    <GridEvents TValue="SQLFile"></GridEvents>
+                    <GridTemplates>
+                        <DetailTemplate>
+                            @{
+                                SQLFile current = (context as SQLFile);
+                                string url = FileUrl + current.FileName;
+                            }
+                            <table class="detailtable" width="100%">
+                                <colgroup>
+                                    <col width="50%">
+                                    <col width="50%">
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="4">
+                                            @if (url.EndsWith(".pdf"))
+                                            {
+                                                <a href="@url" target="_blank">@url</a>
+                                            }
+                                            else
+                                            {
+                                                <img src="@url" width="330" />
+                                            }
+                                        </td>
+                                        <td>
+                                            Location:<br />@url
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                                    @*<image src=@url></image>*@
-                            </DetailTemplate>
-                        </GridTemplates>
-                        <GridColumns>
-                            <GridColumn Field=@nameof(SQLFile.FileName) HeaderText="File Name" TextAlign="TextAlign.Left" IsPrimaryKey="true"></GridColumn>
-                        </GridColumns>
-                    </EjsGrid>
-                </div>
+                            @*<image src=@url></image>*@
+                        </DetailTemplate>
+                    </GridTemplates>
+                    <GridColumns>
+                        <GridColumn Field=@nameof(SQLFile.FileName) HeaderText="File Name" TextAlign="TextAlign.Left" IsPrimaryKey="true"></GridColumn>
+                    </GridColumns>
+                </EjsGrid>
             </div>
         </div>
-
-        <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
-
     </div>
+
+    <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
+
+</div>
 
 
 @code {
