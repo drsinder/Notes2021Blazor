@@ -1,4 +1,36 @@
-﻿@using Notes2021Blazor.Shared
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: DisplayPanel.razor
+    **
+    **  Description:
+    **      Work horse of the notes app
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+@*--------------------------------------------------------------------------
+    **
+    ** This component handles display of a single note, a string of notes,
+    ** navigation between notes without returning to the index, printing of
+    ** single notes, note strings, and whole files.
+    **
+    **--------------------------------------------------------------------------*@
+
+
+@using Notes2021Blazor.Shared
 @using System.Timers
 @using System.Text
 @using Syncfusion.EJ2.Blazor.LinearGauge
@@ -22,94 +54,97 @@ else if (editing)
 }
 else
 {
-<div>
-    <div class="dialognote modal-body">
-        <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
-        <hr id="premenu" />
-        <div>
-            @if (!PrintFile)
-            {
-                <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-
-                <div class="noteheader">
-                    <p>
-                        <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    </p>
-
-                    <h4>
-                        Subject: @currentHeader.NoteSubject <br />
-                        Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                        @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
-                        @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-                        {
-                            <br /><span>Director Message: @currentContent.DirectorMessage</span>
-                        }
-                        @if (tags != null && tags.Count > 0)
-                        {
-                            string tl = "Tags: ";
-                            foreach (Tags tag in tags)
-                                tl += tag.Tag + " ";
-                            <br /><span>@tl</span>
-                        }
-                    </h4>
-                </div>
-            }
-            else
-            {
-                <div class="keep-center"><h4>Printing...  Please Wait...</h4></div>
-            }
-        </div>
-
-        @if (!PrintFile)
-        {
+    <div>
+        <div class="dialognote modal-body">
+            <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
+            <hr id="premenu" />
             <div>
-                <div class="notebody" @onmousedown="StopTimer">
-                    @((MarkupString)currentContent.NoteBody)
-                </div>
-            </div>
-            <div class="arrow2">
-                <div>
-                    <EditForm Model="@myInput" Context="EditBox">
-                        <InputText id="arrow2" @onkeypress="KeyPressed"
-                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                   Value="@myInput.typedValue"
-                                   ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
-                            </EditForm>
-                            <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
-                        </div>
+                @if (!PrintFile)
+                {
+                    <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+
+                    <div class="noteheader">
+                        <p>
+                            <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        </p>
+
+                        <h4>
+                            Subject: @currentHeader.NoteSubject <br />
+                            Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
+                            @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
+                            @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+                            {
+                                <br /><span>Director Message: @currentContent.DirectorMessage</span>
+                            }
+                            @if (tags != null && tags.Count > 0)
+                            {
+                                string tl = "Tags: ";
+                                foreach (Tags tag in tags)
+                                    tl += tag.Tag + " ";
+                                <br /><span>@tl</span>
+                            }
+                        </h4>
                     </div>
                 }
                 else
                 {
-                    <div class="control-section keep-center">
-                        <h4>Progress: @sliderValueText</h4>
-                        <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
-                            <LinearGaugeContainer Width="30"
-                                                  Offset="0"
-                                                  BackgroundColor="#CCC">
-                            </LinearGaugeContainer>
-                            <LinearGaugeAxes>
-                                <LinearGaugeAxis Maximum="@baseNotes">
-                                    <LinearGaugeMajorTicks Color="white" Height="5">
-                                    </LinearGaugeMajorTicks>
-                                    <LinearGaugeMinorTicks Color="white" Height="2">
-                                    </LinearGaugeMinorTicks>
-                                    <LinearGaugeLine Width="0"></LinearGaugeLine>
-                                    <LinearGaugeAxisLabelStyle Offset="-55">
-                                    </LinearGaugeAxisLabelStyle>
-                                    <LinearGaugePointers>
-                                        <LinearGaugePointer Value="@currNote"
-                                                            Height="30"
-                                                            Type="Point.Bar"
-                                                            Color="#3C0">
-                                        </LinearGaugePointer>
-                                    </LinearGaugePointers>
-                                </LinearGaugeAxis>
-                            </LinearGaugeAxes>
-                        </EjsLinearGauge>
-                    </div>
+                    <div class="keep-center"><h4>Printing...  Please Wait...</h4></div>
                 }
-    </div>
+            </div>
+
+            @if (!PrintFile)
+            {
+                <div>
+                    <div class="notebody" @onmousedown="StopTimer">
+                        @((MarkupString)currentContent.NoteBody)
+                    </div>
+                </div>
+                @if (FocusTimer)
+                {
+                <div class="arrow2">
+                    <div>
+                        <EditForm Model="@myInput" Context="EditBox">
+                            <InputText id="arrow2" @onkeypress="KeyPressed"
+                                       ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                       Value="@myInput.typedValue"
+                                       ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
+                                </EditForm>
+                                <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                        <div class="control-section keep-center">
+                            <h4>Progress: @sliderValueText</h4>
+                            <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
+                                <LinearGaugeContainer Width="30"
+                                                      Offset="0"
+                                                      BackgroundColor="#CCC">
+                                </LinearGaugeContainer>
+                                <LinearGaugeAxes>
+                                    <LinearGaugeAxis Maximum="@baseNotes">
+                                        <LinearGaugeMajorTicks Color="white" Height="5">
+                                        </LinearGaugeMajorTicks>
+                                        <LinearGaugeMinorTicks Color="white" Height="2">
+                                        </LinearGaugeMinorTicks>
+                                        <LinearGaugeLine Width="0"></LinearGaugeLine>
+                                        <LinearGaugeAxisLabelStyle Offset="-55">
+                                        </LinearGaugeAxisLabelStyle>
+                                        <LinearGaugePointers>
+                                            <LinearGaugePointer Value="@currNote"
+                                                                Height="30"
+                                                                Type="Point.Bar"
+                                                                Color="#3C0">
+                                            </LinearGaugePointer>
+                                        </LinearGaugePointers>
+                                    </LinearGaugeAxis>
+                                </LinearGaugeAxes>
+                            </EjsLinearGauge>
+                        </div>
+                    }
+        </div>
         <div>
             @if (!PrintFile)
             {
@@ -130,14 +165,15 @@ else
         List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
         foreach (NoteHeader response in responses)
         {
-        <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@OnClick"
-        isSearch="@isSearch" SearchResults="@SearchResults"></DisplayPanel>
+            <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@OnClick"
+                          isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
         }
+
     }
 }
 
 @functions
-{
+    {
     [Parameter] public NoteDisplayIndexModel Model { get; set; }
     [Parameter] public NoteHeader currentHeader { get; set; }
     [Parameter] public int Id { get; set; }
@@ -147,7 +183,8 @@ else
     [Parameter] public EventCallback<string> OnClick { get; set; }
     [Parameter] public bool isSearch { get; set; }
     [Parameter] public List<NoteHeader> SearchResults { get; set; }
-    [Parameter] public bool PrintFile { get; set; } = false;
+    [Parameter] public bool PrintFile { get; set; } = false;  // set to true by parent to print the file
+    [Parameter] public bool FocusTimer { get; set; } = true;  // set to false by parent to inhibit focus timer
 
     public bool SubNotes { get; set; } = false;
 
@@ -170,10 +207,10 @@ else
     private int seqBaseIndx { get; set; }
     private int seqRespOrd { get; set; }
 
-    private Double baseNotes { get; set; }
-    private Double currNote { get; set; }
+    private double baseNotes { get; set; }
+    private double currNote { get; set; }
 
-    private String sliderValueText { get; set; }
+    private string sliderValueText { get; set; }
 
     protected async override Task OnParametersSetAsync()
     {
@@ -195,24 +232,27 @@ else
             Model.myHeader = currentHeader;
         }
 
+        // get content and tags for this note - also includes director message
         DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
 
         currentContent = dm.content;
         tags = dm.tags;
 
+        // set text to be displayed re responses
         respX = "";
         if (currentHeader.ResponseCount > 0)
             respX = " - " + currentHeader.ResponseCount + " Responses ";
         else if (currentHeader.ResponseOrdinal > 0)
             respX = " Response " + currentHeader.ResponseOrdinal;
 
+        // set value to be displayed in navigation box
         curN = "" + currentHeader.NoteOrdinal;
         if (currentHeader.ResponseOrdinal > 0)
         {
             curN += "." + currentHeader.ResponseOrdinal;
         }
 
-        if (PrintFile)
+        if (PrintFile)  // print whole file
         {
             await PrintString();
         }
@@ -220,12 +260,16 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender) // we can not set focus to the nav box right away so defer it 1 second
         {
-            timer = new Timer(1000);
-            timer.Elapsed += TimerTick;
-            timer.Enabled = true;
+            if (FocusTimer)
+            {
+                timer = new Timer(1000);
+                timer.Elapsed += TimerTick;
+                timer.Enabled = true;
+            }
         }
+        // highlight code sections (if any) of a note
         await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
     }
 
@@ -235,6 +279,9 @@ else
         jsRuntime.InvokeAsync<object>("setfocus", "arrow2");
     }
 
+    /// <summary>
+    /// Print a single note
+    /// </summary>
     protected void Print()
     {
         StringBuilder sb = new StringBuilder();
@@ -272,15 +319,19 @@ else
         Modal.Show<PrintDlg>("", parameters);
     }
 
+    /// <summary>
+    /// Print a note string (or whole file if PrintFile is true
+    /// </summary>
     protected async Task PrintString()
     {
+        // keep track of base note
         NoteHeader baseHeader = currentHeader;
 
         StringBuilder sb = new StringBuilder();
 
         sb.Append("<h4 class=\"text-center\">" + Model.noteFile.NoteFileTitle + "</h4>");
 
-    reloop:
+    reloop: // come back here to do another note
 
         sb.Append("<div class=\"noteheader\"><p> <span class=\"keep-right\">Note: ");
         sb.Append(currentHeader.NoteOrdinal + " " + respX);
@@ -308,43 +359,44 @@ else
         sb.Append(currentContent.NoteBody);
         sb.Append("</div>");
 
-        if (currentHeader.ResponseOrdinal < baseHeader.ResponseCount)
+        if (currentHeader.ResponseOrdinal < baseHeader.ResponseCount) // more responses in string
         {
             currentHeader = Model.AllNotes.Single(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal == currentHeader.ResponseOrdinal + 1);
-            await SetNote();
-            goto reloop;
+            await SetNote();    // set important stuff
+            goto reloop;        // print another note
         }
 
-        currentHeader = baseHeader;
-        await SetNote();
+        currentHeader = baseHeader; // set back to base note
+        await SetNote();            // set important stuff
 
-        if (PrintFile)
+        if (PrintFile)  // whole file printing
         {
             NoteHeader next = Model.Notes.SingleOrDefault(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1);
-            if (next != null)
+            if (next != null)       // still base notes left to print
             {
-                currentHeader = next;
+                currentHeader = next;   // set current note and base note
                 baseHeader = next;
-                await SetNote();
-                sliderValueText = currentHeader.NoteOrdinal + "/" + baseNotes;
-                currNote = currentHeader.NoteOrdinal;
+                await SetNote();        // set important stuff
+                sliderValueText = currentHeader.NoteOrdinal + "/" + baseNotes;  // update progress test
+                currNote = currentHeader.NoteOrdinal;                           // update progress bar
 
-                goto reloop;
+                goto reloop;    // print another string
             }
         }
 
-
-        string stuff = sb.ToString();
+        string stuff = sb.ToString();           // turn accumulated output into a string
 
         var parameters = new ModalParameters();
-        parameters.Add("PrintStuff", stuff);
+        parameters.Add("PrintStuff", stuff);    // pass string to print dialog
         Modal.OnClose += HidePrintDialog;
-        Modal.Show<PrintDlg>("", parameters);
+        Modal.Show<PrintDlg>("", parameters);   // invloke print dialog with our output
     }
 
 
     protected void StartTimer()
     {
+        if (!FocusTimer)
+            return;
         timer = new Timer(1000);
         timer.Elapsed += TimerTick;
         timer.Enabled = true;
@@ -356,6 +408,10 @@ else
         timer.Stop();
     }
 
+    /// <summary>
+    /// Handles messages form children
+    /// </summary>
+    /// <param name="newMessage">Text of message</param>
     public async Task ClickHandler(string newMessage)
     {
         switch (newMessage)
@@ -403,6 +459,11 @@ else
         Modal.Show<DeleteNote>("", parameters, options);
     }
 
+    /// <summary>
+    /// Handles keys pressed in navigation box so single key strokes can invoke a function
+    /// </summary>
+    /// <param name="eventArgs"></param>
+    /// <returns></returns>
     protected async Task KeyPressed(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs eventArgs)
     {
         switch (eventArgs.Key)
@@ -419,7 +480,7 @@ else
                 break;
             case "Enter":
                 if (!eventArgs.ShiftKey)
-                    await TextHasChanged("");
+                    await TextHasChanged("");   // next note
                 else
                     await NextBaseNote();
                 break;
@@ -430,12 +491,12 @@ else
                 await PreviousBaseNote();
                 break;
             case "N":
-                newnoteFlag = true;
+                newnoteFlag = true; // write a new note
                 this.StateHasChanged();
                 break;
             case "L":
             case "I":
-                Done();
+                Done();      // we are dome here...
                 break;
             case " ":
                 if (eventArgs.ShiftKey)
@@ -492,7 +553,7 @@ else
         }
     }
 
-    protected async Task ContinueSeq()
+    protected async Task ContinueSeq()  // continue sequencing - tracking new notes
     {
         // first check for responses
         NoteHeader x = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal
@@ -517,13 +578,18 @@ else
         await SetNote();
     }
 
+    /// <summary>
+    /// Given the currentHeader, set up to display or print a note
+    /// </summary>
     protected async Task SetNote()
     {
+        // get NoteContent entity and list of tags
         DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
 
         currentContent = dm.content;
         tags = dm.tags;
 
+        // store stuff to display re responses
         respX = "";
         if (currentHeader.ResponseOrdinal > 0)
         {
@@ -533,14 +599,16 @@ else
         else if (currentHeader.ResponseCount > 0)
             respX = " - " + currentHeader.ResponseCount + " Responses ";
 
-
+        // set nav box info
         curN = "" + currentHeader.NoteOrdinal;
         if (currentHeader.ResponseOrdinal > 0)
         {
             curN += "." + currentHeader.ResponseOrdinal;
         }
+
+        // stuff currentHeader into the Model for tracking
         Model.myHeader = currentHeader;
-        this.StateHasChanged();
+        this.StateHasChanged();     // tell blazor things have changed
     }
 
     protected async Task PreviousBaseNote()
@@ -579,9 +647,19 @@ else
 
     private void Done()
     {
-        OnClick.InvokeAsync("Done:" + currentHeader.NoteOrdinal);
+        OnClick.InvokeAsync("Done:" + currentHeader.NoteOrdinal);   // tell parent I'm done
     }
 
+    /// <summary>
+    /// Handle typing in navigation box format of actions
+    /// n = goto note n
+    /// n.r goto note n response r
+    /// +n go forward n notes
+    /// -n go backward n notes
+    /// +.r go forward r responses
+    /// -.r go backward r responses
+    /// </summary>
+    /// <param name="typedInput">content of nav box</param>
     private async Task TextHasChanged(string typedInput)
     {
         int fileId = Id;
@@ -595,8 +673,10 @@ else
         bool plus = false;
         bool minus = false;
 
+        // strip cruft
         typedInput = typedInput.Trim().Replace("'\n", "").Replace("'\r", "").Trim();
 
+        // if empty - next note
         if (string.IsNullOrEmpty(typedInput) || string.IsNullOrWhiteSpace(typedInput))
         {
             // next note
@@ -606,57 +686,64 @@ else
                 nc = searcher;
                 bnh = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal);
 
-                goto beyond;
+                goto beyond;    // go execute our results
             }
             searcher = Model.Notes.Find(p => p.NoteOrdinal == currentHeader.NoteOrdinal + 1);
             if (searcher != null) // found a base
             {
                 nc = bnh = searcher;
-                goto beyond;
+                goto beyond;    // go execute our results
             }
-            Done();  // reached the end
+            Done();  // reached the end - we be done - tell parent
         }
 
+        // check for starting with + or -
         if (typedInput.StartsWith("+"))
             plus = true;
         if (typedInput.StartsWith("-"))
             minus = true;
+
+        // strip + and -
         typedInput = typedInput.Replace("+", "").Replace("-", "");
 
+        // check for a .
         if (typedInput.Contains("."))
         {
             string[] splits = typedInput.Split(new[] { '.' });
-            if (splits.Length != 2)
+            if (splits.Length != 2) // not exactly 1 .
             {
-                return;
+                return; // ignore
             }
             if (string.IsNullOrEmpty(splits[0]) || string.IsNullOrWhiteSpace(splits[0]))
-                noteOrd = iOrd;
-            else
+                noteOrd = iOrd; // stay where we are
+            else   // compute note ordinal
                 ax = !int.TryParse(splits[0], out noteOrd);
+            // compute response ordinal
             bool bx = !int.TryParse(splits[1], out var respOrd);
-            if (ax || bx)
+            if (ax || bx) // one or the other was bad - ignore
             {
                 return;
             }
 
-            if (noteOrd == iOrd && (plus || minus))
+            if (noteOrd == iOrd && (plus || minus)) // if no note ordinal change and user used + or - prefix
             {
-                if (plus)
+                if (plus)       // bump response ordinal by requested amount
                     respOrd += iResp;
-                else
+                else            //  go back requested amount (responses)
                     respOrd = iResp - respOrd;
 
-                if (respOrd < 0)
+                if (respOrd < 0)  // lower bound check  
                     respOrd = 0;
                 bnh = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
 
-                if (respOrd > bnh.ResponseCount) respOrd = bnh.ResponseCount;
+                if (respOrd > bnh.ResponseCount)    // upper bound check
+                    respOrd = bnh.ResponseCount;
             }
 
+            // get that note header to a temp
             nc = Model.AllNotes.Find(p => p.NoteOrdinal == noteOrd && p.ResponseOrdinal == respOrd);
         }
-        else
+        else // no response part given (no . entered) - work on base notes
         {
             if (!int.TryParse(typedInput, out noteOrd))
             {
@@ -665,21 +752,28 @@ else
 
             if (!plus && !minus && (noteOrd == 0))
             {
-                Done();
+                Done();     // user entered 0 - we be done - tell parent
             }
+
+            // if prefixed with + or - then add or subtract number typed
             if (plus)
                 noteOrd += iOrd;
             else if (minus)
-                noteOrd = iOrd - noteOrd;
+                noteOrd -= noteOrd;
 
-            if (noteOrd < 1) noteOrd = 1;
+            // lower bounds check
+            if (noteOrd < 1)
+                noteOrd = 1;
 
-            long cnt = Model.AllNotes.LongCount();
+            long cnt = Model.Notes.LongCount();  // get count of notes 
 
-            if (noteOrd > cnt) noteOrd = (int)cnt;
+            // upper bounds check
+            if (noteOrd > cnt)
+                noteOrd = (int)cnt;
 
+            // get the base note header
             nc = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
-            bnh = nc;
+            bnh = nc;  // set base and temp
         }
 
         if (nc == null)
@@ -689,28 +783,31 @@ else
 
     beyond:
 
+        // set current note from temp
         currentHeader = nc;
 
-        DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
+        await SetNote();  // set important stuff before we go on
 
-        currentContent = dm.content;
-        tags = dm.tags;
+        //DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
 
-        respX = "";
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
-        }
-        else if (bnh.ResponseCount > 0)
-            respX = " - " + bnh.ResponseCount + " Responses ";
+        //currentContent = dm.content;
+        //tags = dm.tags;
 
-        curN = "" + bnh.NoteOrdinal;
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            curN += "." + currentHeader.ResponseOrdinal;
-        }
-        Model.myHeader = currentHeader;
-        this.StateHasChanged();
+        //respX = "";
+        //if (currentHeader.ResponseOrdinal > 0)
+        //{
+        //    respX = " - Response " + currentHeader.ResponseOrdinal + " of " + bnh.ResponseCount;
+        //}
+        //else if (bnh.ResponseCount > 0)
+        //    respX = " - " + bnh.ResponseCount + " Responses ";
+
+        //curN = "" + bnh.NoteOrdinal;
+        //if (currentHeader.ResponseOrdinal > 0)
+        //{
+        //    curN += "." + currentHeader.ResponseOrdinal;
+        //}
+        //Model.myHeader = currentHeader;
+        //this.StateHasChanged();
     }
 
     private void ShowMessage(string message)
@@ -741,7 +838,6 @@ else
         if (PrintFile)
         {
             Done();
-            return;
         }
     }
 
@@ -782,10 +878,15 @@ else
         OnClick.InvokeAsync("mail:" + currentHeader.NoteOrdinal);
     }
 
+    /// <summary>
+    /// Mark note string for output
+    /// </summary>
     private async Task Markit()
     {
+        // get the current marks for this user
         List<Mark> list = await Http.GetJsonAsync<List<Mark>>("api/Mark");
 
+        // find those for this note
         if (list != null && list.Count > 0)
         {
             List<Mark> list2 = list.Where(p => p.NoteFileId == currentHeader.NoteFileId
@@ -800,15 +901,18 @@ else
             }
         }
 
+        // prepare a new mark
         Mark myMark = new Mark();
         myMark.UserId = "Temp";
         myMark.NoteFileId = currentHeader.NoteFileId;
         myMark.ArchiveId = currentHeader.ArchiveId;
         myMark.NoteHeaderId = currentHeader.Id;
         myMark.NoteOrdinal = currentHeader.NoteOrdinal;
-        myMark.MarkOrdinal = 1;
-        myMark.ResponseOrdinal = -1;
+        myMark.MarkOrdinal = 1;         // sloppy for now - does not permit outputing in marked order
+        myMark.ResponseOrdinal = -1;    // also sloppy for now - 
+                                        // we are marking the whole string rather than allowing selection
 
+        // send to the server for storage
         await Http.PostJsonAsync("api/Mark", myMark);
 
         Model.isMarked = true;
