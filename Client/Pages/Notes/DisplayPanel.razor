@@ -23,36 +23,6 @@ else if (editing)
 else
 {
 <div>
-    @if (PrintFile)
-    {
-    <div class="control-section keep-center">
-        <h4>Progress: @sliderValueText</h4>
-        <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
-            <LinearGaugeContainer Width="30"
-                                  Offset="0"
-                                  BackgroundColor="#e0e0e0">
-            </LinearGaugeContainer>
-            <LinearGaugeAxes>
-                <LinearGaugeAxis Maximum="@baseNotes">
-                    <LinearGaugeMajorTicks Color="white" Height="0">
-                    </LinearGaugeMajorTicks>
-                    <LinearGaugeMinorTicks Color="white" Height="0">
-                    </LinearGaugeMinorTicks>
-                    <LinearGaugeLine Width="0"></LinearGaugeLine>
-                    <LinearGaugeAxisLabelStyle Offset="-55">
-                    </LinearGaugeAxisLabelStyle>
-                    <LinearGaugePointers>
-                        <LinearGaugePointer Value="@currNote"
-                                            Height="30"
-                                            Type="Point.Bar"
-                                            Color="green">
-                        </LinearGaugePointer>
-                    </LinearGaugePointers>
-                </LinearGaugeAxis>
-            </LinearGaugeAxes>
-        </EjsLinearGauge>
-    </div>
-    }
     <div class="dialognote modal-body">
         <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
         <hr id="premenu" />
@@ -60,35 +30,74 @@ else
             @if (!PrintFile)
             {
                 <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-            }
-            <div class="noteheader">
-                <p>
-                    <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                </p>
 
-                <h4>
-                    Subject: @currentHeader.NoteSubject <br />
-                    Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                    @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
-                    @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-                    {
-                        <br /><span>Director Message: @currentContent.DirectorMessage</span>
-                    }
-                    @if (tags != null && tags.Count > 0)
-                    {
-                        string tl = "Tags: ";
-                        foreach (Tags tag in tags)
-                            tl += tag.Tag + " ";
-                        <br /><span>@tl</span>
-                    }
-                </h4>
-            </div>
+                <div class="noteheader">
+                    <p>
+                        <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </p>
+
+                    <h4>
+                        Subject: @currentHeader.NoteSubject <br />
+                        Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
+                        @(Model.tZone.Local(currentHeader.LastEdited).ToLongDateString()) @(Model.tZone.Local(currentHeader.LastEdited).ToShortTimeString()) @Model.tZone.Abbreviation
+                        @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+                        {
+                            <br /><span>Director Message: @currentContent.DirectorMessage</span>
+                        }
+                        @if (tags != null && tags.Count > 0)
+                        {
+                            string tl = "Tags: ";
+                            foreach (Tags tag in tags)
+                                tl += tag.Tag + " ";
+                            <br /><span>@tl</span>
+                        }
+                    </h4>
+                </div>
+            }
+            else
+            {
+                <div class="keep-center"><h4>Printing...  Please Wait...</h4></div>
+            }
         </div>
-        <div>
-            <div class="notebody" @onmousedown="StopTimer">
-                @((MarkupString)currentContent.NoteBody)
+
+        @if (!PrintFile)
+        {
+            <div>
+                <div class="notebody" @onmousedown="StopTimer">
+                    @((MarkupString)currentContent.NoteBody)
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="control-section keep-center">
+                <h4>Progress: @sliderValueText</h4>
+                <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
+                    <LinearGaugeContainer Width="30"
+                                          Offset="0"
+                                          BackgroundColor="#e0e0e0">
+                    </LinearGaugeContainer>
+                    <LinearGaugeAxes>
+                        <LinearGaugeAxis Maximum="@baseNotes">
+                            <LinearGaugeMajorTicks Color="white" Height="0">
+                            </LinearGaugeMajorTicks>
+                            <LinearGaugeMinorTicks Color="white" Height="0">
+                            </LinearGaugeMinorTicks>
+                            <LinearGaugeLine Width="0"></LinearGaugeLine>
+                            <LinearGaugeAxisLabelStyle Offset="-55">
+                            </LinearGaugeAxisLabelStyle>
+                            <LinearGaugePointers>
+                                <LinearGaugePointer Value="@currNote"
+                                                    Height="30"
+                                                    Type="Point.Bar"
+                                                    Color="green">
+                                </LinearGaugePointer>
+                            </LinearGaugePointers>
+                        </LinearGaugeAxis>
+                    </LinearGaugeAxes>
+                </EjsLinearGauge>
+            </div>
+        }
         <div class="arrow2">
             <div>
                 <EditForm Model="@myInput" Context="EditBox">
@@ -101,31 +110,31 @@ else
                     </div>
                 </div>
             </div>
-            <div>
-                @if (!PrintFile)
-                {
-                    <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
-                    <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
-                    @if (currentHeader.ResponseCount > 0)
-                    {
-                        <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
-                        <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle @currentHeader.ResponseCount Reponses</button>
-                    }
-                }
-            </div>
-        </div>
-
-            if (currentHeader.ResponseCount > 0 && SubNotes && !PrintFile)
+        <div>
+            @if (!PrintFile)
             {
-                List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
-                foreach (NoteHeader response in responses)
+                <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
+                <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
+                @if (currentHeader.ResponseCount > 0)
                 {
-                    <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@OnClick"
-                                  isSearch="@isSearch" SearchResults="@SearchResults"></DisplayPanel>
+                    <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
+                    <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle @currentHeader.ResponseCount Reponses</button>
                 }
             }
-        }
+        </div>
 
+    </div>
+
+    if (currentHeader.ResponseCount > 0 && SubNotes && !PrintFile)
+    {
+        List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
+        foreach (NoteHeader response in responses)
+        {
+        <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@OnClick"
+        isSearch="@isSearch" SearchResults="@SearchResults"></DisplayPanel>
+        }
+    }
+}
 
 @functions
 {
