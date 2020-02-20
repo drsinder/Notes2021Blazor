@@ -31,7 +31,7 @@
 <div class="menu-control">
     <div class="layout">
         <div id="container">
-            <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode" CssClass="menubar-specs">
+            <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode">
                 <MenuEvents ItemSelected="OnSelect"></MenuEvents>
             </EjsMenu>
         </div>
@@ -39,24 +39,50 @@
 </div>
 
 <style>
+    .e-menu-wrapper ul {
+        background-color: #555;
+        color: #FFF;
+    }
+
+        .e-menu-wrapper ul .e-menu-item .e-caret {
+            color: #FFF;
+        }
+
+        .e-menu-wrapper ul .e-menu-item.e-focused {
+            color: #CCC;
+            outline: 0 solid #f8f9fa;
+            outline-offset: 0;
+            background-color: none;
+        }
+
+            .e-menu-wrapper ul .e-menu-item.e-focused .e-caret {
+                color: #CCC;
+            }
+
+        .e-menu-wrapper ul .e-menu-item.e-selected {
+            color: #CCC;
+            outline: 0 solid #f2f4f6;
+            outline-offset: 0;
+            background-color: none;
+        }
+
+    .e-menu-wrapper .e-ul {
+        background-color: #555;
+        color: #FFF;
+    }
+
     .menu-control {
         text-align: center;
         color: #FFF;
-        background-color: #777;
+        background-color: #555;
     }
 
     .layout #container {
         color: #FFF;
-        background-color: #777;
+        background-color: #555;
     }
-
-    .menubar-specs ul.e-menu {
-        color: #FFF;
-        background-color: #777;
-        font-weight:600;
-    }
-
 </style>
+
 
 @code {
     [Parameter] public NoteDisplayIndexModel Model { get; set; }
