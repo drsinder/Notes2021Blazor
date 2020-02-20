@@ -54,6 +54,10 @@ else if (editing)
 }
 else
 {
+    if (!PrintFile)
+    {
+        <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+    }
     <div>
         <div class="dialognote modal-body">
             <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
@@ -61,8 +65,10 @@ else
             <div>
                 @if (!PrintFile)
                 {
-                    <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-
+                    @*if (currentHeader.ResponseOrdinal == 0 || !SubNotes)
+                    {
+                        <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+                    }*@
                     <div class="noteheader">
                         <p>
                             <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -101,49 +107,49 @@ else
                 </div>
                 @if (FocusTimer)
                 {
-                <div class="arrow2">
-                    <div>
-                        <EditForm Model="@myInput" Context="EditBox">
-                            <InputText id="arrow2" @onkeypress="KeyPressed"
-                                       ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                       Value="@myInput.typedValue"
-                                       ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
-                                </EditForm>
-                                <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                    <div class="arrow2">
+                        <div>
+                            <EditForm Model="@myInput" Context="EditBox">
+                                <InputText id="arrow2" @onkeypress="KeyPressed"
+                                           ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                           Value="@myInput.typedValue"
+                                           ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
+                                    </EditForm>
+                                    <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                                </div>
                             </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                        <div class="control-section keep-center">
-                            <h4>Progress: @sliderValueText</h4>
-                            <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
-                                <LinearGaugeContainer Width="30"
-                                                      Offset="0"
-                                                      BackgroundColor="#CCC">
-                                </LinearGaugeContainer>
-                                <LinearGaugeAxes>
-                                    <LinearGaugeAxis Maximum="@baseNotes">
-                                        <LinearGaugeMajorTicks Color="white" Height="5">
-                                        </LinearGaugeMajorTicks>
-                                        <LinearGaugeMinorTicks Color="white" Height="2">
-                                        </LinearGaugeMinorTicks>
-                                        <LinearGaugeLine Width="0"></LinearGaugeLine>
-                                        <LinearGaugeAxisLabelStyle Offset="-55">
-                                        </LinearGaugeAxisLabelStyle>
-                                        <LinearGaugePointers>
-                                            <LinearGaugePointer Value="@currNote"
-                                                                Height="30"
-                                                                Type="Point.Bar"
-                                                                Color="#3C0">
-                                            </LinearGaugePointer>
-                                        </LinearGaugePointers>
-                                    </LinearGaugeAxis>
-                                </LinearGaugeAxes>
-                            </EjsLinearGauge>
-                        </div>
-                    }
+                        }
+            }
+            else
+            {
+                <div class="control-section keep-center">
+                    <h4>Progress: @sliderValueText</h4>
+                    <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
+                        <LinearGaugeContainer Width="30"
+                                              Offset="0"
+                                              BackgroundColor="#CCC">
+                        </LinearGaugeContainer>
+                        <LinearGaugeAxes>
+                            <LinearGaugeAxis Maximum="@baseNotes">
+                                <LinearGaugeMajorTicks Color="white" Height="5">
+                                </LinearGaugeMajorTicks>
+                                <LinearGaugeMinorTicks Color="white" Height="2">
+                                </LinearGaugeMinorTicks>
+                                <LinearGaugeLine Width="0"></LinearGaugeLine>
+                                <LinearGaugeAxisLabelStyle Offset="-55">
+                                </LinearGaugeAxisLabelStyle>
+                                <LinearGaugePointers>
+                                    <LinearGaugePointer Value="@currNote"
+                                                        Height="30"
+                                                        Type="Point.Bar"
+                                                        Color="#3C0">
+                                    </LinearGaugePointer>
+                                </LinearGaugePointers>
+                            </LinearGaugeAxis>
+                        </LinearGaugeAxes>
+                    </EjsLinearGauge>
+                </div>
+            }
         </div>
         <div>
             @if (!PrintFile)
@@ -741,7 +747,7 @@ else
                 else            //  go back requested amount (responses)
                     respOrd = iResp - respOrd;
 
-                if (respOrd < 0)  // lower bound check  
+                if (respOrd < 0)  // lower bound check
                     respOrd = 0;
                 bnh = Model.Notes.Find(p => p.NoteOrdinal == noteOrd);
 
@@ -774,7 +780,7 @@ else
             if (noteOrd < 1)
                 noteOrd = 1;
 
-            long cnt = Model.Notes.LongCount();  // get count of notes 
+            long cnt = Model.Notes.LongCount();  // get count of notes
 
             // upper bounds check
             if (noteOrd > cnt)
@@ -897,7 +903,7 @@ else
         myMark.NoteHeaderId = currentHeader.Id;
         myMark.NoteOrdinal = currentHeader.NoteOrdinal;
         myMark.MarkOrdinal = 1;         // sloppy for now - does not permit outputing in marked order
-        myMark.ResponseOrdinal = -1;    // also sloppy for now - 
+        myMark.ResponseOrdinal = -1;    // also sloppy for now -
                                         // we are marking the whole string rather than allowing selection
 
         // send to the server for storage
