@@ -27,8 +27,6 @@
 @using Syncfusion.EJ2.Blazor.Navigations
 
 @inject IJSRuntime jsRuntime
-@inject ILocalStorageService _localStorage
-@inject HttpClient Http
 
 <div class="menu-control">
     <div class="layout">
@@ -49,7 +47,7 @@
 
     .layout #container {
         color: #FFF;
-        background-color: #777;
+        background-color:#777;
     }
 
     .menubar-specs ul.e-menu {
@@ -58,10 +56,52 @@
         font-weight: 600;
     }
 
-        .menubar-specs ul.e-menu:hover {
-            color: #FFF;
-        }
+    .menubar-specs ul.e-menu:hover {
+        color: #FFF;
+    }
 </style>
+
+@*<p class="notesmenu">
+        <button type="button" class="link" @onclick="ListNoteFiles">List Note Files</button>
+        @if (@Model.myAccess.Write)
+        {
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="NewNote">New Base Note</button>
+        }
+        @if (@Model.myAccess.ReadAccess)
+        {
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="eXport">eXport</button>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="Html">Html</button>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="html">html</button>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="mail">mail</button>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="SearchFromIndex">Search</button>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="MarkMine">Mark Mine</button>
+        }
+        @if (@Model.isMarked)
+        {
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="OutputMarked">Output Marked</button>
+        }
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><button type="button" class="link" @onclick="ListHelp"><strong>Z for HELP.</strong></button>
+        @if (@Model.myAccess.EditAccess || Model.myAccess.ViewAccess)
+        {
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="link" @onclick="AccessControls">Access Controls</button></span>
+        }
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+    </p>*@
+
+
+@*<style>
+        .e-menu-wrapper {
+            background-color: white;
+            text-align: center;
+        }
+
+        .menu-control {
+            background-color: white;
+            color: white;
+            text-align: center;
+        }
+    </style>*@
 
 @code {
     [Parameter] public NoteDisplayIndexModel Model { get; set; }
@@ -98,7 +138,7 @@
             menuItems.Add(item);
             item = new { id = "MarkMine", text = "Mark my notes for output", parentId = "OutPutMenu" };
             menuItems.Add(item);
-            if (Model.isMarked)
+            //if (Model.isMarked)
             {
                 item = new { id = "OutputMarked", text = "Output marked notes", parentId = "OutPutMenu" };
                 menuItems.Add(item);
@@ -116,6 +156,7 @@
         }
 
         Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+
     }
 
     protected Timer timer { get; set; }
@@ -141,6 +182,7 @@
     }
 
 
+
     public async Task OnSelect(MenuEventArgs e)
     {
         if (e.Item.Id == "OutPutMenu")
@@ -148,14 +190,71 @@
 
         await OnClick.InvokeAsync(e.Item.Id);
 
-        if (e.Item.Id == "MarkMine")
-        {
-            int archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
-            Model = await Http.GetJsonAsync<NoteDisplayIndexModel>("api/NoteIndex/" + Model.noteFile.Id + "." + archiveID);
-
-            OnParametersSet();
-            StateHasChanged();
-        }
-
+        //OnParametersSet();
+        //StateHasChanged();
     }
+
+    //private void Test()
+    //{
+    //    OnClick.InvokeAsync("Test Me!");
+    //}
+
+    //private void NewNote()
+    //{
+    //    OnClick.InvokeAsync("NewBaseNote");
+
+    //}
+
+    //private void ListNoteFiles()
+    //{
+    //    OnClick.InvokeAsync("ListNoteFiles");
+
+    //}
+
+    //private void ListHelp()
+    //{
+    //    OnClick.InvokeAsync("ListHelp");
+
+    //}
+
+    //private void AccessControls()
+    //{
+    //    OnClick.InvokeAsync("AccessControls");
+    //}
+
+    //private void OutputMarked()
+    //{
+    //    OnClick.InvokeAsync("OutputMarked");
+    //}
+
+    //private void eXport()
+    //{
+    //    OnClick.InvokeAsync("eXport");
+    //}
+
+    //private void Html()
+    //{
+    //    OnClick.InvokeAsync("HtmlFromIndex");
+    //}
+
+    //private void html()
+    //{
+    //    OnClick.InvokeAsync("htmlFromIndex");
+    //}
+
+    //private void mail()
+    //{
+    //    OnClick.InvokeAsync("mailFromIndex");
+    //}
+
+    //private void SearchFromIndex()
+    //{
+    //    OnClick.InvokeAsync("SearchFromIndex");
+    //}
+
+    //private void MarkMine()
+    //{
+    //    OnClick.InvokeAsync("MarkMine");
+    //}
+
 }

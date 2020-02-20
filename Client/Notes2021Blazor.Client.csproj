@@ -16,7 +16,9 @@
 
   <ItemGroup>
     <Content Remove="Pages\Admin\SystemMessage.razor" />
+    <Content Remove="Pages\Notes\DisplayMenu - Copy.razor" />
     <Content Remove="Pages\Notes\Enter.razor" />
+    <Content Remove="Pages\Notes\ListMenu - Copy.razor" />
     <Content Remove="Pages\Notes\NewBaseNote.razor" />
     <Content Remove="Pages\Notes\NoteEditPanel.razor" />
     <Content Remove="Pages\Notes\NoteIndex - Copy.razor" />
