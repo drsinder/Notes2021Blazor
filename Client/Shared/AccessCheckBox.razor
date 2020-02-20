@@ -25,14 +25,7 @@
 @using Notes2021Blazor.Shared
 @inject HttpClient Http
 
-@if (Model.canEdit)
-{
-    <input type="checkbox" @bind="@Model.isChecked" @onclick="OnClick">
-}
-else
-{
-    <input type="checkbox" @bind="@Model.isChecked" disabled>
-}
+<EjsCheckBox @bind-Checked="@Model.isChecked" Disabled="!Model.canEdit" @onclick="OnClick"></EjsCheckBox>
 
 @functions
 {
@@ -44,37 +37,37 @@ else
         {
             case AccessX.ReadAccess:
                 {
-                    Model.Item.ReadAccess = !Model.isChecked;
+                    Model.Item.ReadAccess = Model.isChecked;
                     break;
                 }
             case AccessX.Respond:
                 {
-                    Model.Item.Respond = !Model.isChecked;
+                    Model.Item.Respond = Model.isChecked;
                     break;
                 }
             case AccessX.Write:
                 {
-                    Model.Item.Write = !Model.isChecked;
+                    Model.Item.Write = Model.isChecked;
                     break;
                 }
             case AccessX.DeleteEdit:
                 {
-                    Model.Item.DeleteEdit = !Model.isChecked;
+                    Model.Item.DeleteEdit = Model.isChecked;
                     break;
                 }
             case AccessX.SetTag:
                 {
-                    Model.Item.SetTag = !Model.isChecked;
+                    Model.Item.SetTag = Model.isChecked;
                     break;
                 }
             case AccessX.ViewAccess:
                 {
-                    Model.Item.ViewAccess = !Model.isChecked;
+                    Model.Item.ViewAccess = Model.isChecked;
                     break;
                 }
             case AccessX.EditAccess:
                 {
-                    Model.Item.EditAccess = !Model.isChecked;
+                    Model.Item.EditAccess = Model.isChecked;
                     break;
                 }
 

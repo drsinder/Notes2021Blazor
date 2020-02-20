@@ -40,7 +40,7 @@
             @Model.UserData.DisplayName<br />
             foreach (CheckedUser item in Model.RolesList)
             {
-                @item.theRole.Name <input type="checkbox" @bind="item.isMember" /> <span>&nbsp;&nbsp;&nbsp;</span>
+                <EjsCheckBox @bind-Checked="@item.isMember" Label="@item.theRole.Name"></EjsCheckBox><span>&nbsp;&nbsp;&nbsp;</span>
             }
             <br /><br />
             <button type="button" @onclick="@Submit">Submit</button> <button type="button" @onclick="@Done">Close</button>

@@ -28,7 +28,7 @@
 
 @inject HttpClient Http
 
-<input type="checkbox" @bind="@Model.isChecked" @onclick="OnClick">
+<EjsCheckBox @bind-Checked="@Model.isChecked" @onclick="OnClick"></EjsCheckBox>
 
 @code {
 
@@ -36,8 +36,6 @@
     [Parameter] public bool isChecked { get; set; }
 
     public SCheckModel Model { get; set; }
-
-    //protected Subscription sub { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -51,8 +49,6 @@
 
     public async Task OnClick()
     {
-        Model.isChecked = !Model.isChecked;
-
         if (Model.isChecked) // create item
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(Model), Encoding.UTF8, "application/json");

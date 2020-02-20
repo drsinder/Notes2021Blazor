@@ -51,8 +51,7 @@ else
                 </h5>
                 <p>Select your Time Zone:</p>
                 <select class="form-control medium-input" @bind="@myZid">
-                    <option value=""></option>
-                    @foreach (LocalModel item in MyList)
+                     @foreach (LocalModel item in MyList)
                     {
                         <option value="@item.Id">@item.Name</option>
                     }
@@ -60,19 +59,17 @@ else
                 <br />
                 <p>Starting Page Size for Pagable Lists:</p>
                 <select class="form-control short-input" @bind="@pageSize">
-                    @*<option value="12"></option>*@
                     @foreach (LocalModel2 item in MySizes)
                     {
                         <option value="@item.Psize">@item.Name</option>
                     }
                 </select>
                 <br />
-                <div>Use scrolling index rather than paged: <input type="checkbox" @bind="@UserData.Pref1" /> </div>
+                <EjsCheckBox @bind-Checked="@UserData.Pref1" Label="Use scrolling index rather than paged"></EjsCheckBox>
                 <br />
-                @*<div>Use alternate text editor: <input type="checkbox" @bind="@UserData.Pref2" /> </div>*@
+                <EjsCheckBox Disabled="true" @bind-Checked="@UserData.Pref2" Label="Use alternate text editor"></EjsCheckBox>
                 <br />
-                <div>Show Responses by default: <input type="checkbox" @bind="@UserData.Pref3" /> </div>
-
+                <EjsCheckBox @bind-Checked="@UserData.Pref3" Label="Show Responses by default"></EjsCheckBox>
                 <br />
                 <button type="button" @onclick="OnSubmit" class="btn btn-info btn-sm">Submit</button>
             </div>

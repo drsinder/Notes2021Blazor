@@ -60,9 +60,9 @@ else
                 <br />Shared Secret:<br />
                 <input type="text" @bind="@secret" class="long-input" />
                 <br />
-                Accept From: <input type="checkbox" @bind="@accept" />
+                <EjsCheckBox @bind-Checked="@accept" Label="Accept From"></EjsCheckBox>
                 <br />
-                Send to: <input type="checkbox" @bind="@send" />
+                <EjsCheckBox @bind-Checked="@send" Label="Send to"></EjsCheckBox>
                 <br /><br />
                 <button type="button" @onclick="Submit">Submit</button>
             </div>

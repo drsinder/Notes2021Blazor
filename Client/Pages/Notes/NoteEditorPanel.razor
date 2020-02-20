@@ -98,7 +98,7 @@
         Access Denied!
     </NotAuthorized>
 </AuthorizeView>
-<style>
+@*<style>
     .e-code-mirror::before {
         content: '\e345';
     }
@@ -115,7 +115,7 @@
     .sb-header {
         z-index: 100;
     }
-</style>
+</style>*@
 
 @code {
     [Parameter] public NoteDisplayIndexModel Model { get; set; }
@@ -188,11 +188,11 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await jsRuntime.InvokeAsync<object>("inittinymce", "");
+        //await jsRuntime.InvokeAsync<object>("inittinymce", "");
 
         if (firstRender)
         {
-            timer = new Timer(1000);
+            timer = new Timer(500);
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
         }
