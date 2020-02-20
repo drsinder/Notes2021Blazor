@@ -33,7 +33,7 @@
 <div class="menu-control">
     <div class="layout">
         <div id="container">
-            <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode" CssClass="menubar-specs">
+            <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode" CssClass="menubar-specs" >
                 <MenuEvents ItemSelected="OnSelect"></MenuEvents>
             </EjsMenu>
         </div>
@@ -132,14 +132,16 @@
 
     protected void TimerTick(Object source, ElapsedEventArgs e)
     {
-        timer.Enabled = false;
-        if (Width < 650)
-        {
-            HamburgerMode = true;
-            StateHasChanged();
-        }
+        timer.Interval = 1000;
+        CheckWidth();
     }
 
+    protected async Task CheckWidth()
+    {
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+        HamburgerMode = Width < 650;
+        StateHasChanged();
+    }
 
     public async Task OnSelect(MenuEventArgs e)
     {

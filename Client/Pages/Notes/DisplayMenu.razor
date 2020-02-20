@@ -132,12 +132,15 @@
 
     protected void TimerTick(Object source, ElapsedEventArgs e)
     {
-        timer.Enabled = false;
-        if (Width < 1150)
-        {
-            HamburgerMode = true;
-            StateHasChanged();
-        }
+        timer.Interval = 1000;
+        CheckWidth();
+    }
+
+    protected async Task CheckWidth()
+    {
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+        HamburgerMode = Width < 1150;
+        StateHasChanged();
     }
 
     public async Task OnSelect(MenuEventArgs e)
