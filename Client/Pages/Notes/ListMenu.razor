@@ -22,23 +22,46 @@
     **
     **--------------------------------------------------------------------------*@
 
+@using System.Timers
 @using Notes2021Blazor.Shared
 @using Syncfusion.EJ2.Blazor.Navigations
 
+@inject IJSRuntime jsRuntime
 
-    @*@if (true)
-    {
-        <div class="control-section">
-            <div class="menu-control">
-                <EjsMenu Items="@menuItems">
-                    <MenuEvents ItemSelected="OnSelect"></MenuEvents>
-                </EjsMenu>
-            </div>
+<div class="menu-control">
+    <div class="layout">
+        <div id="container">
+            <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode" CssClass="menubar-specs">
+                <MenuEvents ItemSelected="OnSelect"></MenuEvents>
+            </EjsMenu>
         </div>
+    </div>
+</div>
+
+<style>
+    .menu-control {
+        text-align: center;
+        color: #FFF;
+        background-color: #777;
     }
-    else*@
-   
-    <p class="notesmenu">
+
+    .layout #container {
+        color: #FFF;
+        background-color:#777;
+    }
+
+    .menubar-specs ul.e-menu {
+        color: #FFF;
+        background-color: #777;
+        font-weight: 600;
+    }
+
+    .menubar-specs ul.e-menu:hover {
+        color: #FFF;
+    }
+</style>
+
+@*<p class="notesmenu">
         <button type="button" class="link" @onclick="ListNoteFiles">List Note Files</button>
         @if (@Model.myAccess.Write)
         {
@@ -64,10 +87,10 @@
         }
         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-    </p>
-  
+    </p>*@
 
-    @*<style>
+
+@*<style>
         .e-menu-wrapper {
             background-color: white;
             text-align: center;
@@ -80,127 +103,158 @@
         }
     </style>*@
 
-    @code {
-        [Parameter] public NoteDisplayIndexModel Model { get; set; }
-        [Parameter] public EventCallback<string> OnClick { get; set; }
+@code {
+    [Parameter] public NoteDisplayIndexModel Model { get; set; }
+    [Parameter] public EventCallback<string> OnClick { get; set; }
 
-        //private List<object> menuItems { get; set; }
+    private List<object> menuItems { get; set; }
 
-        //protected override void OnParametersSet()
-        //{
-        //    menuItems = new List<object>();
+    private bool HamburgerMode { get; set; } = false;
 
-        //    object item = new { id = "ListNoteFiles", text = "List Note Files" };
-        //    menuItems.Add(item);
-        //    if (Model.myAccess.Write)
-        //    {
-        //        item = new { id = "NewBaseNote", text = "New Base Note" };
-        //        menuItems.Add(item);
-        //    }
-        //    if (Model.myAccess.ReadAccess)
-        //    {
-        //        item = new { id = "OutPutMenu", text = "Output" };
-        //        menuItems.Add(item);
-        //        item = new { id = "eXport", text = "eXport", parentId = "OutPutMenu" };
-        //        menuItems.Add(item);
-        //        item = new { id = "HtmlFromIndex", text = "Html (expandable)", parentId = "OutPutMenu" };
-        //        menuItems.Add(item);
-        //        item = new { id = "htmlFromIndex", text = "html (flat)", parentId = "OutPutMenu" };
-        //        menuItems.Add(item);
-        //        item = new { id = "mailFromIndex", text = "mail", parentId = "OutPutMenu" };
-        //        menuItems.Add(item);
-        //        item = new { id = "MarkMine", text = "Mark my notes for output", parentId = "OutPutMenu" };
-        //        menuItems.Add(item);
-        //        //if (Model.isMarked)
-        //        {
-        //            item = new { id = "OutputMarked", text = "Output marked notes", parentId = "OutPutMenu" };
-        //            menuItems.Add(item);
-        //        }
+    public int Width { get; set; }
 
-        //        item = new { id = "SearchFromIndex", text = "Search" };
-        //        menuItems.Add(item);
-        //        item = new { id = "ListHelp", text = "Z for HELP" };
-        //        menuItems.Add(item);
-        //        if (Model.myAccess.EditAccess || Model.myAccess.ViewAccess)
-        //        {
-        //            item = new { id = "AccessControls", text = "Access Controls" };
-        //            menuItems.Add(item);
-        //        }
-        //    }
-        //}
+    protected override async Task OnParametersSetAsync()
+    {
+        menuItems = new List<object>();
 
-        //public async Task OnSelect(MenuEventArgs e)
-        //{
-        //    if (e.Item.Id == "OutPutMenu")
-        //        return;
-
-        //    await OnClick.InvokeAsync(e.Item.Id);
-
-        //    OnParametersSet();
-        //    StateHasChanged();
-        //}
-
-        private void Test()
+        object item = new { id = "ListNoteFiles", text = "List Note Files" };
+        menuItems.Add(item);
+        if (Model.myAccess.Write)
         {
-            OnClick.InvokeAsync("Test Me!");
+            item = new { id = "NewBaseNote", text = "New Base Note" };
+            menuItems.Add(item);
+        }
+        if (Model.myAccess.ReadAccess)
+        {
+            item = new { id = "OutPutMenu", text = "Output" };
+            menuItems.Add(item);
+            item = new { id = "eXport", text = "eXport", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "HtmlFromIndex", text = "Html (expandable)", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "htmlFromIndex", text = "html (flat)", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "mailFromIndex", text = "mail", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "MarkMine", text = "Mark my notes for output", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            //if (Model.isMarked)
+            {
+                item = new { id = "OutputMarked", text = "Output marked notes", parentId = "OutPutMenu" };
+                menuItems.Add(item);
+            }
+
+            item = new { id = "SearchFromIndex", text = "Search" };
+            menuItems.Add(item);
+            item = new { id = "ListHelp", text = "Z for HELP" };
+            menuItems.Add(item);
+            if (Model.myAccess.EditAccess || Model.myAccess.ViewAccess)
+            {
+                item = new { id = "AccessControls", text = "Access Controls" };
+                menuItems.Add(item);
+            }
         }
 
-        private void NewNote()
-        {
-            OnClick.InvokeAsync("NewBaseNote");
-
-        }
-
-        private void ListNoteFiles()
-        {
-            OnClick.InvokeAsync("ListNoteFiles");
-
-        }
-
-        private void ListHelp()
-        {
-            OnClick.InvokeAsync("ListHelp");
-
-        }
-
-        private void AccessControls()
-        {
-            OnClick.InvokeAsync("AccessControls");
-        }
-
-        private void OutputMarked()
-        {
-            OnClick.InvokeAsync("OutputMarked");
-        }
-
-        private void eXport()
-        {
-            OnClick.InvokeAsync("eXport");
-        }
-
-        private void Html()
-        {
-            OnClick.InvokeAsync("HtmlFromIndex");
-        }
-
-        private void html()
-        {
-            OnClick.InvokeAsync("htmlFromIndex");
-        }
-
-        private void mail()
-        {
-            OnClick.InvokeAsync("mailFromIndex");
-        }
-
-        private void SearchFromIndex()
-        {
-            OnClick.InvokeAsync("SearchFromIndex");
-        }
-
-        private void MarkMine()
-        {
-            OnClick.InvokeAsync("MarkMine");
-        }
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
 
     }
+
+    protected Timer timer { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer = new Timer(100);
+            timer.Elapsed += TimerTick;
+            timer.Enabled = true;
+        }
+    }
+
+    protected void TimerTick(Object source, ElapsedEventArgs e)
+    {
+        timer.Enabled = false;
+        if (Width < 650)
+        {
+            HamburgerMode = true;
+            StateHasChanged();
+        }
+    }
+
+
+
+    public async Task OnSelect(MenuEventArgs e)
+    {
+        if (e.Item.Id == "OutPutMenu")
+            return;
+
+        await OnClick.InvokeAsync(e.Item.Id);
+
+        //OnParametersSet();
+        //StateHasChanged();
+    }
+
+    //private void Test()
+    //{
+    //    OnClick.InvokeAsync("Test Me!");
+    //}
+
+    //private void NewNote()
+    //{
+    //    OnClick.InvokeAsync("NewBaseNote");
+
+    //}
+
+    //private void ListNoteFiles()
+    //{
+    //    OnClick.InvokeAsync("ListNoteFiles");
+
+    //}
+
+    //private void ListHelp()
+    //{
+    //    OnClick.InvokeAsync("ListHelp");
+
+    //}
+
+    //private void AccessControls()
+    //{
+    //    OnClick.InvokeAsync("AccessControls");
+    //}
+
+    //private void OutputMarked()
+    //{
+    //    OnClick.InvokeAsync("OutputMarked");
+    //}
+
+    //private void eXport()
+    //{
+    //    OnClick.InvokeAsync("eXport");
+    //}
+
+    //private void Html()
+    //{
+    //    OnClick.InvokeAsync("HtmlFromIndex");
+    //}
+
+    //private void html()
+    //{
+    //    OnClick.InvokeAsync("htmlFromIndex");
+    //}
+
+    //private void mail()
+    //{
+    //    OnClick.InvokeAsync("mailFromIndex");
+    //}
+
+    //private void SearchFromIndex()
+    //{
+    //    OnClick.InvokeAsync("SearchFromIndex");
+    //}
+
+    //private void MarkMine()
+    //{
+    //    OnClick.InvokeAsync("MarkMine");
+    //}
+
+}

@@ -54,10 +54,10 @@ else if (editing)
 }
 else
 {
-    if (!PrintFile)
+    @*if (!PrintFile)
     {
         <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-    }
+    }*@
     <div>
         <div class="dialognote modal-body">
             <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
@@ -65,10 +65,13 @@ else
             <div>
                 @if (!PrintFile)
                 {
-                    @*if (currentHeader.ResponseOrdinal == 0 || !SubNotes)
+                    if (currentHeader.ResponseOrdinal == 0 || !SubNotes)
                     {
+
+                    }
+                    <div style="z-index:50;">
                         <DisplayMenu Model="@Model" OnClick="ClickHandler" />
-                    }*@
+                    </div>
                     <div class="noteheader">
                         <p>
                             <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>

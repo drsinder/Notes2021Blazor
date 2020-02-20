@@ -72,3 +72,7 @@ function saveAsFile(filename, bytesBase64) {
     link.click();
     document.body.removeChild(link);
 }
+
+function getWidth(x) {
+    return window.innerWidth;
+}

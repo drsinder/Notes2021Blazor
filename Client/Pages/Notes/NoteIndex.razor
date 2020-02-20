@@ -28,7 +28,9 @@
 
 @if (@Model.myAccess.ReadAccess)
 {
-    <ListMenu Model="@Model" OnClick="ClickHandler" />
+    <div style="z-index:50;">
+        <ListMenu Model="@Model" OnClick="ClickHandler" />
+    </div>
     <div class="col-lg-12 control-section dialoglist">
         <div class="content-wrapper">
             <div class="row">
