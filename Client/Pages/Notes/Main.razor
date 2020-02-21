@@ -613,6 +613,9 @@ else
                 await MainEntry();
                 //NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
                 break;
+            case "U":
+                Browse();
+                break;
 
             default:
                 break;
@@ -1195,6 +1198,14 @@ else
         Model.Notes = Model.AllNotes.Where(p => p.ResponseOrdinal == 0).OrderBy(p => p.NoteOrdinal).ToList();
 
         StateHasChanged();
+    }
+
+    private void Browse()
+    {
+        StopTimer();
+        var parameters = new ModalParameters();
+        Modal.OnClose += HideDialog;
+        Modal.Show<ImageDlg>("", parameters);
     }
 
     protected class LocalInput

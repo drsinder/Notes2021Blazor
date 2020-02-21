@@ -102,12 +102,7 @@ else
         {
             <div>
                 <div class="notebody" @onmousedown="StopTimer">
-                    <div id="notebody">
-                        @((MarkupString)currentContent.NoteBody)
-                    </div>
-                    @*<EjsContextMenu Target="#notebody" Items="@MenuItems">
-                            <ContextMenuEvents ItemSelected="@NewResponse"></ContextMenuEvents>
-                        </EjsContextMenu>*@
+                    @((MarkupString)currentContent.NoteBody)
                 </div>
             </div>
             @if (FocusTimer)
@@ -524,12 +519,6 @@ else
         }
     }
 
-    //private void ToggleExpand()
-    //{
-    //    Expandable = !Expandable;
-    //    //StateHasChanged();
-    //}
-
     private async Task NewResponse()
     {
         StopTimer();
@@ -565,17 +554,8 @@ else
         StartTimer();
         if (!modalResult.Cancelled)
         {
-            // new base note saved.  Now show it.
-
             NoteHeader newNote = (NoteHeader)modalResult.Data;
-
             OnClick.InvokeAsync("EnterAndShow:" + newNote.Id);
-
-            //NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
-        }
-        else
-        {
-            // nothing else to do
         }
     }
 
@@ -671,6 +651,9 @@ else
                 break;
             case "M":
                 await Markit();
+                break;
+            case "U":
+                Browse();
                 break;
 
             default:
@@ -1029,11 +1012,14 @@ else
         ShowMessage("Marked for Output");
     }
 
-    //private void Toggle()
-    //{
-    //    SubNotes = !SubNotes;
-    //    StateHasChanged();
-    //}
+    private void Browse()
+    {
+        StopTimer();
+        var parameters = new ModalParameters();
+        Modal.OnClose += HideDialog;
+        Modal.Show<ImageDlg>("", parameters);
+    }
+
 
     protected class LocalInput
     {
