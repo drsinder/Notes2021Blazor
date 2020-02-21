@@ -223,7 +223,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.2.0-preview1.20073.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="3.1.2" />
 	    <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.50" />
-    <PackageReference Include="Syncfusion.EJ2.WordEditor.Blazor" Version="17.4.0.50" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Notes2021Blazor.Shared.csproj" />
