@@ -521,14 +521,13 @@ else
 
     private async Task NewResponse()
     {
+        StopTimer();
         if (Model.UserData.Pref2)
         {
             newnoteFlag = true;
             StateHasChanged();
             return;
         }
-
-        StopTimer();
 
         var parameters = new ModalParameters();
         parameters.Add("Editing", false);
@@ -541,13 +540,13 @@ else
 
     private async Task EditNote()
     {
+        StopTimer();
         if (Model.UserData.Pref2)
         {
             editing = true;
             StateHasChanged();
             return;
         }
-        StopTimer();
 
         var parameters = new ModalParameters();
         parameters.Add("Editing", true);

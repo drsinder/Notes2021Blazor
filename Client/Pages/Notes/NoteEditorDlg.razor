@@ -74,6 +74,7 @@
                                     <div class="control-section">
                                         <EjsRichTextEditor @ref="@RteObj" @bind-Value="@tvm.MyNote" EditorMode="EditorMode.HTML" ShowCharCount="true" Height="500" Width="950" MaxLength="100000">
                                             <ChildContent>
+                                                <RichTextEditorPasteCleanupSettings Prompt="true"></RichTextEditorPasteCleanupSettings>
                                                 <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
                                             </ChildContent>
                                         </EjsRichTextEditor>
@@ -164,13 +165,14 @@
         Model = parameters.Get<NoteDisplayIndexModel>("Model");
         BaseNoteId = parameters.Get<long>("BaseNoteId");
 
+        AltEdit = Model.UserData.Pref6;
+
         if (parameters.Get<bool>("Editing"))
         {
+            AltEdit = false;
             NoteContent = parameters.Get<NoteContent>("NoteContent");
             EditHeader = parameters.Get<NoteHeader>("EditHeader");
         }
-
-        AltEdit = false;  // Model.UserData.Pref2;
 
         if (AltEdit)
         {

@@ -73,6 +73,7 @@
                                     <div class="control-section">
                                         <EjsRichTextEditor @ref="@RteObj" @bind-Value="@tvm.MyNote" EditorMode="EditorMode.HTML" ShowCharCount="true" MaxLength="100000">
                                             <ChildContent>
+                                                <RichTextEditorPasteCleanupSettings Prompt="true"></RichTextEditorPasteCleanupSettings>
                                                 <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
                                             </ChildContent>
                                         </EjsRichTextEditor>
@@ -153,7 +154,11 @@
 
     protected async override Task OnParametersSetAsync()
     {
-        AltEdit = false;  // Model.UserData.Pref2;
+        AltEdit = Model.UserData.Pref6;
+        if (NoteContent != null && EditHeader != null)
+        {
+            AltEdit = false;
+        }
 
         if (AltEdit)
         {
