@@ -25,6 +25,8 @@
 @using System.Timers
 @using Notes2021Blazor.Shared
 @using Syncfusion.EJ2.Blazor.Navigations
+@using Syncfusion.EJ2.Blazor.Popups
+
 
 @inject IJSRuntime jsRuntime
 @inject ILocalStorageService _localStorage
@@ -33,9 +35,23 @@
 <div class="menu-control">
     <div class="layout">
         <div id="container">
-            <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode">
-                <MenuEvents ItemSelected="OnSelect"></MenuEvents>
-            </EjsMenu>
+            <EjsTooltip ID="tip1" Target="#ListNoteFiles" OpenDelay="1000" Content="@Tip1">
+                <EjsTooltip ID="tip2" Target="#NewBaseNote" OpenDelay="1000" Content="@Tip2">
+                    <EjsTooltip ID="tip3" Target="#OutPutMenu" OpenDelay="1000" Content="@Tip3" Position="Position.TopLeft">
+                        <EjsTooltip ID="tip4" Target="#SearchFromIndex" OpenDelay="1000" Content="@Tip4">
+                            <EjsTooltip ID="tip5" Target="#ListHelp" OpenDelay="1000" Content="@Tip5">
+                                <EjsTooltip ID="tip6" Target="#AccessControls" OpenDelay="1000" Content="@Tip6">
+
+                                    <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode">
+                                        <MenuEvents ItemSelected="OnSelect"></MenuEvents>
+                                    </EjsMenu>
+
+                                </EjsTooltip>
+                            </EjsTooltip>
+                        </EjsTooltip>
+                    </EjsTooltip>
+                </EjsTooltip>
+            </EjsTooltip>
         </div>
     </div>
 </div>
@@ -46,27 +62,27 @@
         color: #FFF;
     }
 
-    .e-menu-wrapper ul .e-menu-item .e-caret {
-        color: #FFF;
-    }
+        .e-menu-wrapper ul .e-menu-item .e-caret {
+            color: #FFF;
+        }
 
-    .e-menu-wrapper ul .e-menu-item.e-focused {
-        color: #CCC;
-        outline: 0 solid #f8f9fa;
-        outline-offset: 0;
-        background-color: none;
-    }
+        .e-menu-wrapper ul .e-menu-item.e-focused {
+            color: #CCC;
+            outline: 0 solid #f8f9fa;
+            outline-offset: 0;
+            background-color: none;
+        }
 
-    .e-menu-wrapper ul .e-menu-item.e-focused .e-caret {
-        color: #CCC;
-    }
+            .e-menu-wrapper ul .e-menu-item.e-focused .e-caret {
+                color: #CCC;
+            }
 
-    .e-menu-wrapper ul .e-menu-item.e-selected {
-        color: #CCC;
-        outline: 0 solid #f2f4f6;
-        outline-offset: 0;
-        background-color: none;
-    }
+        .e-menu-wrapper ul .e-menu-item.e-selected {
+            color: #CCC;
+            outline: 0 solid #f2f4f6;
+            outline-offset: 0;
+            background-color: none;
+        }
 
     .e-menu-wrapper .e-ul {
         background-color: #555;
@@ -94,6 +110,14 @@
     private bool HamburgerMode { get; set; } = false;
 
     public int Width { get; set; }
+
+    object Tip1 = "Go to the list of available notefiles (L)";
+    object Tip2 = "Write a New base note (N)";
+    object Tip3 = "<p>Export the file as text (X)</p><p>Export the file as expandable Html (H)</p><p>Export the file as flat Html (h)</p><p>mail the file (m)</p><p>Mark note strings you have written in for output</p><p>Output marked notes (O)</p>";
+    object Tip4 = "Search the file for something (S)";
+    object Tip5 = "Show the HELP dialog (Z)";
+    object Tip6 = "View or Edit the Access Controls (A)";
+
 
     protected override async Task OnParametersSetAsync()
     {
