@@ -240,6 +240,11 @@ else
             mailOrd = int.Parse(newMessage.Substring(5, newMessage.Length - 5));
             mail1();
         }
+        else if (newMessage.StartsWith("EnterAndShow:"))
+        {
+            long showme = long.Parse(newMessage.Substring(13, newMessage.Length - 13));
+            await EnterAndShow(showme);
+        }
         else
         {
             switch (newMessage)
@@ -299,7 +304,7 @@ else
 
         scroller = string.Empty;
         seqIndex = -1;
-        if (NavigationManager.Uri.Contains("display/"))  // display a note from the main index
+        if (NavigationManager.Uri.Contains("display/"))  // display a base note from the main index
         {
             headerId = long.Parse(fileId);
             currentHeader = Model.Notes.Find(p => p.Id == headerId);
@@ -309,90 +314,11 @@ else
         }
         if (NavigationManager.Uri.Contains("main/"))     // show the main index
         {
-            Id = int.Parse(fileId);
-            archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
-
-            mode = 0;  // index mode
-
-            myInput = new LocalInput();
-            myInput.isAutoFocus = true;
-
-            try
-            {
-                Model = await Http.GetJsonAsync<NoteDisplayIndexModel>("api/NoteIndex/" + Id + "." + archiveID);
-                Model.Notes = Model.AllNotes.Where(p => p.ResponseOrdinal == 0).OrderBy(p => p.NoteOrdinal).ToList();
-            }
-            catch (Exception ex)
-            {
-                Model = new NoteDisplayIndexModel { message = ex.Message };
-            }
-
-            if (Model == null)
-            {
-                message = "Model is null";
-                return;
-            }
-
-            if (Model.UserData == null)
-            {
-                message = "UserData is null";
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(Model.message))
-                message = Model.message;
-
-            if (Model.Notes.Count > 0)
-                currentHeader = Model.Notes[0];
-            else
-                currentHeader = new NoteHeader { NoteOrdinal = 1 };
-
-            message = null;
-
-            basenoteCount = Model.Notes.Count;
+            await MainEntry();
         }
         if (NavigationManager.Uri.Contains("enterandshow/")) // load the index data and then display a note
         {
-            // fileId is really noteId so use it to get base note header
-
-            long myNoteId = long.Parse(fileId);
-
-            NoteHeader myHeader = await Http.GetJsonAsync<NoteHeader>("api/EnterAndDisplay/" + myNoteId);
-            Id = myHeader.NoteFileId;  // we now know the file.  So load it up
-
-            archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
-
-            myInput = new LocalInput();
-            myInput.isAutoFocus = true;
-
-            try
-            {
-                Model = await Http.GetJsonAsync<NoteDisplayIndexModel>("api/NoteIndex/" + Id + "." + archiveID);
-                Model.Notes = Model.AllNotes.Where(p => p.ResponseOrdinal == 0).OrderBy(p => p.NoteOrdinal).ToList();
-            }
-            catch (Exception ex)
-            {
-                Model = new NoteDisplayIndexModel { message = ex.Message };
-                message = ex.Message;
-                return;
-            }
-
-            if (Model == null)
-            {
-                message = "Model is null";
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(Model.message))
-                message = Model.message;
-
-            basenoteCount = Model.Notes.Count;
-
-            currentHeader = myHeader;
-
-            message = null;
-            newnoteFlag = false;
-            mode = myNoteId;
+            await EnterAndShow(0);
         }
         if (NavigationManager.Uri.Contains("sequence"))
         {
@@ -406,6 +332,99 @@ else
 
             await StartFileSequence();
         }
+    }
+
+    protected async Task EnterAndShow(long it)
+    {
+        // fileId is really noteId so use it to get base note header
+
+        long myNoteId = it;
+        if (myNoteId == 0)
+            myNoteId = long.Parse(fileId);
+
+        NoteHeader myHeader = await Http.GetJsonAsync<NoteHeader>("api/EnterAndDisplay/" + myNoteId);
+        Id = myHeader.NoteFileId;  // we now know the file.  So load it up
+
+        archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
+
+        myInput = new LocalInput();
+        myInput.isAutoFocus = true;
+
+        try
+        {
+            Model = await Http.GetJsonAsync<NoteDisplayIndexModel>("api/NoteIndex/" + Id + "." + archiveID);
+            Model.Notes = Model.AllNotes.Where(p => p.ResponseOrdinal == 0).OrderBy(p => p.NoteOrdinal).ToList();
+        }
+        catch (Exception ex)
+        {
+            Model = new NoteDisplayIndexModel { message = ex.Message };
+            message = ex.Message;
+            return;
+        }
+
+        if (Model == null)
+        {
+            message = "Model is null";
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(Model.message))
+            message = Model.message;
+
+        basenoteCount = Model.Notes.Count;
+
+        currentHeader = myHeader;
+
+        message = null;
+        newnoteFlag = false;
+        mode = myNoteId;
+        StateHasChanged();
+    }
+
+    protected async Task MainEntry()
+    {
+        Id = int.Parse(fileId);
+        archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
+
+        mode = 0;  // index mode
+
+        myInput = new LocalInput();
+        myInput.isAutoFocus = true;
+
+        try
+        {
+            Model = await Http.GetJsonAsync<NoteDisplayIndexModel>("api/NoteIndex/" + Id + "." + archiveID);
+            Model.Notes = Model.AllNotes.Where(p => p.ResponseOrdinal == 0).OrderBy(p => p.NoteOrdinal).ToList();
+        }
+        catch (Exception ex)
+        {
+            Model = new NoteDisplayIndexModel { message = ex.Message };
+        }
+
+        if (Model == null)
+        {
+            message = "Model is null";
+            return;
+        }
+
+        if (Model.UserData == null)
+        {
+            message = "UserData is null";
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(Model.message))
+            message = Model.message;
+
+        if (Model.Notes.Count > 0)
+            currentHeader = Model.Notes[0];
+        else
+            currentHeader = new NoteHeader { NoteOrdinal = 1 };
+
+        message = null;
+
+        basenoteCount = Model.Notes.Count;
+
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -591,7 +610,8 @@ else
                 PrintFile();
                 break;
             case "R":
-                NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
+                await MainEntry();
+                //NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
                 break;
 
             default:
@@ -623,7 +643,8 @@ else
             // new base note saved.  Now show it.
 
             NoteHeader newNote = (NoteHeader)modalResult.Data;
-            NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
+            EnterAndShow(newNote.Id);
+            //NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
         }
         else
         {

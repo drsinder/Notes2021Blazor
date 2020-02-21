@@ -51,8 +51,8 @@ else
     @*@if (editing)
     {
     <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId EditHeader="@currentHeader" NoteContent="@currentContent" OnClick="ClickHandler" />
-    }*@
-    @*else if (newnoteFlag)
+    }
+    else if (newnoteFlag)
     {
     <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId OnClick="ClickHandler" />
     }*@
@@ -541,7 +541,6 @@ else
         parameters.Add("BaseNoteId", bnid);
         Modal.OnClose += HideEditDialog;
         Modal.Show<NoteEditorDlg>("", parameters);
-
     }
 
     private async Task EditNote()
@@ -569,7 +568,10 @@ else
             // new base note saved.  Now show it.
 
             NoteHeader newNote = (NoteHeader)modalResult.Data;
-            NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
+
+            OnClick.InvokeAsync("EnterAndShow:" + newNote.Id);
+
+            //NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
         }
         else
         {
