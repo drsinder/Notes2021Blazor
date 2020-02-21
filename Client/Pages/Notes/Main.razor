@@ -36,7 +36,7 @@
     ** /notes/sequence starts sequencing a file (tracking recent notes)
     **
     ** We can operate in three modes depending on the value of *mode*:
-    **  -1 = show nothing
+    **  -1 = show nothing - sequencing done
     **  0 = index mode
     **  > 0 show that noteID
     ** Also *newnoteFlag* = true starts a new note in the editor: NoteEditorPanel
@@ -83,11 +83,12 @@ else
 {
     <AuthorizeView Roles="User">
         <Authorized>
-            @if (newnoteFlag)
+            @*@if (newnoteFlag)
             {
                 <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
             }
-            else if (mode == -1)
+            else*@ 
+            @if (mode == -1)
             {
 
             }
@@ -245,13 +246,12 @@ else
             {
                 case "ListHelp": ShowHelp(); break;
                 case "NewBaseNote":
-                    newnoteFlag = true;
-                    this.StateHasChanged();
+                    NewBaseNote();
+                    //newnoteFlag = true;
+                    //this.StateHasChanged();
                     break;
                 case "CancelEdit":
-                    newnoteFlag = false;
-                    this.StateHasChanged();
-                    NavigationManager.NavigateTo((NavigationManager.Uri), true);
+                    Done();
                     break;
                 case "AccessControls": EditAccess(); break;
                 case "ListNoteFiles": ListFiles(); break;
@@ -547,8 +547,9 @@ else
             case "N":
                 if (Model.myAccess.Write)
                 {
-                    newnoteFlag = true;
-                    this.StateHasChanged();
+                    NewBaseNote();
+                    //newnoteFlag = true;
+                    //this.StateHasChanged();
                 }
                 break;
             case "A":
@@ -597,6 +598,37 @@ else
                 break;
         }
 
+    }
+
+    void NewBaseNote()
+    {
+        StopTimer();
+
+        var parameters = new ModalParameters();
+        parameters.Add("Editing", false);
+        parameters.Add("Model", Model);
+        long bnid = 0;
+        parameters.Add("BaseNoteId", bnid);
+        Modal.OnClose += HideEditDialog;
+        Modal.Show<NoteEditorDlg>("", parameters);
+    }
+
+    void HideEditDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideEditDialog;
+        newnoteFlag = false;
+        StartTimer();
+        if (!modalResult.Cancelled)
+        {
+            // new base note saved.  Now show it.
+
+            NoteHeader newNote = (NoteHeader)modalResult.Data;
+            NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
+        }
+        else
+        {
+            // nothing else to do
+        }
     }
 
     private void TextHasChanged(string typedInput)

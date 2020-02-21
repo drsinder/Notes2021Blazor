@@ -45,17 +45,17 @@
 {
     <p class="center"><em>Loading...</em></p>
 }
-else if (newnoteFlag)
-{
-    <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId OnClick="ClickHandler" />
-}
-else if (editing)
-{
-    <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId EditHeader="@currentHeader" NoteContent="@currentContent" OnClick="ClickHandler" />
-}
 else
 {
 <div>
+    @*@if (editing)
+    {
+    <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId EditHeader="@currentHeader" NoteContent="@currentContent" OnClick="ClickHandler" />
+    }*@
+    @*else if (newnoteFlag)
+    {
+    <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId OnClick="ClickHandler" />
+    }*@
     <div class="dialognote modal-body">
         <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
         <hr id="premenu" />
@@ -490,12 +490,12 @@ else
             case "NextNote": await TextHasChanged(""); break;
             case "PreviousNote": await PreviousNote(); break;
             case "NewResponse":
-                newnoteFlag = true;
-                this.StateHasChanged();
+                await NewResponse();
                 break;
             case "Edit":
-                editing = true;
-                this.StateHasChanged();
+                await EditNote();
+                //editing = true;
+                //this.StateHasChanged();
                 break;
             case "Delete": DeleteNote(); break;
             case "Forward": Forward(); break;
@@ -513,6 +513,10 @@ else
             case "StopTimer":
                 StopTimer();
                 break;
+            case "CancelEdit":
+                newnoteFlag = editing = false;
+                StateHasChanged();
+                break;
 
             default:
                 await OnClick.InvokeAsync(newMessage);
@@ -528,11 +532,50 @@ else
 
     private async Task NewResponse()
     {
-        newnoteFlag = true;
-        this.StateHasChanged();
-        await OnClick.InvokeAsync("NewResponse");
+        StopTimer();
+
+        var parameters = new ModalParameters();
+        parameters.Add("Editing", false);
+        parameters.Add("Model", Model);
+        long bnid = currentHeader.BaseNoteId;
+        parameters.Add("BaseNoteId", bnid);
+        Modal.OnClose += HideEditDialog;
+        Modal.Show<NoteEditorDlg>("", parameters);
+
     }
 
+    private async Task EditNote()
+    {
+        StopTimer();
+
+        var parameters = new ModalParameters();
+        parameters.Add("Editing", true);
+        parameters.Add("Model", Model);
+        long bnid = currentHeader.BaseNoteId;
+        parameters.Add("BaseNoteId", bnid);
+        parameters.Add("EditHeader", currentHeader);
+        parameters.Add("NoteContent", currentContent);
+        Modal.OnClose += HideEditDialog;
+        Modal.Show<NoteEditorDlg>("", parameters);
+
+    }
+
+    void HideEditDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideEditDialog;
+        StartTimer();
+        if (!modalResult.Cancelled)
+        {
+            // new base note saved.  Now show it.
+
+            NoteHeader newNote = (NoteHeader)modalResult.Data;
+            NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
+        }
+        else
+        {
+            // nothing else to do
+        }
+    }
 
     protected void DeleteNote()
     {
@@ -556,8 +599,9 @@ else
             case "Z": ShowHelp(); break;
             case "E":
                 if (@Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
-                    editing = true;
-                StateHasChanged();
+                    await EditNote();
+                //    editing = true;
+                //StateHasChanged();
                 break;
             case "D":
                 if (@Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
@@ -576,8 +620,7 @@ else
                 await PreviousBaseNote();
                 break;
             case "N":
-                newnoteFlag = true; // write a new note
-                this.StateHasChanged();
+                await NewResponse();
                 break;
             case "L":
             case "I":

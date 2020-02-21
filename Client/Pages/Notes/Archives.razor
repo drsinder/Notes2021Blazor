@@ -32,7 +32,7 @@
         <h3>@noteFile.NoteFileName - @noteFile.NoteFileTitle</h3>
         <p>0 is the active file.  <br />1 is the oldest archive. <br />@noteFile.NumberArchives is the most recent archive</p>
         <p>Type the number of the one you want to view:</p>
-        <EjsNumericTextBox TValue="int" Min="0" Max="@numArchives" Step=1 Format="##" @bind-Value="@myId"></EjsNumericTextBox>
+        <EjsNumericTextBox TValue="int" Min="@zero" Max="@numArchives" Step=1 Format="##" @bind-Value="@myId"></EjsNumericTextBox>
         <button type="button" @onclick="Submit" class="btn btn-success btn-sm">Submit</button>
         <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
     </div>
@@ -46,7 +46,7 @@
     public int myId { get; set; }
     public LocalInput locals { get; set; }
 
-
+    public int zero { get; set; } = 0;
     public int numArchives { get; set; }
 
     protected override void OnParametersSet()
@@ -60,6 +60,8 @@
 
     protected void Submit()
     {
+        if (myId < 0)
+            myId = 0;
         _localStorage.SetItemAsync("ArchiveId", myId);
         ModalService.Close(ModalResult.Ok<string>("Ok"));
     }
