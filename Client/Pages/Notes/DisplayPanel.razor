@@ -164,7 +164,6 @@ else
             @if (currentHeader.ResponseCount > 0)
             {
                 <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
-                @*<button @onclick="Toggle" class="btn btn-info btn-sm">Toggle @currentHeader.ResponseCount Reponses</button>*@
                 <span>Show @currentHeader.ResponseCount Reponses <EjsSwitch @bind-Checked="@SubNotes"></EjsSwitch></span>
                 if (SubNotes)
                 {

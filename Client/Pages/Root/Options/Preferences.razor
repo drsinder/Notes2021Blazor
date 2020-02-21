@@ -65,15 +65,15 @@ else
                     }
                 </select>
                 <br />
-                <EjsCheckBox @bind-Checked="@UserData.Pref1" Label="Use scrolling index rather than paged"></EjsCheckBox>
+                <EjsSwitch @bind-Checked="@UserData.Pref1"></EjsSwitch> Use scrolling index rather than paged
                 <br />
-                <EjsCheckBox Disabled="true" @bind-Checked="@UserData.Pref2" Label="Use alternate text editor"></EjsCheckBox>
+                <EjsSwitch @bind-Checked="@UserData.Pref2" Disabled="true"></EjsSwitch> Use alternate text editor
                 <br />
-                <EjsCheckBox @bind-Checked="@UserData.Pref3" Label="Show Responses by default"></EjsCheckBox>
+                <EjsSwitch @bind-Checked="@UserData.Pref3"></EjsSwitch> Show Responses by default
                 <br />
-                <EjsCheckBox @bind-Checked="@UserData.Pref5" Label="Show Expandable Responses"></EjsCheckBox>
+                <EjsSwitch @bind-Checked="@UserData.Pref5"></EjsSwitch> Show Expandable Responses
                 <br />
-                <EjsCheckBox @bind-Checked="@UserData.Pref4" Label="Show Multiple Expandable Responses"></EjsCheckBox>
+                <EjsSwitch @bind-Checked="@UserData.Pref4"></EjsSwitch> Show Multiple Expandable Responses
                 <br />
 
                 <button type="button" @onclick="OnSubmit" class="btn btn-info btn-sm">Submit</button>
