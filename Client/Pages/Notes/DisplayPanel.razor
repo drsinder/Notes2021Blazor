@@ -34,6 +34,7 @@
 @using System.Timers
 @using System.Text
 @using Syncfusion.EJ2.Blazor.LinearGauge
+@using Syncfusion.EJ2.Blazor.Navigations
 
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
@@ -101,7 +102,12 @@ else
             {
                 <div>
                     <div class="notebody" @onmousedown="StopTimer">
-                        @((MarkupString)currentContent.NoteBody)
+                        <div id="notebody">
+                            @((MarkupString)currentContent.NoteBody)
+                        </div>
+                        @*<EjsContextMenu Target="#notebody" Items="@MenuItems">
+                                <ContextMenuEvents ItemSelected="@NewResponse"></ContextMenuEvents>
+                            </EjsContextMenu>*@
                     </div>
                 </div>
                 @if (FocusTimer)
@@ -123,7 +129,7 @@ else
             {
                 <div class="control-section keep-center">
                     <h4>Progress: @sliderValueText</h4>
-                    <EjsLinearGauge Orientation="Orientation.Horizontal" Height="50px">
+                    <EjsLinearGauge Orientation="Syncfusion.EJ2.Blazor.LinearGauge.Orientation.Horizontal" Height="50px">
                         <LinearGaugeContainer Width="30"
                                               Offset="0"
                                               BackgroundColor="#CCC">
@@ -159,23 +165,58 @@ else
                 {
                     <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
                     <button @onclick="Toggle" class="btn btn-info btn-sm">Toggle @currentHeader.ResponseCount Reponses</button>
+                    <button @onclick="ToggleExpand" class="btn btn-info btn-sm">Toggle Expandable Responses</button>
                 }
             }
         </div>
-
     </div>
 
     if (currentHeader.ResponseCount > 0 && SubNotes && !PrintFile)
     {
         List<NoteHeader> responses = Model.AllNotes.Where(p => p.NoteOrdinal == currentHeader.NoteOrdinal && p.ResponseOrdinal != 0).ToList();
-        foreach (NoteHeader response in responses)
-        {
-            <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@ClickHandler"
-                          isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
-        }
 
+        if (Expandable)
+        {
+            ExpandMode exp = ExpandMode.Single;
+            if (Model.UserData.Pref4)
+                exp = ExpandMode.Multiple;
+
+            <EjsAccordion DataSource="responses" ModelType="@typeof(NoteHeader)" ExpandMode="exp">
+                <AccordionTemplates>
+                    <HeaderTemplate>
+                        <div>
+                            Response @((context as NoteHeader).ResponseOrdinal)  -
+                            @((context as NoteHeader).AuthorName) - @((context as NoteHeader).NoteSubject)
+                        </div>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        @{
+                            NoteHeader header = context as NoteHeader;
+                            <div>
+                                <DisplayPanel Model="@Model" currentHeader="@header" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@ClickHandler"
+                                              isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
+                            </div>
+                        }
+                    </ItemTemplate>
+                </AccordionTemplates>
+            </EjsAccordion>
+        }
+        else
+        {
+            foreach (NoteHeader response in responses)
+            {
+                <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@ClickHandler"
+                              isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
+            }
+        }
     }
 }
+                       
+@*<style>
+        .e-copy::before {
+            content: '\e280';
+        }
+    </style>*@
 
 @functions
     {
@@ -217,8 +258,16 @@ else
 
     private string sliderValueText { get; set; }
 
+    private bool Expandable { get; set; }
+
+    //public List<MenuItem> MenuItems = new List<MenuItem>
+    //{
+    //    new MenuItem { Text="New Response" }
+    //};
+
     protected async override Task OnParametersSetAsync()
     {
+        Expandable = Model.UserData.Pref5;
         Model.myHeader = currentHeader;
         myInput = new LocalInput();
         seqBaseIndx = 0;
@@ -462,6 +511,20 @@ else
                 break;
         }
     }
+
+    private void ToggleExpand()
+    {
+        Expandable = !Expandable;
+        //StateHasChanged();
+    }
+
+    private async Task NewResponse()
+    {
+        newnoteFlag = true;
+        this.StateHasChanged();
+        await OnClick.InvokeAsync("NewResponse");
+    }
+
 
     protected void DeleteNote()
     {

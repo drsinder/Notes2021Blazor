@@ -51,7 +51,7 @@ else
                 </h5>
                 <p>Select your Time Zone:</p>
                 <select class="form-control medium-input" @bind="@myZid">
-                     @foreach (LocalModel item in MyList)
+                    @foreach (LocalModel item in MyList)
                     {
                         <option value="@item.Id">@item.Name</option>
                     }
@@ -71,6 +71,11 @@ else
                 <br />
                 <EjsCheckBox @bind-Checked="@UserData.Pref3" Label="Show Responses by default"></EjsCheckBox>
                 <br />
+                <EjsCheckBox @bind-Checked="@UserData.Pref5" Label="Show Expandable Responses"></EjsCheckBox>
+                <br />
+                <EjsCheckBox @bind-Checked="@UserData.Pref4" Label="Show Multiple Expandable Responses"></EjsCheckBox>
+                <br />
+
                 <button type="button" @onclick="OnSubmit" class="btn btn-info btn-sm">Submit</button>
             </div>
         </Authorized>
