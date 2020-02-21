@@ -589,6 +589,10 @@ else
             case "P":
                 PrintFile();
                 break;
+            case "R":
+                NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
+                break;
+
 
             default:
                 //var parameters = new ModalParameters();
