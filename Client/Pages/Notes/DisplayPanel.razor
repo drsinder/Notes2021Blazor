@@ -48,14 +48,14 @@
 else
 {
 <div>
-    @*@if (editing)
+    @if (editing)
     {
     <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId EditHeader="@currentHeader" NoteContent="@currentContent" OnClick="ClickHandler" />
     }
     else if (newnoteFlag)
     {
     <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId OnClick="ClickHandler" />
-    }*@
+    }
     <div class="dialognote modal-body">
         <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
         <hr id="premenu" />
@@ -521,6 +521,13 @@ else
 
     private async Task NewResponse()
     {
+        if (Model.UserData.Pref2)
+        {
+            newnoteFlag = true;
+            StateHasChanged();
+            return;
+        }
+
         StopTimer();
 
         var parameters = new ModalParameters();
@@ -534,6 +541,12 @@ else
 
     private async Task EditNote()
     {
+        if (Model.UserData.Pref2)
+        {
+            editing = true;
+            StateHasChanged();
+            return;
+        }
         StopTimer();
 
         var parameters = new ModalParameters();
