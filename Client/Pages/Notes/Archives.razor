@@ -26,16 +26,37 @@
 @using Blazored.LocalStorage
 @inject IModalService ModalService
 @inject ILocalStorageService _localStorage
+@inject HttpClient Http
 
+@if (AList == null)
+{ }
+else
+{
     <div class="dialogs modal-body">
         <h3>Archives for:</h3>
         <h3>@noteFile.NoteFileName - @noteFile.NoteFileTitle</h3>
-        <p>0 is the active file.  <br />1 is the oldest archive. <br />@noteFile.NumberArchives is the most recent archive</p>
-        <p>Type the number of the one you want to view:</p>
-        <EjsNumericTextBox TValue="int" Min="@zero" Max="@numArchives" Step=1 Format="##" @bind-Value="@myId"></EjsNumericTextBox>
-        <button type="button" @onclick="Submit" class="btn btn-success btn-sm">Submit</button>
-        <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
+
+        <div>
+            <div class="control-section">
+                <div class="radio-control">
+                    <h5 class="row" style="padding-left:20px;">Select a file:</h5>
+                    @foreach (CList item in checkArchive)
+                    {
+                        string txt = "Archive: " + @item.arcnum.ToString();
+                        <div class="row" style="padding-left:20px;">
+                            <EjsRadioButton Label="@txt" Name="archive" Value="@item.arcnum.ToString()" @bind-Checked="@item.ischecked"></EjsRadioButton>
+                        </div>
+                    }
+
+                </div>
+
+                <p>0 is the active file.  <br />1 is the oldest archive. <br />@noteFile.NumberArchives is the most recent archive</p>
+                <button type="button" @onclick="Submit" class="btn btn-success btn-sm">Submit</button>
+                <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
+            </div>
+        </div>
     </div>
+}
 
 @code{
 
@@ -45,21 +66,44 @@
     public NoteFile noteFile { get; set; }
     public int myId { get; set; }
     public LocalInput locals { get; set; }
+    public List<NoteHeader> AList { get; set; }
 
     public int zero { get; set; } = 0;
     public int numArchives { get; set; }
 
-    protected override void OnParametersSet()
+    public class CList
+    {
+        public bool ischecked { get; set; }
+        public int arcnum { get; set; }
+        public DateTime CreateDate { get; set; }
+    }
+
+    public List<CList> checkArchive = new List<CList>();
+
+    protected override async Task OnParametersSetAsync()
     {
         locals = new LocalInput();
         noteFile = Parameters.Get<NoteFile>("NoteFile");
-        myId = 0;
+        //myId = 0;
         numArchives = noteFile.NumberArchives;
+
+        AList = await Http.GetJsonAsync<List<NoteHeader>>("api/Archive/" + noteFile.Id);
+        foreach (NoteHeader item in AList)
+        {
+            checkArchive.Add(new CList { arcnum = item.ArchiveId, ischecked = false, CreateDate = item.CreateDate });
+        }
+
 
     }
 
     protected void Submit()
     {
+        CList item = checkArchive.SingleOrDefault(p => p.ischecked);
+        if (item == null)
+            return;
+
+        myId = item.arcnum;
+
         if (myId < 0)
             myId = 0;
         _localStorage.SetItemAsync("ArchiveId", myId);

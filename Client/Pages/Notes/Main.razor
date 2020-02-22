@@ -762,6 +762,8 @@ else
     {
         Modal.OnClose -= HideDialogArchive;
         StartTimer();
+        if (modalResult.Cancelled)
+            return;
         NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
     }
 
