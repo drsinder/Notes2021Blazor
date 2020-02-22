@@ -34,6 +34,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Notes2021Blazor.Server.Controllers;
 using Notes2021Blazor.Shared;
+using Notes2021Blazor.Shared.Manager;
 
 namespace Notes2021Blazor.Server.Services
 {

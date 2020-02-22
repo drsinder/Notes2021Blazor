@@ -32,8 +32,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Notes2021Blazor.Shared;
 
-namespace Notes2021Blazor.Shared
+namespace Notes2021Blazor.Shared.Manager
 {
     public static class NoteDataManager
     {

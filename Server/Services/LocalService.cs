@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Notes2021Blazor.Shared.Manager;
 
 namespace Notes2021Blazor.Server.Services
 {

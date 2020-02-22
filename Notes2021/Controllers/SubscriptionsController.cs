@@ -30,7 +30,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Notes2021.Manager;
 using Notes2021Blazor.Shared;
-
+using Notes2021Blazor.Shared.Manager;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

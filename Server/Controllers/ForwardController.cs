@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Notes2021Blazor.Server.Services;
 using Notes2021Blazor.Shared;
+using Notes2021Blazor.Shared.Manager;
 using System.Threading.Tasks;
 
 namespace Notes2021Blazor.Server.Controllers

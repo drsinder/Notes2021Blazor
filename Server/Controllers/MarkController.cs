@@ -28,6 +28,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Notes2021Blazor.Shared;
+using Notes2021Blazor.Shared.Manager;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

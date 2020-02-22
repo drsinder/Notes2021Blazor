@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Notes2021Blazor.Shared;
+using Notes2021Blazor.Shared.Manager;
 
 namespace Notes2021Blazor.Server.Controllers
 {

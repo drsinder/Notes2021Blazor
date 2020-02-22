@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Notes2021.Manager;
 using Notes2021Blazor.Shared;
-
+using Notes2021Blazor.Shared.Manager;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

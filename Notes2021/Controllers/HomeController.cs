@@ -34,6 +34,7 @@ using Microsoft.Extensions.Logging;
 using Notes2021.Manager;
 using Notes2021.Models;
 using Notes2021Blazor.Shared;
+using Notes2021Blazor.Shared.Manager;
 using PusherServer;
 using System;
 using System.Collections.Generic;

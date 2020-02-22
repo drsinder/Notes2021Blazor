@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Notes2021Blazor.Shared;
-
+using Notes2021Blazor.Shared.Manager;
 using System;
 using System.Threading.Tasks;
 
