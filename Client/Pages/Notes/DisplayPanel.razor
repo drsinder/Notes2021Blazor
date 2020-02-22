@@ -67,7 +67,7 @@ else
 
                 }
                 <div style="z-index:50;">
-                    <DisplayMenu Model="@Model" OnClick="ClickHandler" />
+                    <DisplayMenu Model="@Model" OnClick="ClickHandler" ToolTips="@ToolTips" />
                 </div>
                 <div class="noteheader">
                     <p>
@@ -163,8 +163,10 @@ else
                 if (SubNotes)
                 {
                     <span> | Expandable Responses <EjsSwitch @bind-Checked="@Expandable"></EjsSwitch></span>
-                    <span> | Allow Multiple Expanded <EjsSwitch @bind-Checked="@Multiple"></EjsSwitch></span>
-
+                    if (Expandable && currentHeader.ResponseCount > 1)
+                    {
+                        <span> | Allow Multiple Expanded <EjsSwitch @bind-Checked="@Multiple"></EjsSwitch></span>
+                    }
                 }
             }
         }
@@ -206,7 +208,7 @@ else
             foreach (NoteHeader response in responses)
             {
                 <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@ClickHandler"
-                              isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
+                              isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false" ></DisplayPanel>
             }
         }
     }
@@ -231,6 +233,7 @@ else
     [Parameter] public List<NoteHeader> SearchResults { get; set; }
     [Parameter] public bool PrintFile { get; set; } = false;  // set to true by parent to print the file
     [Parameter] public bool FocusTimer { get; set; } = true;  // set to false by parent to inhibit focus timer
+    [Parameter] public bool ToolTips { get; set; }
 
     public bool SubNotes { get; set; } = false;
 
