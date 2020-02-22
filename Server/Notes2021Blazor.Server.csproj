@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <LangVersion>7.3</LangVersion>
     <UserSecretsId>8d7001d9-b4f0-4c26-807a-dea26df8c8a7</UserSecretsId>
   </PropertyGroup>
 
@@ -38,7 +37,6 @@
 
   <ItemGroup>
     <Folder Include="Hubs\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
