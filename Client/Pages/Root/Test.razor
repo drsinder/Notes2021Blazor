@@ -23,9 +23,13 @@
     **--------------------------------------------------------------------------*@
 
 @page "/test"
+@using System
 @using Syncfusion.EJ2.Blazor.Buttons
 @using Syncfusion.EJ2.Blazor.Spinner
 <div>
+
+    @ti @ti2
+
     <EjsButton @onclick="@Click">Show/Hide Spinner</EjsButton>
     <div id="container"></div>
     <EjsSpinner @ref="SpinnerObj" Target="#container">
@@ -35,6 +39,10 @@
 @code{
     EjsSpinner SpinnerObj;
     string target { get; set; } = "#container";
+
+
+    string ti = TimeZoneInfo.Local.Id;
+    int ti2 = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
 
     private async Task Click()
     {

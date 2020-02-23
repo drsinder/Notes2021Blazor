@@ -47,7 +47,7 @@ else
             <div>
                 <h2>Set Time Zone</h2>
                 <h5>
-                    @currentText
+                    @currentText<br/>Your Device: @TimeZone
                 </h5>
                 <p>Select your Time Zone:</p>
                 <select class="form-control medium-input" @bind="@myZid">
@@ -98,7 +98,7 @@ else
     private List<LocalModel> MyList { get; set; }
     private List<LocalModel2> MySizes { get; set; }
     private string pageSize { get; set; }
-
+    private string TimeZone { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,11 +116,19 @@ else
 
         MySizes = new List<LocalModel2> { new LocalModel2("0", "All"), new LocalModel2("5"), new LocalModel2("10"), new LocalModel2("12"), new LocalModel2("20") };
 
+        TimeZone = TimeZoneInfo.Local.DisplayName;
+
+        int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
+        int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
+
         MyList = new List<LocalModel>();
         foreach (TZone item in TZones)
         {
-            LocalModel x = new LocalModel(item.Id.ToString(), item.Name + " - " + item.Abbreviation + " - " + item.Offset);
-            MyList.Add(x);
+            if (item.OffsetHours == OHours && item.OffsetMinutes == OMinutes)
+            {
+                LocalModel x = new LocalModel(item.Id.ToString(), item.Name + " - " + item.Abbreviation + " - " + item.Offset);
+                MyList.Add(x);
+            }
         }
 
         currentText = "Current Time Zone: " + MyZone.Name + " - " + MyZone.Abbreviation + " - " + MyZone.Offset;

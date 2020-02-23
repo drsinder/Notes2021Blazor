@@ -30,6 +30,7 @@ using Blazored.Modal;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.EJ2.Blazor;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace Notes2021Blazor.Client
 {
@@ -55,7 +56,10 @@ namespace Notes2021Blazor.Client
     
             builder.RootComponents.Add<App>("app");
 
-            await builder.Build().RunAsync();
+            await builder
+                .Build()
+                .UseLocalTimeZone()
+                .RunAsync();
         }
     }
 }
