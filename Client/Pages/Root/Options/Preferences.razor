@@ -47,16 +47,16 @@ else
             <div>
                 <h2>Preferences</h2>
                 @*<h2>Set Time Zone</h2>
-                <h5>
-                    @currentText<br/>Your Device: @TimeZone
-                </h5>
-                <p>Select your Time Zone (So Time Zone Name is displayed correctly):</p>
-                <select class="form-control medium-input" @bind="@myZid">
-                    @foreach (LocalModel item in MyList)
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
-                </select>*@
+        <h5>
+            @currentText<br/>Your Device: @TimeZone
+        </h5>
+        <p>Select your Time Zone (So Time Zone Name is displayed correctly):</p>
+        <select class="form-control medium-input" @bind="@myZid">
+            @foreach (LocalModel item in MyList)
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        </select>*@
                 <br />
                 <p>Default Page Size for Pagable Lists:</p>
                 <select class="form-control short-input" @bind="@pageSize">
@@ -71,6 +71,8 @@ else
                 <EjsSwitch @bind-Checked="@UserData.Pref2"></EjsSwitch> Use Non-Dialog note editor - Lets you browse uploaded images
                 <br />
                 <EjsSwitch @bind-Checked="@UserData.Pref6"></EjsSwitch> Use Syncfusion note editor - Lets you paste from Word
+                <br />
+                <EjsSwitch @bind-Checked="@UserData.Pref7"></EjsSwitch> Show Content on index by default when expanded
                 <br />
                 <EjsSwitch @bind-Checked="@UserData.Pref3"></EjsSwitch> Show Responses by default
                 <br />

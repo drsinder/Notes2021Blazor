@@ -25,6 +25,7 @@
 @using Notes2021Blazor.Shared
 @using Syncfusion.EJ2.Blazor.Grids
 @using Syncfusion.EJ2.Blazor.Navigations
+@using Syncfusion.EJ2.Blazor.Buttons
 @using System.Timers
 
 @if (@Model.myAccess.ReadAccess)
@@ -36,7 +37,7 @@
                 <div style="z-index:50; min-width:100%;">
                     <ListMenu Model="@Model" OnClick="ClickHandler" />
                 </div>
-                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="Toolbaritems" AllowExcelExport="true" AllowPdfExport="true"  >
+                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="Toolbaritems" AllowExcelExport="true" AllowPdfExport="true">
                     <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
                     <GridEvents RowSelected="DisplayIt" OnToolbarClick="ToolbarClickHandler" TValue="NoteHeader"></GridEvents>
                     <GridTemplates>
@@ -45,8 +46,21 @@
                                 var current = (context as NoteHeader);
                                 List<NoteHeader> Resp = Model.AllNotes.Where(p => p.NoteOrdinal == current.NoteOrdinal && p.ResponseOrdinal != 0).OrderBy(p => p.ResponseOrdinal).ToList();
                             }
+                            @if (ShowContent)
+                            {
+                                <DisplayPanelMini Model="Model" currentHeader="current"></DisplayPanelMini>
+                            }
                             <EjsGrid @ref="MyGrid2" DataSource="@Resp" AllowPaging="false" AllowSelection="true" EnableHover="true">
                                 <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
+                                <GridTemplates>
+                                    <DetailTemplate Context="extra">
+                                        @if (ShowContent)
+                                        {
+                                            var current2 = (extra as NoteHeader);
+                                            <DisplayPanelMini Model="Model" currentHeader="current2"></DisplayPanelMini>
+                                        }
+                                    </DetailTemplate>
+                                </GridTemplates>
                                 <GridColumns>
                                     <GridColumn Field=@nameof(NoteHeader.ResponseOrdinal) HeaderText="Resp. #" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
@@ -60,7 +74,6 @@
                                             }
                                         </Template>
                                     </GridColumn>
-
                                 </GridColumns>
                             </EjsGrid>
                         </DetailTemplate>
@@ -80,6 +93,8 @@
                         <GridColumn Field=@nameof(NoteHeader.ResponseCount) HeaderText="Responses" TextAlign="TextAlign.Left" Width="40"></GridColumn>
                     </GridColumns>
                 </EjsGrid>
+                <EjsSwitch @bind-Checked="@ShowContent"></EjsSwitch> Show Content on Expand
+
             </div>
         </div>
     </div>
@@ -103,6 +118,8 @@ else
     EjsGrid<NoteHeader> MyGrid;
     EjsGrid<NoteHeader> MyGrid2;
 
+    private bool ShowContent { get; set; }
+
     private string Message { get; set; }
 
     private Timer timer { get; set; }
@@ -111,6 +128,8 @@ else
 
     protected override void OnInitialized()
     {
+        ShowContent = Model.UserData.Pref7;
+
         Toolbaritems.Add(new ItemModel() { Text = "Print" });
         Toolbaritems.Add(new ItemModel() { Text = "PdfExport" });
         Toolbaritems.Add(new ItemModel() { Text = "ExcelExport" });

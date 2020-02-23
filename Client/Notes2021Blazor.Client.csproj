@@ -53,7 +53,7 @@
     <None Include="Pages\Notes\Completed.razor" />
     <None Include="Pages\Notes\DeleteNote.razor" />
     <None Include="Pages\Notes\DisplayMenu.razor" />
-    <None Include="Pages\Notes\DisplayPanel.razor" />
+    <None Include="Pages\Notes\DisplayPanelMini.razor" />
     <None Include="Pages\Notes\Email.razor" />
     <None Include="Pages\Notes\ExportUtil1.razor" />
     <None Include="Pages\Notes\Forward.razor" />
