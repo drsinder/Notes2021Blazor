@@ -113,7 +113,7 @@
 
     object Tip1 = "Go to the list of available notefiles (L)";
     object Tip2 = "Write a New base note (N)";
-    object Tip3 = "<p>Export the file as text (X)</p><p>Export the file as expandable Html (H)</p><p>Export the file as flat Html (h)</p><p>mail the file (m)</p><p>Mark note strings you have written in for output</p><p>Output marked notes (O)</p>";
+    object Tip3 = "<p>Export the file as text (X)</p><p>Export the file as expandable Html (H)</p><p>Export the file as flat Html (h)</p><p>mail the file (m)</p><p>Mark note strings you have written in for output</p><p>Output marked notes (O)</p><p>Print entire file (P)</p>";
     object Tip4 = "Search the file for something (S)";
     object Tip5 = "Show the HELP dialog (Z)";
     object Tip6 = "View or Edit the Access Controls (A)";
@@ -144,6 +144,9 @@
             menuItems.Add(item);
             item = new { id = "MarkMine", text = "Mark my notes for output", parentId = "OutPutMenu" };
             menuItems.Add(item);
+            item = new { id = "PrintFile", text = "Print entire file", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+
             if (Model.isMarked)
             {
                 item = new { id = "OutputMarked", text = "Output marked notes", parentId = "OutPutMenu" };

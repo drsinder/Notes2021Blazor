@@ -26,7 +26,7 @@
 @*------------------------------------------------------------------------------
     **
     ** A lot of things happen here.  Some are done for the Display Panel
-    ** when it send a message.
+    ** when it sends a message.
     **
     ** The main entry point /notes/main/ shows the index
     ** /notes/display I'm not entirely sure this is still used.
@@ -282,6 +282,10 @@ else
                 case "OutputMarked":
                     OutputMarkedAsk();
                     break;
+                case "PrintFile":
+                    PrintFile();
+                    break;
+
                 default:
                     ShowMessage(newMessage + " Clicked");
                     break;

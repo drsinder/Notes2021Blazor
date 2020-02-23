@@ -24,19 +24,21 @@
 
 @using Notes2021Blazor.Shared
 @using Syncfusion.EJ2.Blazor.Grids
+@using Syncfusion.EJ2.Blazor.Navigations
 @using System.Timers
 
 @if (@Model.myAccess.ReadAccess)
 {
+    @Message
     <div class="col-lg-12 control-section dialoglist">
         <div class="content-wrapper">
             <div class="row">
                 <div style="z-index:50; min-width:100%;">
                     <ListMenu Model="@Model" OnClick="ClickHandler" />
                 </div>
-                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
+                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="Toolbaritems" AllowExcelExport="true" AllowPdfExport="true"  >
                     <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
-                    <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
+                    <GridEvents RowSelected="DisplayIt" OnToolbarClick="ToolbarClickHandler" TValue="NoteHeader"></GridEvents>
                     <GridTemplates>
                         <DetailTemplate>
                             @{
@@ -105,7 +107,20 @@ else
     EjsGrid<NoteHeader> MyGrid;
     EjsGrid<NoteHeader> MyGrid2;
 
+    private string Message { get; set; }
+
     private Timer timer { get; set; }
+
+    private List<ItemModel> Toolbaritems = new List<ItemModel>();
+
+    protected override void OnInitialized()
+    {
+        Toolbaritems.Add(new ItemModel() { Text = "Print" });
+        Toolbaritems.Add(new ItemModel() { Text = "PdfExport" });
+        Toolbaritems.Add(new ItemModel() { Text = "ExcelExport" });
+        Toolbaritems.Add(new ItemModel() { Text = "Expand all" });
+        Toolbaritems.Add(new ItemModel() { Text = "Collapse all", Align = (Syncfusion.EJ2.Blazor.Navigations.ItemAlign.Right) });
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -132,6 +147,32 @@ else
     protected void ClickHandler(string message)
     {
         OnClick.InvokeAsync(message);
+    }
+
+    public void ToolbarClickHandler(Syncfusion.EJ2.Blazor.Navigations.ClickEventArgs args)
+    {
+        Message = args.Item.Id;
+        if (args.Item.Text == "Expand all")
+        {
+            this.MyGrid.DetailExpandAll();
+        }
+        if (args.Item.Text == "Collapse all")
+        {
+            this.MyGrid.DetailCollapseAll();
+        }
+        if (args.Item.Id.EndsWith("_pdfexport"))
+        {
+            PdfExportProperties ExportProperties = new PdfExportProperties();
+            ExportProperties.FileName = /*Model.noteFile.NoteFileName +*/ "pad.pdf";
+            //pdfp.HierarchyExportMode = HierarchyGridPrintMode.Expanded;
+            //pdfp.PageOrientation = PageOrientation.Landscape;
+            this.MyGrid.PdfExport();
+        }
+        if (args.Item.Id.EndsWith("_excelexport"))
+        {
+            this.MyGrid.ExcelExport();
+        }
+        Message = null;
     }
 
 }
