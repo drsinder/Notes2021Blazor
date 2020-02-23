@@ -187,9 +187,9 @@
         {
             HomePageModel model1 = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
 
-            myTime = model1.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongTimeString()
+            myTime = model1.TimeZone.LocalBlazor(DateTime.Now.ToUniversalTime()).ToLongTimeString()
                 + " " + model1.TimeZone.Abbreviation + " - "
-                + model1.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongDateString();
+                + model1.TimeZone.LocalBlazor(DateTime.Now.ToUniversalTime()).ToLongDateString();
 
             myTimer = new Timer(1000);
             myTimer.Elapsed += OnTimedEvent;
@@ -240,9 +240,9 @@
 
     protected void OnTimedEvent(Object source, ElapsedEventArgs e)
     {
-        myTime = model.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongTimeString()
+        myTime = model.TimeZone.LocalBlazor(DateTime.Now.ToUniversalTime()).ToLongTimeString()
             + " " + model.TimeZone.Abbreviation + " - "
-            + model.TimeZone.Local(DateTime.Now.ToUniversalTime()).ToLongDateString();
+            + model.TimeZone.LocalBlazor(DateTime.Now.ToUniversalTime()).ToLongDateString();
 
         this.StateHasChanged();
     }

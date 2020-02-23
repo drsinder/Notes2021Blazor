@@ -54,7 +54,7 @@
                                         <Template Context="inner">
                                             @{
                                                 var itemx = (inner as NoteHeader);
-                                                DateTime curTimex = Model.tZone.Local(itemx.CreateDate);
+                                                DateTime curTimex = Model.tZone.LocalBlazor(itemx.CreateDate);
                                                 string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString() + " " + Model.tZone.Abbreviation;
                                                 <span>@tellx</span>
                                             }
@@ -73,7 +73,7 @@
                             <Template>
                                 @{
                                     var item = (context as NoteHeader);
-                                    DateTime curTime = Model.tZone.Local(item.CreateDate);
+                                    DateTime curTime = Model.tZone.LocalBlazor(item.CreateDate);
                                     string tell = curTime.ToShortDateString() + " " + curTime.ToShortTimeString() + " " + Model.tZone.Abbreviation;
                                     <span>@tell</span>
                                 }
