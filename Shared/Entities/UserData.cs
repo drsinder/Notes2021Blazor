@@ -68,20 +68,20 @@ namespace Notes2021Blazor.Shared
 
         public bool Pref3 { get; set; } // show responses by default
 
-        public bool Pref4 { get; set; }
+        public bool Pref4 { get; set; } // multiple expanded responses
 
-        public bool Pref5 { get; set; }
+        public bool Pref5 { get; set; } // expanded responses
 
-        public bool Pref6 { get; set; }
+        public bool Pref6 { get; set; } // alternate text editor
 
-        public bool Pref7 { get; set; }
+        public bool Pref7 { get; set; } // show content when expanded
 
         public bool Pref8 { get; set; }
 
         public bool Pref9 { get { return (Ipref8 & 1) == 1; } 
         set
             {
-                Ipref8 = Ipref8 & 0xfffffe;
+                Ipref8 = Ipref8 & 0x7ffffffe;
                 if (value)
                     Ipref8 += 1;
             }
@@ -92,7 +92,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 2) == 2; }
             set
             {
-                Ipref8 = Ipref8 & 0xfffffd;
+                Ipref8 = Ipref8 & 0x7ffffffd;
                 if (value)
                     Ipref8 += 2;
             }
@@ -103,7 +103,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 4) == 4; }
             set
             {
-                Ipref8 = Ipref8 & 0xfffffB;
+                Ipref8 = Ipref8 & 0x7ffffffB;
                 if (value)
                     Ipref8 += 4;
             }
@@ -114,7 +114,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 8) == 8; }
             set
             {
-                Ipref8 = Ipref8 & 0xfffff7;
+                Ipref8 = Ipref8 & 0x7ffffff7;
                 if (value)
                     Ipref8 += 8;
             }
@@ -125,7 +125,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 16) == 16; }
             set
             {
-                Ipref8 = Ipref8 & 0xffffef;
+                Ipref8 = Ipref8 & 0x7fffffef;
                 if (value)
                     Ipref8 += 16;
             }
@@ -136,7 +136,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 32) == 32; }
             set
             {
-                Ipref8 = Ipref8 & 0xffffdf;
+                Ipref8 = Ipref8 & 0x7fffffdf;
                 if (value)
                     Ipref8 += 32;
             }
@@ -147,7 +147,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 64) == 64; }
             set
             {
-                Ipref8 = Ipref8 & 0xffffBf;
+                Ipref8 = Ipref8 & 0x7fffffBf;
                 if (value)
                     Ipref8 += 64;
             }
@@ -158,7 +158,7 @@ namespace Notes2021Blazor.Shared
             get { return (Ipref8 & 128) == 128; }
             set
             {
-                Ipref8 = Ipref8 & 0xffff7f;
+                Ipref8 = Ipref8 & 0x7fffff7f;
                 if (value)
                     Ipref8 += 128;
             }
