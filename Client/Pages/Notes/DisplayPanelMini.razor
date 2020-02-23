@@ -55,9 +55,7 @@ else
     protected async override Task OnParametersSetAsync()
     {
         // get content and tags for this note - also includes director message
-        DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
-
-        currentContent = dm.content;
+        currentContent = await Http.GetJsonAsync<NoteContent>("api/NoteContentMini/" + currentHeader.Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
