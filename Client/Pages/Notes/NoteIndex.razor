@@ -48,7 +48,7 @@
                             }
                             @if (ShowContent)
                             {
-                                <DisplayPanelMini Model="Model" currentHeader="current"></DisplayPanelMini>
+                                <DisplayPanelMini currentHeader="current"></DisplayPanelMini>
                             }
                             <EjsGrid @ref="MyGrid2" DataSource="@Resp" AllowPaging="false" AllowSelection="true" EnableHover="true">
                                 <GridEvents RowSelected="DisplayIt" TValue="NoteHeader"></GridEvents>
@@ -57,7 +57,7 @@
                                         @if (ShowContent)
                                         {
                                             var current2 = (extra as NoteHeader);
-                                            <DisplayPanelMini Model="Model" currentHeader="current2"></DisplayPanelMini>
+                                            <DisplayPanelMini currentHeader="current2"></DisplayPanelMini>
                                         }
                                     </DetailTemplate>
                                 </GridTemplates>

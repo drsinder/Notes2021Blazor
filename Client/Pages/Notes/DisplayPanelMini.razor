@@ -31,99 +31,33 @@
 
 
 @using Notes2021Blazor.Shared
-@using System.Timers
-@using System.Text
-@using Syncfusion.EJ2.Blazor.LinearGauge
-@using Syncfusion.EJ2.Blazor.Navigations
 
-@inject NavigationManager NavigationManager
 @inject HttpClient Http
-@inject IModalService Modal
 @inject IJSRuntime jsRuntime
 
-@if (string.IsNullOrEmpty(curN))
+@if (currentContent == null)
 {
     <p class="center"><em>Loading...</em></p>
 }
 else
 {
-    <div>
-        <div class="dialognote modal-body">
-            <div>
-                 <div class="noteheader">
-                    <p>
-                        <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    </p>
-                    <h4>
-                        Subject: @currentHeader.NoteSubject <br />
-                        Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                        @(Globals.LocalTimeBlazor(currentHeader.LastEdited).ToLongDateString()) @Globals.LocalTimeBlazor(currentHeader.LastEdited).ToShortTimeString()) @*@Model.tZone.Abbreviation*@
-                        @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-                        {
-                            <br /><span>Director Message: @currentContent.DirectorMessage</span>
-                        }
-                        @if (tags != null && tags.Count > 0)
-                        {
-                            string tl = "Tags: ";
-                            foreach (Tags tag in tags)
-                                tl += tag.Tag + " ";
-                            <br /><span>@tl</span>
-                        }
-                    </h4>
-                </div>
-                <div>
-                    <div class="notebody">
-                        @((MarkupString)currentContent.NoteBody)
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="notebody">
+        @((MarkupString)currentContent.NoteBody)
     </div>
 }
 
 @functions
     {
-    [Parameter] public NoteDisplayIndexModel Model { get; set; }
     [Parameter] public NoteHeader currentHeader { get; set; }
-
-    private Timer timer { get; set; }
-    private Timer timer2 { get; set; }
-
-    public string respX { get; set; }
 
     public NoteContent currentContent { get; set; }
 
-    public List<Tags> tags;
-
-    private string curN { get; set; }
-
-
-    private double baseNotes { get; set; }
-
     protected async override Task OnParametersSetAsync()
     {
-        Model.myHeader = currentHeader;
-        baseNotes = Model.Notes.Count;
-
         // get content and tags for this note - also includes director message
         DisplayModel dm = await Http.GetJsonAsync<DisplayModel>("api/NoteContent/" + currentHeader.Id);
 
         currentContent = dm.content;
-        tags = dm.tags;
-
-        // set text to be displayed re responses
-        respX = "";
-        if (currentHeader.ResponseCount > 0)
-            respX = " - " + currentHeader.ResponseCount + " Responses ";
-        else if (currentHeader.ResponseOrdinal > 0)
-            respX = " Response " + currentHeader.ResponseOrdinal;
-
-        // set value to be displayed in navigation box
-        curN = "" + currentHeader.NoteOrdinal;
-        if (currentHeader.ResponseOrdinal > 0)
-        {
-            curN += "." + currentHeader.ResponseOrdinal;
-        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -131,6 +65,4 @@ else
         // highlight code sections (if any) of a note
         await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
     }
-
-
 }
