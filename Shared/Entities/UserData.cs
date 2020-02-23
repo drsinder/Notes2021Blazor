@@ -57,7 +57,7 @@ namespace Notes2021Blazor.Shared
 
         public int Ipref7 { get; set; }
 
-        public int Ipref8 { get; set; }
+        public int Ipref8 { get; set; } // bits extend bool properties
 
 
         [PersonalData]
@@ -77,6 +77,92 @@ namespace Notes2021Blazor.Shared
         public bool Pref7 { get; set; }
 
         public bool Pref8 { get; set; }
+
+        public bool Pref9 { get { return (Ipref8 & 1) == 1; } 
+        set
+            {
+                Ipref8 = Ipref8 & 0xfffffe;
+                if (value)
+                    Ipref8 += 1;
+            }
+        }
+
+        public bool Pref10
+        {
+            get { return (Ipref8 & 2) == 2; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xfffffd;
+                if (value)
+                    Ipref8 += 2;
+            }
+        }
+
+        public bool Pref11
+        {
+            get { return (Ipref8 & 4) == 4; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xfffffB;
+                if (value)
+                    Ipref8 += 4;
+            }
+        }
+
+        public bool Pref12
+        {
+            get { return (Ipref8 & 8) == 8; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xfffff7;
+                if (value)
+                    Ipref8 += 8;
+            }
+        }
+
+        public bool Pref13
+        {
+            get { return (Ipref8 & 16) == 16; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xffffef;
+                if (value)
+                    Ipref8 += 16;
+            }
+        }
+
+        public bool Pref14
+        {
+            get { return (Ipref8 & 32) == 32; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xffffdf;
+                if (value)
+                    Ipref8 += 32;
+            }
+        }
+
+        public bool Pref15
+        {
+            get { return (Ipref8 & 64) == 64; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xffffBf;
+                if (value)
+                    Ipref8 += 64;
+            }
+        }
+
+        public bool Pref16
+        {
+            get { return (Ipref8 & 128) == 128; }
+            set
+            {
+                Ipref8 = Ipref8 & 0xffff7f;
+                if (value)
+                    Ipref8 += 128;
+            }
+        }
 
         [Display(Name = "Style Preferences")]
         [StringLength(7000)]
