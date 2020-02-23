@@ -69,7 +69,6 @@ namespace Notes2021Blazor.Server.Controllers
         [HttpPost("[action]")]
         public async Task Save(IList<IFormFile> UploadFiles)
         {
-            //long size = 0;
             try
             {
                 foreach (IFormFile file in UploadFiles)
@@ -81,13 +80,23 @@ namespace Notes2021Blazor.Server.Controllers
 
                     string nameonly = Path.GetFileNameWithoutExtension(filename);
                     string extonly = Path.GetExtension(filename);
+                    string fname = nameonly + extonly;
+
+                    SQLFile x = await _db.SQLFile.SingleOrDefaultAsync(p => p.FileName == fname);
+                    if (x != null) // already exists
+                    {
+                        Response.Clear();
+                        Response.StatusCode = 409;
+                        Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "File already exists";
+                        return;
+                    }
 
                     SQLFile SqlFile = new SQLFile();
                     SQLFileContent SqlFileContent = new SQLFileContent { Content = new byte[file.Length] };
                     using (Stream reader = file.OpenReadStream())
                     {
-                        int x = await reader.ReadAsync(SqlFileContent.Content, 0, (int)file.Length);
-                        if (x != file.Length)
+                        int xx = await reader.ReadAsync(SqlFileContent.Content, 0, (int)file.Length);
+                        if (xx != file.Length)
                         {
                             Response.Clear();
                             Response.StatusCode = 204;
@@ -109,7 +118,6 @@ namespace Notes2021Blazor.Server.Controllers
                     await _db.SaveChangesAsync();
                     retId = SqlFileContent.SQLFileId;
 
-                    string fname = nameonly + extonly;
                     SqlFile.FileName = fname;
                     _db.Entry(SqlFile).State = EntityState.Modified;
                     await _db.SaveChangesAsync();
@@ -135,8 +143,33 @@ namespace Notes2021Blazor.Server.Controllers
             }
         }
         [HttpPost("[action]")]
-        public void Remove(IList<IFormFile> UploadFiles)
+        public async Task Remove(IList<IFormFile> UploadFiles)
         {
+            IFormFile file = UploadFiles[0];
+            string filename = ContentDispositionHeaderValue
+                .Parse(file.ContentDisposition)
+                .FileName
+                .Trim('"');
+
+            string nameonly = Path.GetFileNameWithoutExtension(filename);
+            string extonly = Path.GetExtension(filename);
+            string fname = nameonly + extonly;
+
+            SQLFile x = await _db.SQLFile.SingleOrDefaultAsync(p => p.FileName == fname);
+            if (x == null)
+                return;
+
+            SQLFileContent y = await _db.SQLFileContent.SingleOrDefaultAsync(p => p.SQLFileId == x.FileId);
+            _db.SQLFileContent.Remove(y);
+            await _db.SaveChangesAsync();
+            _db.SQLFile.Remove(x);
+            await _db.SaveChangesAsync();
+
+            Response.Clear();
+            Response.StatusCode = 200;
+            Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "File removed successfully";
+
+
             //try
             //{
             //    var filename = hostingEnv.ContentRootPath + $@"\{UploadFiles[0].FileName}";

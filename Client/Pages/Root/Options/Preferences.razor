@@ -45,6 +45,7 @@ else
     <AuthorizeView Roles="User">
         <Authorized>
             <div>
+                <h2>Preferences</h2>
                 @*<h2>Set Time Zone</h2>
                 <h5>
                     @currentText<br/>Your Device: @TimeZone
@@ -57,7 +58,7 @@ else
                     }
                 </select>*@
                 <br />
-                <p>Starting Page Size for Pagable Lists:</p>
+                <p>Default Page Size for Pagable Lists:</p>
                 <select class="form-control short-input" @bind="@pageSize">
                     @foreach (LocalModel2 item in MySizes)
                     {
@@ -94,8 +95,8 @@ else
     private TZone MyZone { get; set; }
     private string currentText { get; set; }
     private int myZid { get; set; }
-    private LocalModel stuff { get; set; }
-    private List<LocalModel> MyList { get; set; }
+    //private LocalModel stuff { get; set; }
+    //private List<LocalModel> MyList { get; set; }
     private List<LocalModel2> MySizes { get; set; }
     private string pageSize { get; set; }
     private string TimeZone { get; set; }
@@ -141,8 +142,8 @@ else
     {
         UserData.TimeZoneID = myZid;
         UserData.Ipref2 = int.Parse(pageSize);
-        MyZone = TZones.SingleOrDefault(p => p.Id == UserData.TimeZoneID);
-        currentText = "Current Time Zone: " + MyZone.Name + " - " + MyZone.Abbreviation + " - " + MyZone.Offset;
+        //MyZone = TZones.SingleOrDefault(p => p.Id == UserData.TimeZoneID);
+        //currentText = "Current Time Zone: " + MyZone.Name + " - " + MyZone.Abbreviation + " - " + MyZone.Offset;
 
         var stringContent = new StringContent(JsonConvert.SerializeObject(UserData), Encoding.UTF8, "application/json");
         HttpResponseMessage result = await Http.PutAsync("api/User/", stringContent);
@@ -153,16 +154,16 @@ else
     }
 
 
-    public class LocalModel
-    {
-        public LocalModel(string id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-        public string Id { get; set; }
-        public string Name { get; set; }
-    }
+    //public class LocalModel
+    //{
+    //    public LocalModel(string id, string name)
+    //    {
+    //        Id = id;
+    //        Name = name;
+    //    }
+    //    public string Id { get; set; }
+    //    public string Name { get; set; }
+    //}
 
     public class LocalModel2
     {
