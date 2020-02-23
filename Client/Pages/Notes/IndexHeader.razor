@@ -28,7 +28,7 @@
 
 <h3 class="text-center">@Model.noteFile.NoteFileName - @Model.noteFile.NoteFileTitle @Model.linkedText </h3>
 <h5>
-    Last Edited - @Model.tZone.LocalBlazor(@Model.noteFile.LastEdited) @*@Model.tZone.Abbreviation*@
+    Last Edited - @Globals.LocalTimeBlazor(@Model.noteFile.LastEdited) @*@Model.tZone.Abbreviation*@
     <span class="keep-right">
         @if (Model.noteFile.NumberArchives > 0)
         {

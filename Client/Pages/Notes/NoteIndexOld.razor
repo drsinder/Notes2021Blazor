@@ -37,7 +37,7 @@
     {
         foreach (var item in Model.Notes)
         {
-            string when = Model.tZone.LocalBlazor(item.CreateDate).ToString();  // + " " + Model.tZone.Abbreviation;
+            string when = Globals.LocalTimeBlazor(item.CreateDate).ToString();  // + " " + Model.tZone.Abbreviation;
             string idx = "Base" + (item.NoteOrdinal + 1);
             <tr class="noteindex">
                 <td><span id="@idx"><IndexButton text="@item.NoteOrdinal.ToString()" noteId="@item.Id" OnClick="Display" /></span></td>

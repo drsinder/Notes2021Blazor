@@ -74,7 +74,7 @@ else
                             @file.NoteFileTitle
                         </td>
                         <td>
-                            @timeZone.LocalBlazor(file.LastEdited).ToShortTimeString() @timeZone.LocalBlazor(file.LastEdited).ToShortDateString()
+                            @Globals.LocalTimeBlazor(file.LastEdited).ToShortTimeString() @Globals.LocalTimeBlazor(file.LastEdited).ToShortDateString()
                         </td>
 
                     </tr>

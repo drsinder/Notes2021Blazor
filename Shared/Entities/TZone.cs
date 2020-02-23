@@ -61,13 +61,13 @@ namespace Notes2021Blazor.Shared
             return dt.AddHours(OffsetHours).AddMinutes(OffsetMinutes);
         }
 
-        public DateTime LocalBlazor(DateTime dt)
-        {
-            int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
-            int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
+        //public DateTime LocalBlazor(DateTime dt)
+        //{
+        //    int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
+        //    int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
 
-            return dt.AddHours(OHours).AddMinutes(OMinutes);
-        }
+        //    return dt.AddHours(OHours).AddMinutes(OMinutes);
+        //}
 
 
         public DateTime Universal(DateTime dt)

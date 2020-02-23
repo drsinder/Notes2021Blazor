@@ -72,6 +72,14 @@ namespace Notes2021Blazor.Shared
         public static string PrimeAdminName { get; set; }
         public static string PrimeAdminEmail { get; set; }
 
+        public static DateTime LocalTimeBlazor(DateTime dt)
+        {
+            int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
+            int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
+
+            return dt.AddHours(OHours).AddMinutes(OMinutes);
+        }
+
         //public static IEmailSender EmailSender { get; set; }
         //public static IWebHostEnvironment Env { get; set; }
     }
