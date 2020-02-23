@@ -58,7 +58,7 @@ else
                                         @{
                                             var itemx = (inner as NoteFile);
                                             DateTime curTimex = timeZone.LocalBlazor(itemx.LastEdited);
-                                            string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString() + " " + timeZone.Abbreviation;
+                                            string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString()/* + " " + timeZone.Abbreviation*/;
                                             <span>@tellx</span>
                                         }
                                     </Template>
