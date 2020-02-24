@@ -37,7 +37,7 @@
                 <div style="z-index:50; min-width:100%;">
                     <ListMenu Model="@Model" OnClick="ClickHandler" />
                 </div>
-                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="Toolbaritems" AllowExcelExport="true" AllowPdfExport="true" >
+                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" >
                     <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
                     <GridEvents RowSelected="DisplayIt" OnToolbarClick="ToolbarClickHandler" TValue="NoteHeader"></GridEvents>
                     <GridTemplates>
@@ -65,7 +65,13 @@
                                     <GridColumn Field=@nameof(NoteHeader.ResponseOrdinal) HeaderText="Resp. #" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-                                    <GridColumn Field=@nameof(NoteHeader.CreateDateLocal) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                    <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                        <Template Context="inner">
+                                            @{
+                                                var itemx = (inner as NoteHeader);
+                                                <span>@Globals.LocalTimeBlazor(itemx.CreateDate)</span>
+                                            }
+                                        </Template>
                                     </GridColumn>
                                 </GridColumns>
                             </EjsGrid>
@@ -75,7 +81,13 @@
                         <GridColumn Field=@nameof(NoteHeader.NoteOrdinal) HeaderText="#" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-                        <GridColumn Field=@nameof(NoteHeader.CreateDateLocal) HeaderText="Date/Time" Format="M/d/yyyy hh:mm tt" TextAlign="TextAlign.Left" Width="60">
+                        <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" Format="M/d/yyyy hh:mm tt" TextAlign="TextAlign.Left" Width="60">
+                            <Template>
+                                @{
+                                    var item = (context as NoteHeader);
+                                    <span>@Globals.LocalTimeBlazor(item.CreateDate).ToString()</span>
+                                }
+                            </Template>
                         </GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.ResponseCount) HeaderText="Responses" TextAlign="TextAlign.Left" Width="40"></GridColumn>
                     </GridColumns>
