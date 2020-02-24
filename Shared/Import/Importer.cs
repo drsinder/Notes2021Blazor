@@ -31,6 +31,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Notes2021Blazor.Shared.Import
 { 
@@ -74,6 +77,13 @@ namespace Notes2021Blazor.Shared.Import
 
             int filetype = 0;  // 0= NovaNET | 1 = Notes 3.1 | 2 = plato iv group notes -- we can process three formats
 
+
+            int firstchar = file.Peek();
+            if (firstchar == 123)  //  123 = "{" json input!
+            {
+                await DoJson(_db, file, noteFile);
+                return true;
+            }
 
             // Read the file and process it line by line.
             //try
@@ -639,6 +649,67 @@ namespace Notes2021Blazor.Shared.Import
         public async Task<NoteHeader> GetBaseNoteHeader(NotesDbContext _db, NoteHeader nc)
         {
             return await NoteDataManager.GetBaseNoteHeader(_db, nc.NoteFileId, 0, nc.NoteOrdinal);
+        }
+
+        public async Task DoJson(NotesDbContext _db, StreamReader file, NoteFile impFile)
+        {
+            NoteHeader newHeader;
+
+            string wholetext = await file.ReadLineAsync();
+            JsonExport myNotes = JsonConvert.DeserializeObject<JsonExport>(wholetext);
+
+            //Extract Base Notes
+
+            List<NoteHeader> BaseNotes = myNotes.NoteHeaders.Where(p => p.ResponseOrdinal == 0).ToList();
+
+            foreach ( NoteHeader item in BaseNotes)
+            {
+                string myTags = string.Empty;
+                item.NoteFileId = impFile.Id;
+                if (item.Tags != null && item.Tags.Count > 0)
+                {
+                    foreach(Tags tag in item.Tags)
+                    {
+                        myTags += tag.Tag + " ";
+                    }
+                }
+
+                item.Id = 0;
+                string content = item.NoteContent.NoteBody;
+                string dirmess = item.NoteContent.DirectorMessage;
+                item.NoteContent = null;
+                int respcount = item.ResponseCount;
+                item.ResponseCount = 0;
+                newHeader = await NoteDataManager.CreateNote(_db, null, item, content, myTags, dirmess, false, false);
+                NoteHeader baseNoteHeader = await GetBaseNoteHeader(_db, newHeader);
+                long baseNoteHeaderId = baseNoteHeader.BaseNoteId;
+
+
+                for (int rn = 1; rn <= respcount; rn++)
+                {
+                    NoteHeader rHeader = myNotes.NoteHeaders.Single(p => p.NoteOrdinal == item.NoteOrdinal && p.ResponseOrdinal == rn);
+                    myTags = string.Empty;
+                    rHeader.NoteFileId = impFile.Id;
+                    if (rHeader.Tags != null && rHeader.Tags.Count > 0)
+                    {
+                        foreach (Tags tag in rHeader.Tags)
+                        {
+                            myTags += tag.Tag + " ";
+                        }
+                    }
+
+                    rHeader.BaseNoteId = baseNoteHeaderId;  //Fix
+                    rHeader.NoteOrdinal = baseNoteHeader.NoteOrdinal;
+                    rHeader.NoteFileId = impFile.Id;
+                    rHeader.Id = 0;
+                    content = rHeader.NoteContent.NoteBody;
+                    dirmess = rHeader.NoteContent.DirectorMessage;
+                    rHeader.NoteContent = null;
+                    await NoteDataManager.CreateResponse(_db, null, rHeader, content, myTags, dirmess, false, false);
+
+                }
+            }
+            Output("Completed");
         }
 
         public virtual void Output(string message)

@@ -170,6 +170,7 @@ namespace Notes2021Blazor.Shared.Manager
 
         public static async Task<NoteHeader> CreateNote(NotesDbContext db, UserManager<IdentityUser> userManager, NoteHeader nh, string body, string tags, string dMessage, bool send, bool linked)
         {
+            nh.Id = 0;
             if (nh.ResponseOrdinal == 0)  // base note
             {
                 nh.NoteOrdinal = await NextBaseNoteOrdinal(db, nh.NoteFileId, nh.ArchiveId);

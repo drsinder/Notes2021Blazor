@@ -120,7 +120,7 @@ namespace NotesUtil
                     startDir = configDir;
 
                 openFileDialog.InitialDirectory = startDir;
-                openFileDialog.Filter = "txt files (*.txt)|*.txt";
+                openFileDialog.Filter = "json files (*.json)|*.json|txt files (*.txt)|*.txt";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
 
