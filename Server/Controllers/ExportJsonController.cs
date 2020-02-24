@@ -58,6 +58,9 @@ namespace Notes2021Blazor.Server.Controllers
             arcId = int.Parse(parts[1]);
 
             JsonExport stuff = new JsonExport();
+
+            stuff.NoteFile = _db.NoteFile.Single(p => p.Id == fileId);
+
             stuff.NoteHeaders = await _db.NoteHeader
                     .Where(p => p.NoteFileId == fileId && p.ArchiveId == arcId)
                     .OrderBy(p => p.NoteOrdinal)
