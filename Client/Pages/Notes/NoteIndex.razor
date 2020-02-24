@@ -65,14 +65,7 @@
                                     <GridColumn Field=@nameof(NoteHeader.ResponseOrdinal) HeaderText="Resp. #" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-
                                     <GridColumn Field=@nameof(NoteHeader.CreateDateLocal) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
-                                        @*<Template Context="inner">
-                                            @{
-                                                var itemx = (inner as NoteHeader);
-                                                <span>@Globals.LocalTimeBlazor(itemx.CreateDate)</span>
-                                            }
-                                        </Template>*@
                                     </GridColumn>
                                 </GridColumns>
                             </EjsGrid>
@@ -83,12 +76,6 @@
                         <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.CreateDateLocal) HeaderText="Date/Time" Format="M/d/yyyy hh:mm tt" TextAlign="TextAlign.Left" Width="60">
-                            @*<Template>
-                                @{
-                                    var item = (context as NoteHeader);
-                                    <span>@Globals.LocalTimeBlazor(item.CreateDate).ToString()</span>
-                                }
-                            </Template>*@
                         </GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.ResponseCount) HeaderText="Responses" TextAlign="TextAlign.Left" Width="40"></GridColumn>
                     </GridColumns>
@@ -168,7 +155,6 @@ else
 
     public void ToolbarClickHandler(Syncfusion.EJ2.Blazor.Navigations.ClickEventArgs args)
     {
-        //Message = args.Item.Id;
         if (args.Item.Text == "Expand all")
         {
             this.MyGrid.DetailExpandAll();
@@ -179,53 +165,19 @@ else
         }
         if (args.Item.Id.EndsWith("_pdfexport"))
         {
-            //Message = "PdfExport";
-            MainModel = new List<LocalModel>();
-
-            foreach (NoteHeader item in Model.Notes)
-            {
-                LocalModel it = new LocalModel();
-                it.AuthorName = item.AuthorName;
-                it.CreateDate = Globals.LocalTimeBlazor(item.CreateDate).ToShortDateString() + " " + Globals.LocalTimeBlazor(item.CreateDate).ToShortTimeString();
-                it.NoteOrdinal = item.NoteOrdinal;
-                it.NoteSubject = item.NoteSubject;
-                it.ResponseCount = item.ResponseCount;
-                it.ResponseOrdinal = item.ResponseOrdinal;
-
-                MainModel.Add(it);
-            }
-
             PdfExportProperties ExportProperties = new PdfExportProperties();
             ExportProperties.FileName = Model.noteFile.NoteFileName + ".pdf";
             ExportProperties.PageOrientation = PageOrientation.Landscape;
             ExportProperties.PageSize = PdfPageSize.Letter;
-            ExportProperties.DataSource = MainModel;
             this.MyGrid.PdfExport(/*ExportProperties*/);
         }
         if (args.Item.Id.EndsWith("_excelexport"))
         {
-            MainModel = new List<LocalModel>();
-
-            foreach (NoteHeader item in Model.Notes)
-            {
-                LocalModel it = new LocalModel();
-                it.AuthorName = item.AuthorName;
-                it.CreateDate = Globals.LocalTimeBlazor(item.CreateDate).ToShortDateString() + " " + Globals.LocalTimeBlazor(item.CreateDate).ToShortTimeString();
-                it.NoteOrdinal = item.NoteOrdinal;
-                it.NoteSubject = item.NoteSubject;
-                it.ResponseCount = item.ResponseCount;
-                it.ResponseOrdinal = item.ResponseOrdinal;
-
-                MainModel.Add(it);
-            }
-
             ExcelExportProperties ExportProperties = new ExcelExportProperties();
             ExportProperties.FileName = Model.noteFile.NoteFileName + ".xlsx";
             ExportProperties.ExportType = ExportType.AllPages;
-            //ExportProperties.DataSource = MainModel;
             this.MyGrid.ExcelExport(ExportProperties);
         }
-        //Message = null;
     }
 
     public class LocalModel

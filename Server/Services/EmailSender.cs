@@ -53,6 +53,7 @@ namespace Notes2021Blazor.Server.Services
                 await sw.FlushAsync();
                 ms.Seek(0, SeekOrigin.Begin);
                 await msg.AddAttachmentAsync("FromNotes2021.html", ms);
+                ms.Dispose();
             }
 
             Response response = await client.SendEmailAsync(msg);

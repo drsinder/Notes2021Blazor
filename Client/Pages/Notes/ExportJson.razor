@@ -62,7 +62,7 @@
         MemoryStream ms = await DoExport();
 
         await FileUtil.SaveAs(jsRuntime, FileName, ms.GetBuffer());
-
+        ms.Dispose();
         Modal.Close(ModalResult.Cancel());
     }
 
@@ -76,6 +76,7 @@
         Stream ms0 = await stringContent.ReadAsStreamAsync();
         MemoryStream ms = new MemoryStream();
         await ms0.CopyToAsync(ms);
+        ms0.Dispose();
         ms.Close();
         return ms;
     }

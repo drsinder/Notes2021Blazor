@@ -88,6 +88,8 @@
                 await Http.PostJsonAsync("api/Email", stuff);
             }
 
+            ms.Dispose();
+
             Modal.Close(ModalResult.Cancel());
         }
 
@@ -100,7 +102,6 @@
             int nfid = nf.Id;
 
             List<Tags> tags = await Http.GetJsonAsync<List<Tags>>("api/Tags/" + nfid);
-
 
             MemoryStream ms = new MemoryStream();
             StreamWriter sw = new StreamWriter(ms);
