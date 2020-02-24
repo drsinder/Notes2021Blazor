@@ -37,7 +37,7 @@
                 <div style="z-index:50; min-width:100%;">
                     <ListMenu Model="@Model" OnClick="ClickHandler" />
                 </div>
-                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="Toolbaritems" AllowExcelExport="true" AllowPdfExport="true">
+                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" >
                     <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
                     <GridEvents RowSelected="DisplayIt" OnToolbarClick="ToolbarClickHandler" TValue="NoteHeader"></GridEvents>
                     <GridTemplates>
@@ -132,11 +132,11 @@ else
     {
         ShowContent = Model.UserData.Pref7;
 
-        //Toolbaritems.Add(new ItemModel() { Text = "Print" });
-        //Toolbaritems.Add(new ItemModel() { Text = "PdfExport" });
+        Toolbaritems.Add(new ItemModel() { Text = "Print" });
+        Toolbaritems.Add(new ItemModel() { Text = "PdfExport" });
         Toolbaritems.Add(new ItemModel() { Text = "ExcelExport" });
-        //Toolbaritems.Add(new ItemModel() { Text = "Expand all" });
-        //Toolbaritems.Add(new ItemModel() { Text = "Collapse all", Align = (Syncfusion.EJ2.Blazor.Navigations.ItemAlign.Right) });
+        Toolbaritems.Add(new ItemModel() { Text = "Expand all" });
+        Toolbaritems.Add(new ItemModel() { Text = "Collapse all", Align = (Syncfusion.EJ2.Blazor.Navigations.ItemAlign.Right) });
     }
 
     protected override void OnAfterRender(bool firstRender)

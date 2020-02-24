@@ -113,7 +113,7 @@
 
     object Tip1 = "Go to the list of available notefiles (L)";
     object Tip2 = "Write a New base note (N)";
-    object Tip3 = "<p>Export the file as text (X)</p><p>Export the file as expandable Html (H)</p><p>Export the file as flat Html (h)</p><p>mail the file (m)</p><p>Mark note strings you have written in for output</p><p>Output marked notes (O)</p><p>Print entire file (P)</p>";
+    object Tip3 = "<p>Export the file as text (X)</p><p>Export the file as expandable Html (H)</p><p>Export the file as flat Html (h)</p>p>mail the file (m)</p><p>Mark note strings you have written in for output</p><p>Output marked notes (O)</p><p>Print entire file (P)</p><p>Json file export (J)</p>";
     object Tip4 = "Search the file for something (S)";
     object Tip5 = "Show the HELP dialog (Z)";
     object Tip6 = "View or Edit the Access Controls (A)";
@@ -152,6 +152,10 @@
                 item = new { id = "OutputMarked", text = "Output marked notes", parentId = "OutPutMenu" };
                 menuItems.Add(item);
             }
+
+            item = new { id = "JsonExport", text = "Json Export - for later import", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+
 
             item = new { id = "SearchFromIndex", text = "Search" };
             menuItems.Add(item);
