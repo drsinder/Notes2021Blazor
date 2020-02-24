@@ -1,0 +1,93 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: ExportJson.razor
+    **
+    **  Description:
+    **      Exports as Json
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using System
+@using System.Collections.Generic
+@using System.Threading.Tasks
+@using Notes2021Blazor.Shared
+@using System.IO
+@using System.Text
+@using Newtonsoft.Json
+
+@inject HttpClient Http
+@inject IModalService Modal
+@inject IJSRuntime jsRuntime
+
+<div class="dialogs modal-body">
+    <p>@message  Please Wait...</p>
+</div>
+
+@functions {
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    public ExportViewModel model { get; set; }
+    private string FileName { get; set; }
+    private string message = "Getting ready...";
+    private bool marked { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        model = Parameters.Get<ExportViewModel>("ExportViewModel");
+        FileName = model.NoteFile.NoteFileName + ".json";
+
+        if (model.Marks != null && model.Marks.Count > 0)
+            marked = true;
+        else
+            marked = false;
+
+        message = "Exporting " + FileName;
+
+        MemoryStream ms = await DoExport();
+
+        await FileUtil.SaveAs(jsRuntime, FileName, ms.GetBuffer());
+
+        Modal.Close(ModalResult.Cancel());
+    }
+
+    private async Task<MemoryStream> DoExport()
+    {
+        NoteFile nf = model.NoteFile;
+        int nfid = nf.Id;
+
+        JsonExport stuff = await Http.GetJsonAsync<JsonExport>("api/ExportJson/" + nfid + ".0");
+        var stringContent = new StringContent(JsonConvert.SerializeObject(stuff), Encoding.UTF8, "application/json");
+        Stream ms0 = await stringContent.ReadAsStreamAsync();
+        MemoryStream ms = new MemoryStream();
+        await ms0.CopyToAsync(ms);
+        ms.Close();
+        return ms;
+    }
+
+    public static class FileUtil
+    {
+        public async static Task SaveAs(IJSRuntime js, string filename, byte[] data)
+        {
+            await js.InvokeAsync<object>(
+                "saveAsFile",
+                filename,
+                Convert.ToBase64String(data));
+        }
+    }
+}

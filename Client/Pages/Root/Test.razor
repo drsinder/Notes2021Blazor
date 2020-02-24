@@ -23,9 +23,13 @@
     **--------------------------------------------------------------------------*@
 
 @page "/test"
+@using Notes2021Blazor.Shared
 @using System
 @using Syncfusion.EJ2.Blazor.Buttons
 @using Syncfusion.EJ2.Blazor.Spinner
+
+@inject HttpClient Http
+
 <div>
 
     @ti @ti2
@@ -46,8 +50,11 @@
 
     private async Task Click()
     {
-        SpinnerObj.ShowSpinner(target);
-        await Task.Delay(2000);
-        SpinnerObj.HideSpinner(target);
+
+        JsonExport stuff = await Http.GetJsonAsync<JsonExport>("api/ExportJson/" + "5.0");
+
+        //SpinnerObj.ShowSpinner(target);
+        //await Task.Delay(2000);
+        //SpinnerObj.HideSpinner(target);
     }
 }

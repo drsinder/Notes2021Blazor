@@ -615,6 +615,9 @@ else
             case "U":
                 Browse();
                 break;
+            case "J":
+                DoJson();
+                break;
 
             default:
                 break;
@@ -834,6 +837,20 @@ else
         timerAccess2Trigger.Stop();
         timerAccess2Trigger.Enabled = false;
         EditAccess();
+    }
+
+    private void DoJson()
+    {
+        var parameters = new ModalParameters();
+
+        ExportViewModel vm = new ExportViewModel();
+        vm.ArchiveNumber = archiveID;
+        vm.NoteFile = Model.noteFile;
+
+        parameters.Add("ExportViewModel", vm);
+
+        Modal.OnClose += HideDialog;
+        Modal.Show<ExportJson>("", parameters);
     }
 
     private void DoExport(bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = null)
