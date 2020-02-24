@@ -77,7 +77,7 @@ else
                     <h4>
                         Subject: @currentHeader.NoteSubject <br />
                         Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                        @(Globals.LocalTimeBlazor(currentHeader.LastEdited).ToLongDateString()) @Globals.LocalTimeBlazor(currentHeader.LastEdited).ToShortTimeString()) @*@Model.tZone.Abbreviation*@
+                        @(Globals.LocalTimeBlazor(currentHeader.LastEdited).ToLongDateString()) @Globals.LocalTimeBlazor(currentHeader.LastEdited).ToShortTimeString() @*@Model.tZone.Abbreviation*@
                         @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
                         {
                             <br /><span>Director Message: @currentContent.DirectorMessage</span>

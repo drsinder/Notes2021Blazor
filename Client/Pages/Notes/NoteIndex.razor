@@ -37,7 +37,7 @@
                 <div style="z-index:50; min-width:100%;">
                     <ListMenu Model="@Model" OnClick="ClickHandler" />
                 </div>
-                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" >
+                <EjsGrid @ref="MyGrid" DataSource="@Model.Notes" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="Toolbaritems" AllowExcelExport="true" AllowPdfExport="true" >
                     <GridPageSettings PageSize="Model.UserData.Ipref2" PageSizes="true"></GridPageSettings>
                     <GridEvents RowSelected="DisplayIt" OnToolbarClick="ToolbarClickHandler" TValue="NoteHeader"></GridEvents>
                     <GridTemplates>
@@ -66,13 +66,13 @@
                                     <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                                     <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
 
-                                    <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
-                                        <Template Context="inner">
+                                    <GridColumn Field=@nameof(NoteHeader.CreateDateLocal) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                        @*<Template Context="inner">
                                             @{
                                                 var itemx = (inner as NoteHeader);
                                                 <span>@Globals.LocalTimeBlazor(itemx.CreateDate)</span>
                                             }
-                                        </Template>
+                                        </Template>*@
                                     </GridColumn>
                                 </GridColumns>
                             </EjsGrid>
@@ -82,13 +82,13 @@
                         <GridColumn Field=@nameof(NoteHeader.NoteOrdinal) HeaderText="#" TextAlign="TextAlign.Left" Width="25" IsPrimaryKey="true"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.NoteSubject) HeaderText="Subject" TextAlign="TextAlign.Left" Width="150"></GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.AuthorName) HeaderText="Writer" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-                        <GridColumn Field=@nameof(NoteHeader.CreateDate) HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
-                            <Template>
+                        <GridColumn Field=@nameof(NoteHeader.CreateDateLocal) HeaderText="Date/Time" Format="M/d/yyyy hh:mm tt" TextAlign="TextAlign.Left" Width="60">
+                            @*<Template>
                                 @{
                                     var item = (context as NoteHeader);
                                     <span>@Globals.LocalTimeBlazor(item.CreateDate).ToString()</span>
                                 }
-                            </Template>
+                            </Template>*@
                         </GridColumn>
                         <GridColumn Field=@nameof(NoteHeader.ResponseCount) HeaderText="Responses" TextAlign="TextAlign.Left" Width="40"></GridColumn>
                     </GridColumns>
@@ -135,8 +135,8 @@ else
         Toolbaritems.Add(new ItemModel() { Text = "Print" });
         Toolbaritems.Add(new ItemModel() { Text = "PdfExport" });
         Toolbaritems.Add(new ItemModel() { Text = "ExcelExport" });
-        Toolbaritems.Add(new ItemModel() { Text = "Expand all" });
-        Toolbaritems.Add(new ItemModel() { Text = "Collapse all", Align = (Syncfusion.EJ2.Blazor.Navigations.ItemAlign.Right) });
+        //Toolbaritems.Add(new ItemModel() { Text = "Expand all" });
+        //Toolbaritems.Add(new ItemModel() { Text = "Collapse all", Align = (Syncfusion.EJ2.Blazor.Navigations.ItemAlign.Right) });
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -200,7 +200,7 @@ else
             ExportProperties.PageOrientation = PageOrientation.Landscape;
             ExportProperties.PageSize = PdfPageSize.Letter;
             ExportProperties.DataSource = MainModel;
-            this.MyGrid.PdfExport(ExportProperties);
+            this.MyGrid.PdfExport(/*ExportProperties*/);
         }
         if (args.Item.Id.EndsWith("_excelexport"))
         {
@@ -222,7 +222,7 @@ else
             ExcelExportProperties ExportProperties = new ExcelExportProperties();
             ExportProperties.FileName = Model.noteFile.NoteFileName + ".xlsx";
             ExportProperties.ExportType = ExportType.AllPages;
-            ExportProperties.DataSource = MainModel;
+            //ExportProperties.DataSource = MainModel;
             this.MyGrid.ExcelExport(ExportProperties);
         }
         //Message = null;

@@ -82,6 +82,15 @@ namespace Notes2021Blazor.Shared
         [Display(Name = "Created")]
         public DateTime CreateDate { get; set; }
 
+        public DateTime CreateDateLocal { get 
+            {
+                int OHours = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Hours;
+                int OMinutes = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Minutes;
+
+                return CreateDate.AddHours(OHours).AddMinutes(OMinutes);
+            }
+        }
+
         // Meaningful only if ResponseOrdinal = 0
         [Required]
         public int ResponseCount { get; set; }
