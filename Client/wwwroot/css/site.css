@@ -253,6 +253,12 @@ button {
         button.link:focus span {
             color: black;
         }
+
+.copiednote {
+    color:yellow;
+    background-color:black;
+}
+
 .large {
     font-size: 200%;
 }
