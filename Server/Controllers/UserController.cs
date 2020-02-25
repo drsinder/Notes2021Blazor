@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 
 namespace Notes2021Blazor.Server.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Guest")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

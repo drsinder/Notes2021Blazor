@@ -151,7 +151,11 @@
             <NotAuthorized>
                 <div class="keep-center">
                     <h2>Not Logged In!</h2>
-                    <p>Please register if you have not already.  Then login.  Thanks.</p>
+                    <h4>Please register if you have not already.  Then login.  Thanks.</h4>
+                    @if (Globals.GuestId != "*none*")
+                    {
+                        <h5>Or you may login as @Globals.GuestEmail with password "Notes123" to browse.</h5>
+                    }
                 </div>
             </NotAuthorized>
         </AuthorizeView>
@@ -186,6 +190,9 @@
         if (user.Identity.IsAuthenticated)
         {
             HomePageModel model1 = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
+
+            Globals.GuestId = model1.GuestId;
+            Globals.GuestEmail = model1.GuestEmail;
 
             myTime = Globals.LocalTimeBlazor(DateTime.Now.ToUniversalTime()).ToLongTimeString()
                 + /*" " + model1.TimeZone.Abbreviation +*/ " - "
@@ -225,6 +232,11 @@
         }
         else
         {
+            HomePageModel model1 = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
+
+            Globals.GuestId = model1.GuestId;
+            Globals.GuestEmail = model1.GuestEmail;
+
             model = new HomePageModel();
             fileList = nameList = new List<localFile>();
             myTime = "";

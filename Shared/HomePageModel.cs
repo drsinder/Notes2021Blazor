@@ -38,5 +38,9 @@ namespace Notes2021Blazor.Shared
         public HomePageMessage Message { get; set; }
 
         public UserData UserData { get; set; }
+
+        public string GuestId { get; set; }
+        public string GuestEmail { get; set; }
+
     }
 }

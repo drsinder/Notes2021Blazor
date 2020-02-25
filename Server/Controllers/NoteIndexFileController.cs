@@ -34,7 +34,7 @@ using Notes2021Blazor.Shared;
 
 namespace Notes2021Blazor.Server.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Guest")]
     [Route("api/[controller]")]
     [Route("api/[controller]/{sid}")]
     [ApiController]

@@ -81,7 +81,7 @@
 }
 else
 {
-    <AuthorizeView Roles="User">
+    <AuthorizeView Roles="User,Guest">
         <Authorized>
             @if (newnoteFlag)
             {

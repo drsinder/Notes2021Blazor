@@ -117,11 +117,24 @@ namespace Notes2021Blazor.Shared.Manager
                 .Where(p => p.UserID == userId && p.NoteFileId == fileId && p.ArchiveId == arcId).FirstOrDefaultAsync();
 
             if (na != null)
+            {
+                if (userId == Globals.GuestId)
+                {
+                    na.EditAccess = na.DeleteEdit = na.Respond = na.Write = false;
+                }
                 return na;
+            }
 
             // If specific user not in list use "Other"
-            return await db.NoteAccess
+            na = await db.NoteAccess
                 .Where(p => p.UserID == Globals.AccessOtherId() && p.NoteFileId == fileId && p.ArchiveId == arcId).FirstOrDefaultAsync();
+
+            if (userId == Globals.GuestId)
+            {
+                na.EditAccess = na.DeleteEdit = na.Respond = na.Write = false;
+            }
+
+            return na;
         }
 
         /// <summary>

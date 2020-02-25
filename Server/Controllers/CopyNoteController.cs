@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Notes2021Blazor.Server.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Guest")]
     [Route("api/[controller]")]
     [ApiController]
     public class CopyNoteController : ControllerBase

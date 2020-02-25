@@ -110,6 +110,17 @@ namespace Notes2021Blazor.Server.Controllers
 
             model.TimeZone = _db.TZone.Single(p => p.Id == model.UserData.TimeZoneID);
 
+            Globals.GuestId = model.GuestId = "*none*";
+            UserData Gdata = _db.UserData.Where(p => p.DisplayName == "Guest").FirstOrDefault();
+            if (Gdata != null)
+            {
+                Globals.GuestId = model.GuestId = Gdata.UserId;
+
+                IdentityUser me = await _userManager.FindByIdAsync(Globals.GuestId);
+
+                model.GuestEmail = Globals.GuestEmail = me.Email;
+            }
+
             return model;
         }
     }

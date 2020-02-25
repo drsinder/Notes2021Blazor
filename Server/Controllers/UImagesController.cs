@@ -40,7 +40,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Notes2021Blazor.Server.Controllers
 {
-    //[Authorize(Roles = "User")]
+    //[Authorize(Roles = "User,Guest")]
     [Route("api/[controller]")]
     [Route("api/[controller]/{filename}")]
     [ApiController]

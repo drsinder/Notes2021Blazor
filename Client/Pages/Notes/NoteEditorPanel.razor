@@ -37,7 +37,7 @@
 @inject IModalService Modal
 @inject IJSRuntime jsRuntime
 
-<AuthorizeView Roles="User">
+<AuthorizeView Roles="User,Guest">
     <Authorized Context="Top">
         @if (noteFile == null)
         {
