@@ -40,6 +40,7 @@ namespace Notes2021Blazor.Shared
         //[Required(ErrorMessage = "A Subject is required.")]
         [StringLength(200)]
         [Display(Name = "MySubject")]
+        [Required(ErrorMessage = "A Subject is required.")]
         public string MySubject { get; set; }
 
         //[Required]

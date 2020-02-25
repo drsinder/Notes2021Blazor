@@ -54,44 +54,47 @@
                     <ValidationSummary />
                     <strong>Subject</strong>
                     <InputText id="name" @bind-Value="tvm.MySubject" class="form-control long-input" />
-                    <strong>Tags</strong>
-                    <InputText id="title" @bind-Value="tvm.TagLine" class="form-control long-input" />
-                    <strong>Director Message</strong>
-                    <InputText id="title" @bind-Value="tvm.DirectorMessage" class="form-control long-input" />
-                    <strong>Note Body</strong>
-                    @if (!AltEdit)
+                    @if (Model.myAccess.SetTag)
                     {
-                        <div class="@TinyClass">
-                            <InputTextArea id="mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
-                        </div>
+                        <strong>Tags</strong>
+                        <InputText id="title" @bind-Value="tvm.TagLine" class="form-control long-input" />
+                        <strong>Director Message</strong>
+                        <InputText id="title" @bind-Value="tvm.DirectorMessage" class="form-control long-input" />
                     }
-                    else
-                    {
-                        <div class="@EjsClass">
-                            <div class="control-section">
-                                <div class="control-wrapper">
-                                    <div class="control-section">
-                                        <EjsRichTextEditor @ref="@RteObj" @bind-Value="@tvm.MyNote" EditorMode="EditorMode.HTML" ShowCharCount="true" Height="400" Width="950" MaxLength="100000">
-                                            <ChildContent>
-                                                <RichTextEditorPasteCleanupSettings Prompt="true"></RichTextEditorPasteCleanupSettings>
-                                                <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
-                                            </ChildContent>
-                                        </EjsRichTextEditor>
+                        <strong>Note Body</strong>
+                        @if (!AltEdit)
+                        {
+                            <div class="@TinyClass">
+                                <InputTextArea id="mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="@EjsClass">
+                                <div class="control-section">
+                                    <div class="control-wrapper">
+                                        <div class="control-section">
+                                            <EjsRichTextEditor @ref="@RteObj" @bind-Value="@tvm.MyNote" EditorMode="EditorMode.HTML" ShowCharCount="true" Height="400" Width="950" MaxLength="100000">
+                                                <ChildContent>
+                                                    <RichTextEditorPasteCleanupSettings Prompt="true"></RichTextEditorPasteCleanupSettings>
+                                                    <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
+                                                </ChildContent>
+                                            </EjsRichTextEditor>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                    <br /><button type="submit" class="btn btn-success btn-sm">Submit</button>
-                    <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
-                    <button type="button" @onclick="Browse" class="btn btn-info btn-sm">Image Browser</button>
-                    <EjsUploader ID="UploadFiles" AllowedExtensions=".jpg, .png, .gif">
-                        <UploaderAsyncSettings SaveUrl="api/UImages/Save" RemoveUrl="api/UImages/Remove"></UploaderAsyncSettings>
-                    </EjsUploader>
-                    <p>Reference uploaded files as @FileUrl</p>
+                        }
+                        <br /><button type="submit" class="btn btn-success btn-sm">Submit</button>
+                        <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
+                        <button type="button" @onclick="Browse" class="btn btn-info btn-sm">Image Browser</button>
+                        <EjsUploader ID="UploadFiles" AllowedExtensions=".jpg, .png, .gif">
+                            <UploaderAsyncSettings SaveUrl="api/UImages/Save" RemoveUrl="api/UImages/Remove"></UploaderAsyncSettings>
+                        </EjsUploader>
+                        <p>Reference uploaded files as @FileUrl</p>
 
-                    @*<span class="@TinyClass"><br/><button type="button" @onclick="Switch" class="btn btn-info btn-sm">Switch Editors</button></span>*@
-                </EditForm>
+                        @*<span class="@TinyClass"><br/><button type="button" @onclick="Switch" class="btn btn-info btn-sm">Switch Editors</button></span>*@
+                    </EditForm>
             </div>
         }
     </Authorized>
