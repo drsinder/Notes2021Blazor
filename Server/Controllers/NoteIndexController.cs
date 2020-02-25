@@ -130,6 +130,10 @@ namespace Notes2021Blazor.Server.Controllers
             string uid = await _userManager.GetUserIdAsync(IdUser);
 
             NoteAccess noteAccess = await AccessManager.GetAccess(_db, uid, fileid, ArcId);
+
+            if (User.IsInRole("Guest"))
+                noteAccess.EditAccess = noteAccess.DeleteEdit = noteAccess.Respond = noteAccess.Write = false;
+
             return noteAccess;
         }
 
