@@ -515,11 +515,24 @@ else
                 newnoteFlag = editing = false;
                 StateHasChanged();
                 break;
+            case "Copy":
+                Copy(currentHeader);
+                break;
 
             default:
                 await OnClick.InvokeAsync(newMessage);
                 break;
         }
+    }
+
+    private void Copy(NoteHeader Note)
+    {
+        StopTimer();
+        var parameters = new ModalParameters();
+        parameters.Add("Note", Note);
+        parameters.Add("UserData", Model.UserData);
+        Modal.OnClose += HideDialog;
+        Modal.Show<Copy>("", parameters);
     }
 
     private async Task NewResponse()
@@ -670,6 +683,10 @@ else
             case "U":
                 Browse();
                 break;
+            case "C":
+                Copy(currentHeader);
+                break;
+
 
             default:
                 //var parameters = new ModalParameters();

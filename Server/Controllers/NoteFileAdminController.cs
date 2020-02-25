@@ -34,7 +34,7 @@ using System.Threading.Tasks;
 
 namespace Notes2021Blazor.Server.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "User")]
     [Route("api/[controller]")]
     [Route("api/[controller]/{id}")]
     [ApiController]
@@ -57,6 +57,7 @@ namespace Notes2021Blazor.Server.Controllers
             return await NoteDataManager.GetNoteFilesOrderedByName(_db);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task Post(CreateFileModel crm)
         {
@@ -65,6 +66,7 @@ namespace Notes2021Blazor.Server.Controllers
             await NoteDataManager.CreateNoteFile(_db, _userManager, me.Id, crm.NoteFileName, crm.NoteFileTitle);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task Delete(string id)
         {
@@ -72,6 +74,7 @@ namespace Notes2021Blazor.Server.Controllers
             await NoteDataManager.DeleteNoteFile(_db, intid);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task Put(NoteFile edited)
         {
