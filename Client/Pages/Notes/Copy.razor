@@ -69,17 +69,21 @@ else
 
     //private EjsDropDownList<int, NoteFile> drp { get; set; }
 
-    private int SelectedId { get; set; } = 4;
+    private int SelectedId { get; set; } = 0;
 
     protected async override Task OnInitializedAsync()
     {
         Note = parameters.Get<NoteHeader>("Note");
         UserData = parameters.Get<UserData>("UserData");
         Files = await Http.GetJsonAsync<List<NoteFile>>("api/NoteFileAdmin");
+        Files.Insert(0, new NoteFile { Id = 0, NoteFileName = "Select a file" });
     }
 
     protected async Task OnSubmit()
     {
+        if (SelectedId == 0)
+            return;
+
         CopyModel cm = new CopyModel();
         cm.FileId = SelectedId;
         cm.Note = Note;

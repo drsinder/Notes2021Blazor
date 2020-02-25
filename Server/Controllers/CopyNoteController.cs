@@ -28,6 +28,12 @@ namespace Notes2021Blazor.Server.Controllers
         public async Task Post(CopyModel Model)
         {
             int fileId = Model.FileId;
+
+            string uid = Model.UserData.UserId;
+            NoteAccess myAccess = await AccessManager.GetAccess(_db, uid, fileId, 0);
+            if (!myAccess.Write)
+                return;
+
             NoteHeader Header = Model.Note;
             bool whole = Model.WholeString;
             noteFile = await _db.NoteFile.SingleAsync(p => p.Id == fileId);

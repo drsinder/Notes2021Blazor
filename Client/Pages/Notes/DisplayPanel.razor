@@ -527,6 +527,9 @@ else
 
     private void Copy(NoteHeader Note)
     {
+        if (!Model.myAccess.ReadAccess)
+            return;
+
         StopTimer();
         var parameters = new ModalParameters();
         parameters.Add("Note", Note);
