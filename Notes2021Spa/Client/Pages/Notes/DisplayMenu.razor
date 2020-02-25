@@ -1,0 +1,245 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: DisplayMenu.razor
+    **
+    **  Description:
+    **      Menu bar for DisplayPanel
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using System.Timers
+@using Notes2021Blazor.Shared
+@using Syncfusion.EJ2.Blazor.Navigations
+@using Syncfusion.EJ2.Blazor.Popups
+
+@inject IJSRuntime jsRuntime
+
+    <div class="menu-control">
+        <div class="layout">
+            <div id="container">
+                @if (ToolTips)
+                {
+                    <EjsTooltip ID="tip1" Target="#Done" OpenDelay="1000" Content="@Tip1">
+                        <EjsTooltip ID="tip2" Target="#NextBaseNote" OpenDelay="1000" Content="@Tip2">
+                            <EjsTooltip ID="tip3" Target="#PreviousBaseNote" OpenDelay="1000" Content="@Tip3">
+                                <EjsTooltip ID="tip4" Target="#NextNote" OpenDelay="1000" Content="@Tip4">
+                                    <EjsTooltip ID="tip5" Target="#PreviousNote" OpenDelay="1000" Content="@Tip5">
+                                        <EjsTooltip ID="tip6" Target="#NewResponse" OpenDelay="1000" Content="@Tip6">
+                                            <EjsTooltip ID="tip7" Target="#Edit" OpenDelay="1000" Content="@Tip7">
+                                                <EjsTooltip ID="tip8" Target="#Delete" OpenDelay="1000" Content="@Tip8">
+                                                    <EjsTooltip ID="tip9" Target="#Search" OpenDelay="1000" Content="@Tip9">
+                                                        <EjsTooltip ID="tip10" Target="#ShowHelp" OpenDelay="1000" Content="@Tip10">
+                                                            <EjsTooltip ID="tip11" Target="#OutPutMenu" OpenDelay="1000" Content="@Tip11" Position="Position.TopLeft">
+
+                                                                @*<EjsTooltip ID="tip12" Target="#Copy" OpenDelay="1000" Content="@Tip12">
+                                                        <EjsTooltip ID="tip13" Target="#mail" OpenDelay="1000" Content="@Tip13">
+                                                            <EjsTooltip ID="tip14" Target="#Mark" OpenDelay="1000" Content="@Tip14">
+                                                                <EjsTooltip ID="tip15" Target="#Html" OpenDelay="1000" Content="@Tip15">
+                                                                    <EjsTooltip ID="tip16" Target="#html" OpenDelay="1000" Content="@Tip16">*@
+
+                                                                <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode">
+                                                                    <MenuEvents ItemSelected="OnSelect"></MenuEvents>
+                                                                </EjsMenu>
+
+                                                                @*</EjsTooltip>
+                                                                    </EjsTooltip>
+                                                                </EjsTooltip>
+                                                            </EjsTooltip>
+                                                        </EjsTooltip>*@
+
+                                                            </EjsTooltip>
+                                                        </EjsTooltip>
+                                                    </EjsTooltip>
+                                                </EjsTooltip>
+                                            </EjsTooltip>
+                                        </EjsTooltip>
+                                    </EjsTooltip>
+                                </EjsTooltip>
+                            </EjsTooltip>
+                        </EjsTooltip>
+                    </EjsTooltip>
+                }
+                else
+                {
+                    <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode">
+                        <MenuEvents ItemSelected="OnSelect"></MenuEvents>
+                    </EjsMenu>}
+            </div>
+        </div>
+    </div>
+
+
+<style>
+    .e-menu-wrapper ul {
+        background-color: #555;
+        color: #FFF;
+    }
+
+        .e-menu-wrapper ul .e-menu-item .e-caret {
+            color: #FFF;
+        }
+
+        .e-menu-wrapper ul .e-menu-item.e-focused {
+            color: #CCC;
+            outline: 0 solid #f8f9fa;
+            outline-offset: 0;
+            background-color: none;
+        }
+
+            .e-menu-wrapper ul .e-menu-item.e-focused .e-caret {
+                color: #CCC;
+            }
+
+        .e-menu-wrapper ul .e-menu-item.e-selected {
+            color: #CCC;
+            outline: 0 solid #f2f4f6;
+            outline-offset: 0;
+            background-color: none;
+        }
+
+    .e-menu-wrapper .e-ul {
+        background-color: #555;
+        color: #FFF;
+    }
+
+    .menu-control {
+        text-align: center;
+        color: #FFF;
+        background-color: #555;
+    }
+
+    .layout #container {
+        color: #FFF;
+        background-color: #555;
+    }
+</style>
+
+
+@code {
+    [Parameter] public NoteDisplayIndexModel Model { get; set; }
+    [Parameter] public EventCallback<string> OnClick { get; set; }
+    [Parameter] public bool ToolTips { get; set; } = true;
+
+    private bool HamburgerMode { get; set; } = false;
+
+    private List<object> menuItems { get; set; }
+
+    public int Width { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+
+        menuItems = new List<object>();
+
+        object item = new { id = "Done", text = "LIsting" };
+        menuItems.Add(item);
+        item = new { id = "NextBaseNote", text = "Next Base" };
+        menuItems.Add(item);
+        item = new { id = "PreviousBaseNote", text = "Previous Base" };
+        menuItems.Add(item);
+        item = new { id = "NextNote", text = "Next" };
+        menuItems.Add(item);
+        item = new { id = "PreviousNote", text = "Previous" };
+        menuItems.Add(item);
+        item = new { id = "OutPutMenu", text = "Output" };
+        menuItems.Add(item);
+        item = new { id = "Forward", text = "Forward", parentId = "OutPutMenu" };
+        menuItems.Add(item);
+        item = new { id = "Copy", text = "Copy", parentId = "OutPutMenu" };
+        menuItems.Add(item);
+        item = new { id = "mail", text = "mail", parentId = "OutPutMenu" };
+        menuItems.Add(item);
+        item = new { id = "Mark", text = "Mark", parentId = "OutPutMenu" };
+        menuItems.Add(item);
+        item = new { id = "Html", text = "Html (expandable)", parentId = "OutPutMenu" };
+        menuItems.Add(item);
+        item = new { id = "html", text = "html (flat)", parentId = "OutPutMenu" };
+        menuItems.Add(item);
+
+        if (Model.myAccess.Write)
+        {
+            item = new { id = "NewResponse", text = "New Response" };
+            menuItems.Add(item);
+        }
+        if (Model.myAccess.DeleteEdit || Model.myHeader.AuthorID == Model.myAccess.UserID)
+        {
+            item = new { id = "Edit", text = "Edit" };
+            menuItems.Add(item);
+            item = new { id = "Delete", text = "Delete" };
+            menuItems.Add(item);
+        }
+        item = new { id = "Search", text = "Search" };
+        menuItems.Add(item);
+        item = new { id = "ShowHelp", text = "Z for HELP" };
+        menuItems.Add(item);
+
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+    }
+
+    protected Timer timer { get; set; }
+
+    object Tip1 = "Return to the list of notes (I for Index)";
+    object Tip2 = "Go to the next base note (SHIFT-Enter)";
+    object Tip3 = "Go to the previous base note (B)";
+    object Tip4 = "Go to the next note (Enter)";
+    object Tip5 = "Go to the previous note (b)";
+    object Tip6 = "Write a New response (N)";
+    object Tip7 = "Edit the note (E)";
+    object Tip8 = "Delete the note (D)";
+    object Tip9 = "Search for something (S)";
+    object Tip10 = "Show the HELP dialog (Z)";
+
+    object Tip11 = "<p>Forward by email as html (F)</p><p>Copy to another file (C)</p><p>mail as plain text (m)</p><p>Mark for later output (M)</p><p>Html output - expandable (H)</p><p>html output - flat (h)</p>";
+    //object Tip12 = "<p>Copy to another file (C)</p>";
+    //object Tip13 = "<p>mail as plain text (m)</p>";
+    //object Tip14 = "<p>Mark for later output (M)</p>";
+    //object Tip15 = "<p>Html output - expandable (H)</p>";
+    //object Tip16 = "<p>html output - flat (h)</p>";
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer = new Timer(100);
+            timer.Elapsed += TimerTick;
+            timer.Enabled = true;
+        }
+    }
+
+    protected void TimerTick(Object source, ElapsedEventArgs e)
+    {
+        timer.Interval = 1000;
+        CheckWidth();
+    }
+
+    protected async Task CheckWidth()
+    {
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+        HamburgerMode = Width < 1150;
+        StateHasChanged();
+    }
+
+    public async Task OnSelect(MenuEventArgs e)
+    {
+        if (e.Item.Id == "OutPutMenu")
+            return;
+
+        await OnClick.InvokeAsync(e.Item.Id);
+    }
+}

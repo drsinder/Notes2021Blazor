@@ -1,0 +1,116 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: DisplayPanel.razor
+    **
+    **  Description:
+    **      Collect specs for a search
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using System
+@using Notes2021Blazor.Shared
+@using Syncfusion.EJ2.Blazor.Calendars
+
+@*@using Newtonsoft.Json
+    @using System.Text*@
+
+@inject IModalService ModalService
+
+<div class="dialogs keep-center" style="width:400px;">
+    <h3>Search @searchtype</h3>
+    <hr />
+    <div>
+        <h5>Search By</h5>
+        <select id="option" @bind="@option">
+            <option value="0">-- Select a Search Option --</option>
+            <option value="1">Author</option>
+            <option value="2">Subject</option>
+            <option value="3">Content</option>
+            <option value="4">Director Message</option>
+            @*<option value="5">Tag</option>*@
+            <option value="6">Time Before</option>
+            <option value="7">Time After</option>
+        </select>
+        @if (option < 6 && option > 0)
+        {
+            string txt = "Author";
+            if (option == 2) txt = "Subject";
+            if (option == 3) txt = "Content";
+            if (option == 4) txt = "Director Message";
+            if (option == 5) txt = "Tag";
+            <h5>@txt</h5>
+            <input id="searchtext" type="text" @bind="@text" />
+        }
+            @if (option > 5)
+            {
+                <h5>Date/Time</h5>
+                <div id="datetimepicker-control">
+                    <EjsDateTimePicker TValue="DateTime" @bind-Value="theTime" Placeholder="Select a date and time" Width="250px"></EjsDateTimePicker>
+                </div>
+            }
+            <hr />
+            <button type="button" @onclick="Searchfor" class="btn btn-success btn-sm">Search</button>
+            <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
+        </div>
+</div>
+
+@functions{
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+    string Message { get; set; }
+
+    private int option { get; set; }
+    private string text { get; set; }
+    private DateTime theTime { get; set; }
+    private TZone zone { get; set; }
+    private string searchtype { get; set; }
+
+    protected override void OnInitialized()
+    {
+        option = 0;
+        theTime = DateTime.Now.ToUniversalTime();
+        zone = Parameters.Get<TZone>("TimeZone");
+        searchtype = Parameters.Get<string>("Text");
+    }
+    private void Searchfor()
+    {
+        Search target = new Search(); switch (option)
+        {
+            case 1: target.Option = SearchOption.Author; break;
+            case 2: target.Option = SearchOption.Title; break;
+            case 3: target.Option = SearchOption.Content; break;
+            case 4: target.Option = SearchOption.DirMess; break;
+            case 5: target.Option = SearchOption.Tag; break;
+            case 6: target.Option = SearchOption.TimeIsBefore; break;
+            case 7: target.Option = SearchOption.TimeIsAfter; break;
+            default: return;
+        }
+
+        target.Text = text;
+
+        //theTime = zone.Universal(theTime);
+        target.Time = theTime;
+
+        ModalService.Close(ModalResult.Ok<Search>(target));
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+}

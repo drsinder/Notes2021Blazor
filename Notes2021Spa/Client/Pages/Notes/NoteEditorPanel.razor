@@ -1,0 +1,323 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: NoteEditorPanel.razor
+    **
+    **  Description:
+    **      For creating and editing notes
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@using Blazored.LocalStorage
+@using System.Net.Http
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Text
+@using Newtonsoft.Json
+@using System.Timers
+@using Syncfusion.EJ2.Blazor.RichTextEditor
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService _localStorage
+@*@inject NavigationManager NavigationManager*@
+@inject IModalService Modal
+@inject IJSRuntime jsRuntime
+
+<AuthorizeView Roles="User,Guest">
+    <Authorized Context="Top">
+        @if (noteFile == null)
+        {
+            <p class="center"><em>Loading...</em></p>
+        }
+        else
+        {
+            <div class="dialogedit">
+                <h2>
+                    Note Editor - @noteFile.NoteFileName <span>-</span> @noteFile.NoteFileTitle
+                </h2>
+                <EditForm id="createform" Model="@tvm" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <strong>Subject</strong>
+                    <InputText id="name" @bind-Value="tvm.MySubject" class="form-control long-input" />
+                    @if (Model.myAccess.SetTag)
+                    {
+                        <strong>Tags</strong>
+                        <InputText id="title" @bind-Value="tvm.TagLine" class="form-control long-input" />
+                        <strong>Director Message</strong>
+                        <InputText id="title" @bind-Value="tvm.DirectorMessage" class="form-control long-input" />
+                    }
+                        <strong>Note Body</strong>
+                        @if (!AltEdit)
+                        {
+                            <div class="@TinyClass">
+                                <InputTextArea id="@mynote" @bind-Value="tvm.MyNote" class="form-control"></InputTextArea>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="@EjsClass">
+                                <div class="control-section">
+                                    <div class="control-wrapper">
+                                        <div class="control-section">
+                                            <EjsRichTextEditor @ref="@RteObj" @bind-Value="@tvm.MyNote" EditorMode="EditorMode.HTML" ShowCharCount="true" Height="400" Width="950" MaxLength="100000">
+                                                <ChildContent>
+                                                    <RichTextEditorPasteCleanupSettings Prompt="true"></RichTextEditorPasteCleanupSettings>
+                                                    <RichTextEditorToolbarSettings Items="@Tools"></RichTextEditorToolbarSettings>
+                                                </ChildContent>
+                                            </EjsRichTextEditor>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <br /><button type="submit" class="btn btn-success btn-sm">Save</button>
+                        <button type="button" @onclick="CancelEdit" class="btn btn-info btn-sm">Cancel</button>
+                        <button type="button" @onclick="Browse" class="btn btn-info btn-sm">Image Browser</button>
+                        <EjsUploader ID="UploadFiles" AllowedExtensions=".jpg, .png, .gif">
+                            <UploaderAsyncSettings SaveUrl="api/UImages/Save" RemoveUrl="api/UImages/Remove"></UploaderAsyncSettings>
+                        </EjsUploader>
+                        <p>Reference uploaded files as @FileUrl</p>
+
+                        @*<span class="@TinyClass"><br/><button type="button" @onclick="Switch" class="btn btn-info btn-sm">Switch Editors</button></span>*@
+                    </EditForm>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        Access Denied!
+    </NotAuthorized>
+</AuthorizeView>
+@*<style>
+    .e-code-mirror::before {
+        content: '\e345';
+    }
+
+    .e-html-preview::before {
+        content: '\e350';
+    }
+
+    .CodeMirror-linenumber,
+    .CodeMirror-gutters {
+        display: none;
+    }
+
+    .sb-header {
+        z-index: 100;
+    }
+</style>*@
+
+@code {
+    [Parameter] public NoteDisplayIndexModel Model { get; set; }
+    [Parameter] public long BaseNoteId { get; set; }
+    [Parameter] public NoteHeader EditHeader { get; set; }
+    [Parameter] public NoteContent NoteContent { get; set; }
+    [Parameter] public EventCallback<string> OnClick { get; set; }
+
+    private int Id { get; set; }
+
+    private NoteFile noteFile { get; set; }
+
+    private TextViewModel tvm { get; set; }
+
+    private Timer timer { get; set; }
+
+    private bool AltEdit { get; set; }
+
+    EjsRichTextEditor RteObj;
+
+    public object[] Tools = new object[]{"Undo", "Redo", "|",
+        "Bold", "Italic", "Underline", "StrikeThrough",
+        "FontName", "FontSize", "FontColor", "BackgroundColor",
+        "LowerCase", "UpperCase", "|",
+        "Formats", "Alignments", "OrderedList", "UnorderedList",
+        "Outdent", "Indent", "|",
+        "CreateTable", "CreateLink", "Image", "|", "ClearFormat", "Print",
+        "SourceCode"
+    };
+
+    private string TinyClass { get; set; }
+    private string EjsClass { get; set; }
+
+    private string FileUrl { get; set; }
+
+    string mynote { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        DateTime now = DateTime.Now;
+        mynote = "mynote" + now.Ticks.ToString();
+
+        AltEdit = Model.UserData.Pref6;
+        if (NoteContent != null && EditHeader != null)
+        {
+            AltEdit = false;
+        }
+
+        if (AltEdit)
+        {
+            EjsClass = "printershown";
+            TinyClass = "printerhidden";
+        }
+        else
+        {
+            EjsClass = "printerhidden";
+            TinyClass = "printershown";
+        }
+
+        FileUrl = (await Http.GetJsonAsync<Stringy>("api/ProductionUrl")).value;
+        FileUrl += "File/YourFileNameHere";
+
+        tvm = new TextViewModel();
+        tvm.MyNote = "";
+
+        noteFile = Model.noteFile;
+
+        tvm.BaseNoteHeaderID = BaseNoteId;
+        tvm.NoteFileID = Id = noteFile.Id;
+
+        if (NoteContent != null && EditHeader != null)
+        {
+            tvm.MyNote = NoteContent.NoteBody;
+            tvm.DirectorMessage = NoteContent.DirectorMessage;
+            tvm.MySubject = EditHeader.NoteSubject;
+            tvm.NoteHeader = EditHeader;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //await jsRuntime.InvokeAsync<object>("inittinymce", "");
+
+        if (firstRender)
+        {
+            timer = new Timer(500);
+            timer.Elapsed += TimerTick;
+            timer.Enabled = true;
+        }
+    }
+
+    protected void TimerTick(Object source, ElapsedEventArgs e)
+    {
+        jsRuntime.InvokeAsync<object>("inittinymce2", "textarea#" + mynote).GetAwaiter();
+        //jsRuntime.InvokeAsync<object>("inittinymce", "").GetAwaiter();
+        timer.Enabled = false;
+        jsRuntime.InvokeAsync<object>("tinyfocus", "mynote");
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        if (string.IsNullOrEmpty(tvm.MySubject))
+            tvm.MySubject = "*none*";  // must have title
+
+        if (!AltEdit)
+        {
+            tvm.MyNote = await jsRuntime.InvokeAsync<string>("gettinymcecontent", "");
+        }
+
+        if (NoteContent == null || EditHeader == null)  // new note
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(tvm), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage result = await Http.PostAsync("api/NewBaseNote/", stringContent);
+
+            NoteHeader nh = await Http.GetJsonAsync<NoteHeader>("api/NewBaseNote2/");
+
+            ShowNewNote(nh.Id);
+
+            //            NavigationManager.NavigateTo("notes/enterandshow/" + nh.Id, true);
+            return;
+        }
+        else  // edited note
+        {
+            tvm.NoteHeader = EditHeader;
+            var stringContent = new StringContent(JsonConvert.SerializeObject(tvm), Encoding.UTF8, "application/json");
+            HttpResponseMessage result = await Http.PutAsync("api/NewBaseNote/", stringContent);
+
+            ShowNewNote(tvm.NoteHeader.Id);
+
+            //NavigationManager.NavigateTo("notes/enterandshow/" + tvm.NoteHeader.Id, true);
+            return;
+        }
+    }
+
+    protected void CancelEdit()
+    {
+        if (NoteContent == null || EditHeader == null)  // new note
+        {
+            if (tvm.BaseNoteHeaderID != 0)
+            {
+                ShowNewNote(tvm.BaseNoteHeaderID);
+
+                //NavigationManager.NavigateTo("notes/enterandshow/" + tvm.BaseNoteHeaderID, true);
+            }
+            else
+            {
+                OnClick.InvokeAsync("CancelEdit");
+                //NavigationManager.NavigateTo("notes/main/" + tvm.NoteFileID, true);
+            }
+        }
+        else  // editing
+        {
+            ShowNewNote(EditHeader.Id);
+            //NavigationManager.NavigateTo("notes/enterandshow/" + EditHeader.Id, true);
+        }
+    }
+
+    protected void ShowNewNote(long Id)
+    {
+        OnClick.InvokeAsync("EnterAndShow:" + Id.ToString());
+    }
+
+    protected async Task Switch()
+    {
+        AltEdit = !AltEdit;
+        if (AltEdit)
+        {
+            EjsClass = "printershown";
+            TinyClass = "printerhidden";
+            //StateHasChanged();
+            tvm.MyNote = await jsRuntime.InvokeAsync<string>("gettinymcecontent", "");
+            await this.RteObj.ExecuteCommand(CommandName.InsertHTML, tvm.MyNote);
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("inittinymce2", "textarea#" + mynote);
+            //await jsRuntime.InvokeAsync<object>("inittinymce", "");
+            EjsClass = "printerhidden";
+            TinyClass = "printershown";
+            timer = new Timer(1000);
+            timer.Elapsed += TimerTick;
+            timer.Enabled = true;
+        }
+        StateHasChanged();
+    }
+
+    private void Browse()
+    {
+        var parameters = new ModalParameters();
+        Modal.OnClose += HideDialog;
+        Modal.Show<ImageDlg>("", parameters);
+    }
+
+    void HideDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialog;
+    }
+
+}
+

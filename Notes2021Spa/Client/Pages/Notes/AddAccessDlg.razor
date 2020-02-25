@@ -1,0 +1,124 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: AddAccessDlg.razor
+    **
+    **  Description:
+    **      Adds a user to the access list
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@using System.Timers
+@using Blazored.LocalStorage
+@inject HttpClient Http
+@inject IModalService ModalService
+@inject ILocalStorageService _localStorage
+
+@if (NoteFile == null)
+{
+    <p class="center"><em>Loading...</em></p>
+}
+else
+{
+    <div class="dialogs modal-body">
+        <h3>Add Access Element for User</h3>
+
+        <h5>Select the User</h5>
+
+        <select @bind="selectedUserId">
+            <option value="none">Choose from below</option>
+            @foreach (UserData item in userData)
+            {
+                <option value="@item.UserId">@item.DisplayName</option>
+            }
+        </select>
+        <br /><br />
+        <button type="button" @onclick="Create" class="btn btn-success btn-sm">Create</button>
+
+        <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
+    </div>
+}
+
+@code {
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    protected int fileId { get; set; }
+
+    protected List<UserData> userData { get; set; }
+
+    protected NoteFile NoteFile { get; set; }
+
+    protected string selectedUserId { get; set; }
+
+    protected Timer delay { get; set; }
+
+    protected string ArcString { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        selectedUserId = "none";
+        //ArcString = "0";
+
+        userData = Parameters.Get<List<UserData>>("UserList");
+
+        NoteFile = Parameters.Get<NoteFile>("NoteFile");
+
+        if (NoteFile == null)
+            Cancel();
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+    private async Task Create()
+    {
+        if (selectedUserId != "none")
+        {
+            int aId = await _localStorage.GetItemAsync<int>("ArchiveId");
+
+            NoteAccess item = new NoteAccess();
+
+            item.UserID = selectedUserId;
+            item.NoteFileId = NoteFile.Id;
+            item.ArchiveId = aId;
+            // all access options left false
+
+            await Http.PostJsonAsync("api/AccessList", item);
+
+            delay = new Timer(250);
+            delay.Enabled = true;
+            delay.Elapsed += Done;
+
+            return;
+        }
+
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+    private void Done(Object source, ElapsedEventArgs e)
+    {
+        delay.Enabled = false;
+        delay.Stop();
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+
+}

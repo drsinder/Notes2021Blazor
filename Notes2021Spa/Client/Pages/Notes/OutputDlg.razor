@@ -1,0 +1,78 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: OutputDlg.razor
+    **
+    **  Description:
+    **      Dialog for collecting specs for output
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@inject IModalService ModalService
+
+<div class="dialogs modal-body">
+    <h3>Output Specs</h3>
+
+    <input type="checkbox" @bind="isHtml" /> As Html - otherwise plain text.<br />
+    <input type="checkbox" @bind="isCollapsible" /> Collapsible/Expandable<br />
+    <input type="checkbox" @bind="isEmail" /> Email - Otherwise download.<br />
+    Email Address:<br />
+    <input type="text" @bind="Email" /><br />
+
+    <button type="button" @onclick="Submit" class="btn btn-success btn-sm">Submit</button> <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
+
+</div>
+
+@functions{
+
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    private bool isHtml { get; set; }
+    private bool isCollapsible { get; set; }
+    private bool isEmail { get; set; }
+    private string Email { get; set; }
+
+
+    protected override void OnParametersSet()
+    {
+        isEmail = false;
+        isCollapsible = true;
+        isHtml = true;
+        Email = "";
+    }
+
+    private void Submit()
+    {
+        MarkedOutputModel mo = new MarkedOutputModel();
+        mo.isHtml = isHtml;
+        mo.isCollapsible = isCollapsible;
+        mo.isEmail = isEmail;
+        mo.Email = Email;
+
+        ModalService.Close(ModalResult.Ok<MarkedOutputModel>(mo));
+    }
+
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+
+
+
+}

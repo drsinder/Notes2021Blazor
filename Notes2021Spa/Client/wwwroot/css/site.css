@@ -31,7 +31,8 @@ app {
 }
 
     .main .top-row {
-        background-color: #f7f7f7;
+        /*background-color: #f7f7f7;*/
+        background-color:#555;
         border-bottom: 1px solid #d6d5d5;
         justify-content: flex-end;
     }
@@ -634,6 +635,7 @@ div.copyright {
 .bigpix {
     background-image: url("adventure-alpine-background-smaller.jpg");
     background-color: #dddddd;
+    height:100%;
 }
 
 .bolderface {

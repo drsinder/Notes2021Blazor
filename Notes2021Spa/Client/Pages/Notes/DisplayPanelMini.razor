@@ -1,0 +1,66 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: DisplayPanel.razor
+    **
+    **  Description:
+    **      Work horse of the notes app
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+@*--------------------------------------------------------------------------
+    **
+    ** This component handles display of a single note, a string of notes,
+    ** navigation between notes without returning to the index, printing of
+    ** single notes, note strings, and whole files.  Also makes coffee! :)
+    **
+    **--------------------------------------------------------------------------*@
+
+
+@using Notes2021Blazor.Shared
+
+@inject HttpClient Http
+@inject IJSRuntime jsRuntime
+
+@if (currentContent == null)
+{
+    <p class="center"><em>Loading...</em></p>
+}
+else
+{
+    <div class="notebody">
+        @((MarkupString)currentContent.NoteBody)
+    </div>
+}
+
+@functions
+    {
+    [Parameter] public NoteHeader currentHeader { get; set; }
+
+    public NoteContent currentContent { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        // get content and tags for this note - also includes director message
+        currentContent = await Http.GetJsonAsync<NoteContent>("api/NoteContentMini/" + currentHeader.Id);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // highlight code sections (if any) of a note
+        await jsRuntime.InvokeVoidAsync("Prism.highlightAll");
+    }
+}

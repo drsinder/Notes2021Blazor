@@ -1,0 +1,216 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: ListMenu.razor
+    **
+    **  Description:
+    **      Menu bar for Main (mode 0)
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using System.Timers
+@using Notes2021Blazor.Shared
+@using Syncfusion.EJ2.Blazor.Navigations
+@using Syncfusion.EJ2.Blazor.Popups
+
+
+@inject IJSRuntime jsRuntime
+@inject ILocalStorageService _localStorage
+@inject HttpClient Http
+
+<div class="menu-control">
+    <div class="layout">
+        <div id="container">
+            <EjsTooltip ID="tip1" Target="#ListNoteFiles" OpenDelay="1000" Content="@Tip1">
+                <EjsTooltip ID="tip2" Target="#NewBaseNote" OpenDelay="1000" Content="@Tip2">
+                    <EjsTooltip ID="tip3" Target="#OutPutMenu" OpenDelay="1000" Content="@Tip3" Position="Position.TopLeft">
+                        <EjsTooltip ID="tip4" Target="#SearchFromIndex" OpenDelay="1000" Content="@Tip4">
+                            <EjsTooltip ID="tip5" Target="#ListHelp" OpenDelay="1000" Content="@Tip5">
+                                <EjsTooltip ID="tip6" Target="#AccessControls" OpenDelay="1000" Content="@Tip6">
+
+                                    <EjsMenu Items="@menuItems" HamburgerMode="@HamburgerMode">
+                                        <MenuEvents ItemSelected="OnSelect"></MenuEvents>
+                                    </EjsMenu>
+
+                                </EjsTooltip>
+                            </EjsTooltip>
+                        </EjsTooltip>
+                    </EjsTooltip>
+                </EjsTooltip>
+            </EjsTooltip>
+        </div>
+    </div>
+</div>
+
+<style>
+    .e-menu-wrapper ul {
+        background-color: #555;
+        color: #FFF;
+    }
+
+        .e-menu-wrapper ul .e-menu-item .e-caret {
+            color: #FFF;
+        }
+
+        .e-menu-wrapper ul .e-menu-item.e-focused {
+            color: #CCC;
+            outline: 0 solid #f8f9fa;
+            outline-offset: 0;
+            background-color: none;
+        }
+
+            .e-menu-wrapper ul .e-menu-item.e-focused .e-caret {
+                color: #CCC;
+            }
+
+        .e-menu-wrapper ul .e-menu-item.e-selected {
+            color: #CCC;
+            outline: 0 solid #f2f4f6;
+            outline-offset: 0;
+            background-color: none;
+        }
+
+    .e-menu-wrapper .e-ul {
+        background-color: #555;
+        color: #FFF;
+    }
+
+    .menu-control {
+        text-align: center;
+        color: #FFF;
+        background-color: #555;
+    }
+
+    .layout #container {
+        color: #FFF;
+        background-color: #555;
+    }
+</style>
+
+@code {
+    [Parameter] public NoteDisplayIndexModel Model { get; set; }
+    [Parameter] public EventCallback<string> OnClick { get; set; }
+
+    private List<object> menuItems { get; set; }
+
+    private bool HamburgerMode { get; set; } = false;
+
+    public int Width { get; set; }
+
+    object Tip1 = "Go to the list of available notefiles (L)";
+    object Tip2 = "Write a New base note (N)";
+    object Tip3 = "<p>Export the file as text (X)</p><p>Export the file as expandable Html (H)</p><p>Export the file as flat Html (h)</p>p>mail the file (m)</p><p>Mark note strings you have written in for output</p><p>Output marked notes (O)</p><p>Print entire file (P)</p><p>Json file export (J)</p>";
+    object Tip4 = "Search the file for something (S)";
+    object Tip5 = "Show the HELP dialog (Z)";
+    object Tip6 = "View or Edit the Access Controls (A)";
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        menuItems = new List<object>();
+
+        object item = new { id = "ListNoteFiles", text = "List Note Files" };
+        menuItems.Add(item);
+        if (Model.myAccess.Write)
+        {
+            item = new { id = "NewBaseNote", text = "New Base Note" };
+            menuItems.Add(item);
+        }
+        if (Model.myAccess.ReadAccess)
+        {
+            item = new { id = "OutPutMenu", text = "Output" };
+            menuItems.Add(item);
+            item = new { id = "eXport", text = "eXport", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "HtmlFromIndex", text = "Html (expandable)", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "htmlFromIndex", text = "html (flat)", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "mailFromIndex", text = "mail", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "MarkMine", text = "Mark my notes for output", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+            item = new { id = "PrintFile", text = "Print entire file", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+
+            if (Model.isMarked)
+            {
+                item = new { id = "OutputMarked", text = "Output marked notes", parentId = "OutPutMenu" };
+                menuItems.Add(item);
+            }
+
+            item = new { id = "JsonExport", text = "Json Export - for later import", parentId = "OutPutMenu" };
+            menuItems.Add(item);
+
+
+            item = new { id = "SearchFromIndex", text = "Search" };
+            menuItems.Add(item);
+            item = new { id = "ListHelp", text = "Z for HELP" };
+            menuItems.Add(item);
+            if (Model.myAccess.EditAccess || Model.myAccess.ViewAccess)
+            {
+                item = new { id = "AccessControls", text = "Access Controls" };
+                menuItems.Add(item);
+            }
+        }
+
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+    }
+
+    protected Timer timer { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer = new Timer(100);
+            timer.Elapsed += TimerTick;
+            timer.Enabled = true;
+        }
+    }
+
+    protected void TimerTick(Object source, ElapsedEventArgs e)
+    {
+        timer.Interval = 1000;
+        CheckWidth();
+    }
+
+    protected async Task CheckWidth()
+    {
+        Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
+        HamburgerMode = Width < 650;
+        StateHasChanged();
+    }
+
+    public async Task OnSelect(MenuEventArgs e)
+    {
+        if (e.Item.Id == "OutPutMenu")
+            return;
+
+        await OnClick.InvokeAsync(e.Item.Id);
+
+        if (e.Item.Id == "MarkMine")
+        {
+            int archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
+            Model = await Http.GetJsonAsync<NoteDisplayIndexModel>("api/NoteIndex/" + Model.noteFile.Id + "." + archiveID);
+
+            OnParametersSet();
+            StateHasChanged();
+        }
+
+    }
+}

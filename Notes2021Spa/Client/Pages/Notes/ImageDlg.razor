@@ -1,0 +1,103 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: ImageDlg.razor
+    **
+    **  Description:
+    **      File Browser for uploaded files (stored in SQL DB)
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@using Syncfusion.EJ2.Blazor.Grids
+@inject HttpClient Http
+@inject IModalService ModalService
+
+<div class="dialogs modal-body">
+    <h3>Image Browser</h3>
+
+    <div class="col-lg-12 control-section dialoglist">
+        <div class="content-wrapper">
+            <div class="row">
+                <EjsGrid @ref="MyGrid" DataSource="@MyFiles" AllowPaging="true" AllowSelection="true" EnableHover="true" Width="700">
+                    <GridPageSettings PageSizes="true"></GridPageSettings>
+                    <GridEvents TValue="SQLFile"></GridEvents>
+                    <GridTemplates>
+                        <DetailTemplate>
+                            @{
+                                SQLFile current = (context as SQLFile);
+                                string url = FileUrl + current.FileName;
+                            }
+                            <table class="detailtable" width="100%">
+                                <colgroup>
+                                    <col width="50%">
+                                    <col width="50%">
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="4">
+                                            @if (url.EndsWith(".pdf"))
+                                            {
+                                                <a href="@url" target="_blank">@url</a>
+                                            }
+                                            else
+                                            {
+                                                <img src="@url" width="330" />
+                                            }
+                                        </td>
+                                        <td>
+                                            Location:<br />@url
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </DetailTemplate>
+                    </GridTemplates>
+                    <GridColumns>
+                        <GridColumn Field=@nameof(SQLFile.FileName) HeaderText="File Name" TextAlign="TextAlign.Left" IsPrimaryKey="true"></GridColumn>
+                    </GridColumns>
+                </EjsGrid>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Close</button>
+
+</div>
+
+
+@code {
+
+
+    List<SQLFile> MyFiles { get; set; }
+
+    EjsGrid<SQLFile> MyGrid;
+
+    private string FileUrl { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        FileUrl = (await Http.GetJsonAsync<Stringy>("api/ProductionUrl")).value + "File/";
+
+        MyFiles = await Http.GetJsonAsync<List<SQLFile>>("api/UImages/GetFiles");
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+}
