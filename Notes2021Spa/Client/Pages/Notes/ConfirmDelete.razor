@@ -1,0 +1,58 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: ConfirmDelete.razor
+    **
+    **  Description:
+    **      Confirms Delete
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Net.Http
+@using Notes2021Blazor.Shared
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService ModalService
+
+<AuthorizeView Roles="Admin">
+    <Authorized Context="Other">
+        <div class="dialogs">
+            <h3>Confirm Delete.</h3>
+            <button type="submit" @onclick="Submit">Confirm</button> <button type="button" @onclick="Cancel">Cancel</button>
+
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        Access denied.
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+
+    private void Submit()
+    {
+        ModalService.Close(ModalResult.Ok($"Delete was submitted successfully."));
+    }
+
+    private void Cancel()
+    {
+        ModalService.Close(ModalResult.Cancel());
+    }
+}

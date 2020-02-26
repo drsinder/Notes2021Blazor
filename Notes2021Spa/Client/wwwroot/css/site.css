@@ -236,7 +236,8 @@ button {
 
     button.linkblue {
         font-family: "Verdana" sans-serif;
-        font-size: 1em;
+        font-size: 1.1em;
+        font-weight:600;
         text-align: left;
         color: blue;
         background: none;

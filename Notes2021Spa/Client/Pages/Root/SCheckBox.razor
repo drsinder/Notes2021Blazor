@@ -1,0 +1,66 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: SCheckBox.razor
+    **
+    **  Description:
+    **      CheckBox used in sequencer editor
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@using Newtonsoft.Json
+@using System.Text
+
+@inject HttpClient Http
+
+<EjsCheckBox @bind-Checked="@Model.isChecked" @onclick="OnClick"></EjsCheckBox>
+
+@code {
+
+    [Parameter] public int fileId { get; set; }
+    [Parameter] public bool isChecked { get; set; }
+
+    public SCheckModel Model { get; set; }
+
+    protected Sequencer tracker { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Model = new SCheckModel
+        {
+            isChecked = isChecked,
+            fileId = fileId
+        };
+
+    }
+
+    public async Task OnClick()
+    {
+        if (Model.isChecked) // create item
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(Model), Encoding.UTF8, "application/json");
+            await Http.PostAsync("api/sequencer", stringContent);
+        }
+        else // delete it
+        {
+            await Http.DeleteAsync("api/sequencer/" + Model.fileId);
+        }
+    }
+
+
+}

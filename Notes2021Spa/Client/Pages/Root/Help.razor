@@ -22,7 +22,9 @@
     **
     **--------------------------------------------------------------------------*@
 
-<h2>Navigation</h2>
+<h2>Navigation Help</h2>
+<button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Exit</button>
+
 <div>
     <p>
         First I highly recommend you look at some historical screens below with a few notes to get some perspective.
@@ -190,5 +192,8 @@
 @code{
 
     [Parameter] public EventCallback<Message> OnMessage { get; set; }
-
+    private async Task Cancel()
+    {
+        await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMe });
+    }
 }

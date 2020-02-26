@@ -1,0 +1,17 @@
+﻿@using Notes2021Blazor.Shared
+
+<button type="button" class="linkblue" @onclick="OnClick">@NoteFile.NoteFileName - @NoteFile.NoteFileTitle</button>
+
+@code{
+
+    [Parameter] public EventCallback<Message> OnMessage { get; set; }
+    [Parameter] public NoteFile NoteFile {get; set;}
+
+    protected void OnClick()
+    {
+        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = NoteFile.Id});
+
+    }
+
+
+}

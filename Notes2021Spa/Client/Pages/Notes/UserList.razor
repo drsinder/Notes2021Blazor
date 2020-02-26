@@ -1,0 +1,95 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: UserList.razor
+    **
+    **  Description:
+    **      List of registered users
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService Modal
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        @if (UList == null)
+        {
+            <p class="center"><em>Loading...</em></p>
+        }
+        else
+        {
+            <h3>User List</h3>
+
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (UserData item in UList)
+                        {
+                            <tr>
+                                <td>@item.DisplayName</td>
+                                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                <td>
+                                    <button @onclick="@(() => EditLink(item.UserId))">Edit</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        Access Denied.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private List<UserData> UList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        UList = await Http.GetJsonAsync<List<UserData>>("api/users");
+    }
+
+    protected void EditLink(string Id)
+    {
+        ModalParameters Parameters = new ModalParameters();
+        Parameters.Add("UserId", Id);
+        Modal.OnClose += UserEditClosed;
+
+        Modal.Show<UserEdit>("", Parameters);
+    }
+
+    public void UserEditClosed(ModalResult result)
+    {
+        Modal.OnClose -= UserEditClosed;
+    }
+
+}

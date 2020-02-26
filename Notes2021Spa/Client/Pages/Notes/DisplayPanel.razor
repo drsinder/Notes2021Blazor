@@ -595,7 +595,7 @@ else
         parameters.Add("NoteId", currentHeader.Id);
         parameters.Add("FileId", Model.noteFile.Id);
         var options = new ModalOptions() { HideCloseButton = false };
-        Modal.OnClose += HideDialog;
+        Modal.OnClose += HideDeleteDialog;
         Modal.Show<DeleteNote>("", parameters, options);
     }
 
@@ -797,6 +797,11 @@ else
         OnClick.InvokeAsync("Done:" + currentHeader.NoteOrdinal);   // tell parent I'm done
     }
 
+    private void DoneToIndex()
+    {
+        OnClick.InvokeAsync("Done");   // tell parent I'm done
+    }
+
     /// <summary>
     /// Handle typing in navigation box format of actions
     /// n = goto note n
@@ -956,6 +961,15 @@ else
     {
         Modal.OnClose -= HideDialog;
         StartTimer();
+    }
+
+    void HideDeleteDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDeleteDialog;
+        StartTimer();
+        if (modalResult.Cancelled)
+            return;
+        DoneToIndex();
     }
 
     void HidePrintDialog(ModalResult modalResult)

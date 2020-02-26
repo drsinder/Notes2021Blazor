@@ -1,0 +1,162 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: CreateLinked.razor
+    **
+    **  Description:
+    **      Create a link between file on another system
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+@using Notes2021Blazor.Shared
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IModalService Modal
+@inject IJSRuntime jsRuntime
+
+<h3>Create Linked File</h3>
+
+@if (Model == null)
+{
+    <p class="center"><em>Loading...</em></p>
+}
+else
+{
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <div>
+                Select File to link:
+                <br />
+                <select id="select1" @bind="myFile">
+                    <option value="0" selected="selected">-- Select from list --</option>
+                    @foreach (NoteFile item in Files)
+                    {
+                        <option value="@item.Id">@item.NoteFileName</option>
+                    }
+                </select>
+                <br />
+                Name of remote file:<br />
+                <input type="text" @bind="@remoteFile" />
+                <br />Uri of remote App:<br />
+                <input type="text" @bind="@appUri" class="long-input" />
+                <br />Shared Secret:<br />
+                <input type="text" @bind="@secret" class="long-input" />
+                <br />
+                <EjsCheckBox @bind-Checked="@accept" Label="Accept From"></EjsCheckBox>
+                <br />
+                <EjsCheckBox @bind-Checked="@send" Label="Send to"></EjsCheckBox>
+                <br /><br />
+                <button type="button" @onclick="Submit">Submit</button>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            You do not have access!
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+
+@code {
+
+    [Parameter] public EventCallback<Message> OnMessage { get; set; }
+
+    private List<LinkedFile> Model { get; set; }
+    private List<NoteFile> Files { get; set; }
+    private int myFile { get; set; }
+    private string remoteFile { get; set; }
+    private string appUri { get; set; }
+    private string secret { get; set; }
+    private bool accept { get; set; }
+    private bool send { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Files = await Http.GetJsonAsync<List<NoteFile>>("api/notefileadmin");
+        myFile = 0;
+        accept = send = true;
+        Model = await Http.GetJsonAsync<List<LinkedFile>>("api/Linked");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            jsRuntime.InvokeAsync<object>("setselect0", "select1");
+    }
+
+    protected async Task Submit()
+    {
+        if (myFile == 0)
+        {
+            ShowMessage("Select a file!");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(remoteFile))
+        {
+            ShowMessage("Enter a remote file!");
+            return;
+        }
+
+        Stringy test = new Stringy { value = appUri };
+        bool result = await Http.PostJsonAsync<bool>("api/LinkTest", test);
+
+        if (!result)
+        {
+            ShowMessage("Remote system not responding...");
+            return;
+        }
+
+        Stringy test2 = new Stringy { value = appUri + "/" + remoteFile };
+        bool result2 = await Http.PutJsonAsync<bool>("api/LinkTest", test2);
+
+        if (!result2)
+        {
+            ShowMessage("Remote file does not exist.");
+            return;
+        }
+
+
+        LinkedFile linker = new LinkedFile();
+        linker.HomeFileId = myFile;
+        linker.HomeFileName = Files.Find(p => p.Id == myFile).NoteFileName;
+        linker.RemoteBaseUri = appUri;
+        linker.RemoteFileName = remoteFile;
+        linker.Secret = secret;
+        linker.SendTo = send;
+        linker.AcceptFrom = accept;
+
+        await Http.PostJsonAsync("api/Linked", linker);
+
+        await OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Linked });
+    }
+
+    private void ShowMessage(string message)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add("Message", message);
+        Modal.OnClose += HideDialog;
+        Modal.Show<MessageBox>("", parameters);
+    }
+
+    public void HideDialog(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialog;
+    }
+
+}

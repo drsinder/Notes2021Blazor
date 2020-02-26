@@ -23,7 +23,17 @@ namespace Notes2021Blazor.Shared
         FileUserIndex,
         MainHelp,
         About,
-        Schema
+        Schema,
+        RecentEdit,
+        Subscriptions,
+        Preferences,
+        License,
+        AdminFiles,
+        Roles,
+        Linked,
+        CreateLinked,
+        EditLinked
+
     }
 
     public class Message

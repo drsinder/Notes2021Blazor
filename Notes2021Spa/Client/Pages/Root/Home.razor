@@ -126,11 +126,8 @@
                         <ul>
                             @foreach (localFile x in impfileList)
                             {
-                                string val = x.NoteFileName + " - " + x.NoteFileTitle;
                                 <li>
-                                    <strong>
-                                        <a href="notes\main\@x.Id">@val</a>
-                                    </strong>
+                                    <FileButton NoteFile="@x" OnMessage="OnMessage"></FileButton>
                                 </li>
                             }
                         </ul>
@@ -140,12 +137,9 @@
                         <ul>
                             @foreach (localFile x in histfileList)
                             {
-                                string val = x.NoteFileName + " - " + x.NoteFileTitle;
-                                <li>
-                                    <strong>
-                                        <a href="notes/main/@x.Id">@val</a>
-                                    </strong>
-                                </li>
+                            <li>
+                                <FileButton NoteFile="@x" OnMessage="OnMessage"></FileButton>
+                            </li>
                             }
                         </ul>
                     </div>
@@ -285,7 +279,7 @@
             {
                 if (value == item.NoteFileName)
                 {
-                    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = item.Id, StringArg = item.NoteFileName });
+                    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = item.Id/*, StringArg = item.NoteFileName */});
 
                     //NavigationManager.NavigateTo("notes/main/" + item.Id);
                     return;
@@ -309,11 +303,11 @@
 
 @code {
 
-    public class localFile
+    public class localFile : NoteFile
     {
-        public int Id { get; set; }
-        public string NoteFileName { get; set; }
-        public string NoteFileTitle { get; set; }
+        //public int Id { get; set; }
+        //public string NoteFileName { get; set; }
+        //public string NoteFileTitle { get; set; }
 
     }
 
