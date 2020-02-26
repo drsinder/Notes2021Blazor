@@ -837,6 +837,8 @@ else @if (CurrentLoc == Locations.EditLinked)
     {
         printfile = false;
         timer.Interval = 5000;
+        timer.Stop();
+        timer.Enabled = false;
         jsRuntime.InvokeAsync<object>("setfocus", "arrow1");
     }
 
