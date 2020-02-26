@@ -124,6 +124,10 @@ else @if (CurrentLoc == Locations.EditLinked)
       {
         <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
     }
+    else @if (CurrentLoc == Locations.FileList)
+      {
+        <NotesFiles OnMessage="MessageHandler"></NotesFiles>
+    }
 
     else if (CurrentLoc == Locations.FileUserIndex)
     {
@@ -277,6 +281,9 @@ else @if (CurrentLoc == Locations.EditLinked)
 </style>
 
 @code {
+
+    [Parameter] public EventCallback<Message> OnMessage { get; set; }
+
     //private bool collapseNavMenu = true;
 
     //private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -292,8 +299,6 @@ else @if (CurrentLoc == Locations.EditLinked)
     private string StringArg { get; set; }
 
     private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    //[Parameter] public EventCallback<Message> OnMessage { get; set; }
 
     public string fileId { get; set; }
 
@@ -531,6 +536,10 @@ else @if (CurrentLoc == Locations.EditLinked)
             PreviousLoc = Locations.Home;
             CurrentLoc = PreviousLoc;
         }
+        //else if (Message.Command == Commands.SetPixClass)
+        //{
+        //    await OnMessage.InvokeAsync(Message);
+        //}
     }
 
     private void Login()
@@ -939,6 +948,10 @@ else @if (CurrentLoc == Locations.EditLinked)
 
     protected void ListFiles()
     {
+        PreviousLoc = CurrentLoc;
+        CurrentLoc = Locations.FileList;
+
+
         //NavigationManager.NavigateTo("notes/notesfiles", true);
     }
 
@@ -1010,6 +1023,8 @@ else @if (CurrentLoc == Locations.EditLinked)
 
     void NewBaseNote()
     {
+        StopTimer();
+
         //if (Model.UserData.Pref2)
         {
             newnoteFlag = true;
@@ -1017,7 +1032,6 @@ else @if (CurrentLoc == Locations.EditLinked)
             return;
         }
 
-        StopTimer();
 
         //var parameters = new ModalParameters();
         //parameters.Add("Editing", false);

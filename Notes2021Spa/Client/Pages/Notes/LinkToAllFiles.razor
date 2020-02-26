@@ -1,0 +1,11 @@
+﻿<button type="button" @onclick="OnClick" class="linkblue"><strong>See All Files</strong></button>
+
+@code {
+    [Parameter] public EventCallback<Message> OnMessage { get; set; }
+
+    void OnClick()
+    {
+        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileList });
+    }
+
+}

@@ -1,14 +1,28 @@
 ﻿@inherits LayoutComponentBase
-@*<div class="sidebar">
-        <NavMenu />
-    </div>*@
+
 <BlazoredModal Style="blazored-custom-modal" DisableBackgroundCancel="true" HideCloseButton="true" HideHeader="true" />
-<div class="main">
-    <div class="content px-4">
-        @Body
+@*<div class="@pixclass" style="width:100%; height=2000px;">*@
+    <div class="main">
+        <div class="content px-4">
+
+            @*<Index OnMessage="MessageHandler"></Index>*@
+
+            @Body
+
+        </div>
     </div>
-    @*<div class="copyright">
-        Copyright &copy; 2020 Dale Sinder
-    </div>*@
-</div>
+@*</div>*@
+
+@*@code{
+
+    string pixclass { get; set; } = "";
+
+    private void MessageHandler(Message Message)
+    {
+        if (Message.Command == Commands.SetPixClass)
+        {
+            pixclass = Message.StringArg;
+        }
+    }
+}*@
 

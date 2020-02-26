@@ -1,0 +1,110 @@
+﻿@*--------------------------------------------------------------------------
+    **
+    **  Copyright (c) 2020, Dale Sinder
+    **
+    **  Name: NoteFiles.razor
+    **
+    **  Description:
+    **      User list of notefiles
+    **
+    **  This program is free software: you can redistribute it and/or modify
+    **  it under the terms of the GNU General Public License version 3 as
+    **  published by the Free Software Foundation.
+    **
+    **  This program is distributed in the hope that it will be useful,
+    **  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    **  GNU General Public License version 3 for more details.
+    **
+    **  You should have received a copy of the GNU General Public License
+    **  version 3 along with this program in file "license-gpl-3.0.txt".
+    **  If not, see <http: //www.gnu.org/licenses/gpl-3.0.txt>.
+    **
+    **--------------------------------------------------------------------------*@
+
+
+@using Notes2021Blazor.Shared
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILocalStorageService _localStorage
+
+
+
+<h3>Notes Files List</h3>
+
+@if (files == null)
+{
+    <p class="center"><em>Loading...</em></p>
+}
+else
+{
+    <AuthorizeView Roles="User,Guest">
+        <Authorized>
+            <div class="col-lg-12 control-section dialognote">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <EjsGrid @ref="MyGrid" EnableAltRow="true" DataSource="@files" AllowPaging="true" AllowSelection="true" EnableHover="true" Toolbar="@(new List<string>() { "Print" })">
+                            <GridPageSettings PageSize="UserData.Ipref2" PageSizes="true"></GridPageSettings>
+                            <GridEvents RowSelected="DisplayIt" TValue="NoteFile"></GridEvents>
+                            <GridColumns>
+                                <GridColumn Field=@nameof(NoteFile.NoteFileName) HeaderText="NoteFile Name" TextAlign="TextAlign.Left" Width="80" IsPrimaryKey="true"></GridColumn>
+                                <GridColumn Field=@nameof(NoteFile.NoteFileTitle) HeaderText="NoteFile Title" TextAlign="TextAlign.Left" Width="150"></GridColumn>
+
+                                <GridColumn HeaderText="Date/Time" TextAlign="TextAlign.Left" Width="60">
+                                    <Template Context="inner">
+                                        @{
+                                            var itemx = (inner as NoteFile);
+                                            DateTime curTimex = Globals.LocalTimeBlazor(itemx.LastEdited);
+                                            string tellx = curTimex.ToShortDateString() + " " + curTimex.ToShortTimeString()/* + " " + timeZone.Abbreviation*/;
+                                            <span>@tellx</span>
+                                        }
+                                    </Template>
+                                </GridColumn>
+
+                            </GridColumns>
+                        </EjsGrid>
+                    </div>
+                </div>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            Access denied!
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+@code {
+    [Parameter] public EventCallback<Message> OnMessage { get; set; }
+
+    EjsGrid<NoteFile> MyGrid;
+
+    private List<NoteFile> files { get; set; }
+    private TZone timeZone { get; set; }
+    private UserData UserData { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
+        files = model.NoteFiles;
+        timeZone = model.TimeZone;
+        UserData = model.UserData;
+    }
+
+    protected void DisplayIt(RowSelectEventArgs<NoteFile> args)
+    {
+        ViewNoteFile(args.Data.Id);
+    }
+
+    void ViewNoteFile(int Id)
+    {
+        _localStorage.SetItemAsync("ArchiveId", 0);
+
+        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = Id });
+        //NavigationManager.NavigateTo("notes/main/" + Id);
+    }
+
+
+}
+

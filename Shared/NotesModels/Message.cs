@@ -11,7 +11,8 @@ namespace Notes2021Blazor.Shared
         Dialog,
         Refresh,
         CloseMeAndRefresh,
-        Home
+        Home,
+        SetPixClass
     }
 
     public enum Locations
@@ -32,7 +33,8 @@ namespace Notes2021Blazor.Shared
         Roles,
         Linked,
         CreateLinked,
-        EditLinked
+        EditLinked,
+        FileList
 
     }
 

@@ -115,7 +115,8 @@
                                 }
                             </InputSelect>
                         </EditForm>
-                        <h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>
+                        <LinkToAllFiles OnMessage="OnMessage"></LinkToAllFiles>
+                        @*<h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>*@
                     </div>
                 </div>
                 <div class="row">
@@ -188,6 +189,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        //await OnMessage.InvokeAsync(new Message { Command = Commands.SetPixClass, StringArg = "bigpix" });
 
         Globals.RootUri = ""; // NavigationManager.Uri;
 
