@@ -156,14 +156,13 @@
 
                     @if (Globals.GuestId != "*none*")
                     {
-                        <h5>Or you may <button type="button" class="linkblue" @onclick="Autologin">login</button> as Guest to browse.</h5>
+                        <h5>Or you may <button type="button" class="linkblue" @onclick="Autologin">login as Guest</button> to browse.</h5>
                     }
 
                     @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
                     {
                         <h5 class="keep-center">@model.Message.Message</h5>
                     }
-                    @*<button type="button" @onclick="Login">Login</button>*@
 
                 </div>
             </NotAuthorized>

@@ -66,7 +66,7 @@
 @code {
     [Parameter] public EventCallback<Message> OnMessage { get; set; }
 
-    [Parameter] public string Autologin { get; set; }
+    [Parameter] public string Autologin { get; set; } = string.Empty;
 
     private LoginModel loginModel = new LoginModel();
     private bool ShowErrors;
