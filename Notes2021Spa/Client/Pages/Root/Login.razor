@@ -66,10 +66,26 @@
 @code {
     [Parameter] public EventCallback<Message> OnMessage { get; set; }
 
+    [Parameter] public string Autologin { get; set; }
 
     private LoginModel loginModel = new LoginModel();
     private bool ShowErrors;
     private string Error = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Autologin))
+            return;
+
+        loginModel.Email = Autologin;
+        loginModel.Password = "Notes123";
+
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
+            await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
+    }
+
 
     private async Task HandleLogin()
     {

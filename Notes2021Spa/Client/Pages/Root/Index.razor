@@ -74,7 +74,7 @@
         }
         else if (CurrentLoc == Locations.Login)
         {
-            <Login OnMessage="MessageHandler"></Login>
+            <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
         }
         else if (CurrentLoc == Locations.Logout)
         {
@@ -292,6 +292,8 @@ else @if (CurrentLoc == Locations.EditLinked)
 
     private Locations CurrentLoc { get; set; }
     private Locations PreviousLoc { get; set; }
+
+    private string Autologin { get; set; }
 
     private List<object> menuItemsTop { get; set; }
 
@@ -530,6 +532,8 @@ else @if (CurrentLoc == Locations.EditLinked)
                 Routing = "main";
                 await StartListing();
             }
+            if (Message.Location == Locations.Login)
+                Autologin = Message.StringArg;
         }
         else if (Message.Command == Commands.Home)
         {

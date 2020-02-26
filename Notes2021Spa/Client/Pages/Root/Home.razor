@@ -156,9 +156,13 @@
 
                     @if (Globals.GuestId != "*none*")
                     {
-                        <h5>Or you may login as @Globals.GuestEmail with password "Notes123" to browse.</h5>
+                        <h5>Or you may <button type="button" class="linkblue" @onclick="Autologin">login</button> as Guest to browse.</h5>
                     }
 
+                    @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
+                    {
+                        <h5 class="keep-center">@model.Message.Message</h5>
+                    }
                     @*<button type="button" @onclick="Login">Login</button>*@
 
                 </div>
@@ -292,9 +296,14 @@
         { }
     }
 
+    private void Autologin()
+    {
+        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = Globals.GuestEmail });
+    }
+
     private void Login()
     {
-        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login });
+        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = string.Empty });
     }
 
     private void Logout()
