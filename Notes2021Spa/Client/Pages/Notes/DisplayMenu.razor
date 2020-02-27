@@ -29,7 +29,7 @@
 
 @inject IJSRuntime jsRuntime
 
-    <div class="menu-control">
+    @*<div class="menu-control">*@
         <div class="layout">
             <div id="container">
                 @if (ToolTips)
@@ -81,7 +81,7 @@
                     </EjsMenu>}
             </div>
         </div>
-    </div>
+    @*</div>*@
 
 
 <style>
@@ -117,11 +117,10 @@
         color: #FFF;
     }
 
-    .menu-control {
-        text-align: center;
+    /*.menu-control {
         color: #FFF;
         background-color: #555;
-    }
+    }*/
 
     .layout #container {
         color: #FFF;
@@ -231,7 +230,7 @@
     protected async Task CheckWidth()
     {
         Width = await jsRuntime.InvokeAsync<int>("getWidth", "x");
-        HamburgerMode = Width < 1150;
+        HamburgerMode = Width < 950;
         StateHasChanged();
     }
 

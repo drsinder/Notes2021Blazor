@@ -24,7 +24,6 @@ namespace Notes2021Blazor.Shared
         FileUserIndex,
         MainHelp,
         About,
-        Schema,
         RecentEdit,
         Subscriptions,
         Preferences,
