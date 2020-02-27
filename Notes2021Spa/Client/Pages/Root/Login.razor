@@ -26,49 +26,46 @@
 @using Notes2021Blazor.Shared
 @inject IAuthService AuthService
 @inject ILocalStorageService _localStorage
-@inject IModalService Modal
 
-<div class="dialogs modal-body">
-    <h1>Login</h1>
+<h1>Login</h1>
 
-    @if (ShowErrors)
-    {
-        <div class="alert alert-danger" role="alert">
-            <p>@Error</p>
-        </div>
-    }
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@Error</p>
+    </div>
+}
 
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Please enter your details</h5>
-            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <InputText Id="email" Class="form-control short-input" @bind-Value="loginModel.Email" />
-                    <ValidationMessage For="@(() => loginModel.Email)" />
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <InputText Id="password" type="password" Class="form-control short-input" @bind-Value="loginModel.Password" />
-                    <ValidationMessage For="@(() => loginModel.Password)" />
-                </div>
-                @*<div class="form-group">
-                        <label for="rememberme">Remember me</label>
-                        <InputCheckbox Id="rememberme" Class="form-control checkbox" @bind-Value="loginModel.RememberMe" />
-                    </div>*@
-                <button type="submit" class="btn btn-primary btn-sm">Submit</button>&nbsp;<button type="button" @onclick="Cancel" class="btn btn-info btn-sm">Cancel</button> 
-            </EditForm>
-        </div>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <InputText Id="email" Class="form-control short-input" @bind-Value="loginModel.Email" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" Class="form-control short-input" @bind-Value="loginModel.Password" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            @*<div class="form-group">
+                    <label for="rememberme">Remember me</label>
+                    <InputCheckbox Id="rememberme" Class="form-control checkbox" @bind-Value="loginModel.RememberMe" />
+                </div>*@
+            <button type="submit" class="btn btn-primary btn-info">Submit</button>
+        </EditForm>
     </div>
 </div>
 
 @code {
-    [CascadingParameter] ModalParameters Parameters { get; set; }
+    [Parameter] public EventCallback<Message> OnMessage { get; set; }
 
-    private string Autologin { get; set; } = string.Empty;
+    [Parameter] public string Autologin { get; set; } = string.Empty;
 
     private LoginModel loginModel = new LoginModel();
     private bool ShowErrors;
@@ -76,53 +73,45 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Autologin = Parameters.Get<string>("AutoLogin");
-
         if (Autologin.Length < 5)
             return;
 
         loginModel.Email = Autologin;
         loginModel.Password = "Notes123";
 
-        try
-        {
-            LoginResult result = await AuthService.Login(loginModel);
-            if (result.Successful)
-            {
-                Modal.Cancel();
-            }
-            else
-            {
-                Error = result.Error;
-                ShowErrors = true;
-            }
-        }
-        catch { };
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
+            await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
     }
+
 
     private async Task HandleLogin()
     {
         ShowErrors = false;
 
-        try
-        {
-            LoginResult result = await AuthService.Login(loginModel);
-            if (result.Successful)
-            {
-                Modal.Cancel();
-            }
-            else
-            {
-                Error = result.Error;
-                ShowErrors = true;
-            }
-        }
-        catch { }
-    }
+        var result = await AuthService.Login(loginModel);
 
-    private void Cancel()
-    {
-        Modal.Cancel();
+        if (result.Successful)
+        {
+            try
+            {
+                string ReturnUri = await _localStorage.GetItemAsync<string>("ReturnUri");
+                await _localStorage.RemoveItemAsync("ReturnUri");
+                if (!string.IsNullOrEmpty(ReturnUri))
+                {
+                    await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
+                    return;
+                }
+            }
+            catch { }
+            await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
+        }
+        else
+        {
+            Error = result.Error;
+            ShowErrors = true;
+        }
     }
 
 }
