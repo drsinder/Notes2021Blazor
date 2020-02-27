@@ -1,28 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
 <BlazoredModal Style="blazored-custom-modal" DisableBackgroundCancel="true" HideCloseButton="true" HideHeader="true" />
-@*<div class="@pixclass" style="width:100%; height=2000px;">*@
-    <div class="main">
-        <div class="content px-4">
+<div class="main">
+    @*<div class="content px-4">*@
+        @Body
 
-            @*<Index OnMessage="MessageHandler"></Index>*@
-
-            @Body
-
-        </div>
-    </div>
-@*</div>*@
-
-@*@code{
-
-    string pixclass { get; set; } = "";
-
-    private void MessageHandler(Message Message)
-    {
-        if (Message.Command == Commands.SetPixClass)
-        {
-            pixclass = Message.StringArg;
-        }
-    }
-}*@
-
+    @*</div>*@
+</div>

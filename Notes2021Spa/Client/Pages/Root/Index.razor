@@ -28,7 +28,6 @@
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.ComponentModel.DataAnnotations
-@using System.Security.Claims
 @using System.Timers
 @using System.Text
 @using Newtonsoft.Json
@@ -39,201 +38,201 @@
 @inject IModalService Modal
 @inject IJSRuntime jsRuntime
 
-    <div>
-        <div class="top-row">
-            <div class="keep-center">
-                <EjsMenu Items="@menuItemsTop" @ref="@topMenu">
-                    <MenuEvents ItemSelected="OnSelectTop"></MenuEvents>
-                </EjsMenu>
-                &nbsp;&nbsp;
-            </div>
-            <AuthorizeView>
-                <Authorized>
-                    <button type="button" class="btn btn-info btn-sm" @onclick="Logout">Logout</button>
-                </Authorized>
-                <NotAuthorized>
-                    <button type="button" class="btn btn-info btn-sm" @onclick="Register">Register</button>&nbsp;&nbsp;
-                    <button type="button" class="btn btn-info btn-sm" @onclick="Login">Login</button>
-                </NotAuthorized>
-            </AuthorizeView>
-            &nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" @onclick="Home">Notes 2021 Home</button>&nbsp;&nbsp;
+<div>
+    <div class="top-row">
+        <div class="keep-center">
+            <EjsMenu Items="@menuItemsTop" @ref="@topMenu">
+                <MenuEvents ItemSelected="OnSelectTop"></MenuEvents>
+            </EjsMenu>
+            &nbsp;&nbsp;
         </div>
+        <AuthorizeView>
+            <Authorized>
+                <button type="button" class="btn btn-info btn-sm" @onclick="Logout">Logout</button>
+            </Authorized>
+            <NotAuthorized>
+                <button type="button" class="btn btn-info btn-sm" @onclick="Register">Register</button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-info btn-sm" @onclick="Login">Login</button>
+            </NotAuthorized>
+        </AuthorizeView>
+        &nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" @onclick="Home">Notes 2021 Home</button>&nbsp;&nbsp;
+    </div>
 
 
-        @if (CurrentLoc == Locations.Home)
-        {
-            <Home OnMessage="MessageHandler"></Home>
-        }
-        else if (CurrentLoc == Locations.About)
-        {
-            <About OnMessage="MessageHandler"></About>
-        }
-        else if (CurrentLoc == Locations.MainHelp)
-        {
-            <Help OnMessage="MessageHandler"></Help>
-        }
-        else if (CurrentLoc == Locations.Login)
-        {
-            <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
-        }
-        else if (CurrentLoc == Locations.Logout)
-        {
-            <Logout OnMessage="MessageHandler"></Logout>
-        }
-        else if (CurrentLoc == Locations.Register)
-        {
-            <Register OnMessage="MessageHandler"></Register>
-        }
-        else @if (CurrentLoc == Locations.Schema)
-  {
-    <Schema OnMessage="MessageHandler"></Schema>
+    @if (CurrentLoc == Locations.Home)
+    {
+        <Home OnMessage="MessageHandler"></Home>
+    }
+    else if (CurrentLoc == Locations.About)
+    {
+        <About OnMessage="MessageHandler"></About>
+    }
+    else if (CurrentLoc == Locations.MainHelp)
+    {
+        <Help OnMessage="MessageHandler"></Help>
+    }
+    else if (CurrentLoc == Locations.Login)
+    {
+        <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
+    }
+    else if (CurrentLoc == Locations.Logout)
+    {
+        <Logout OnMessage="MessageHandler"></Logout>
+    }
+    else if (CurrentLoc == Locations.Register)
+    {
+        <Register OnMessage="MessageHandler"></Register>
+    }
+    else @if (CurrentLoc == Locations.Schema)
+{
+<Schema OnMessage="MessageHandler"></Schema>
 }
 else @if (CurrentLoc == Locations.Preferences)
-      {
-        <Preferences OnMessage="MessageHandler"></Preferences>
-    }
-    else @if (CurrentLoc == Locations.RecentEdit)
   {
-    <Tracker OnMessage="MessageHandler"></Tracker>
+    <Preferences OnMessage="MessageHandler"></Preferences>
+}
+else @if (CurrentLoc == Locations.RecentEdit)
+{
+<Tracker OnMessage="MessageHandler"></Tracker>
 }
 else @if (CurrentLoc == Locations.Subscriptions)
-      {
-        <Subscribe OnMessage="MessageHandler"></Subscribe>
-    }
-    else @if (CurrentLoc == Locations.License)
   {
-    <License></License>
+    <Subscribe OnMessage="MessageHandler"></Subscribe>
+}
+else @if (CurrentLoc == Locations.License)
+{
+<License></License>
 }
 else @if (CurrentLoc == Locations.AdminFiles)
-      {
-        <NotesFilesAdmin></NotesFilesAdmin>
-    }
-    else @if (CurrentLoc == Locations.Roles)
   {
-    <UserList></UserList>
+    <NotesFilesAdmin></NotesFilesAdmin>
+}
+else @if (CurrentLoc == Locations.Roles)
+{
+<UserList></UserList>
 }
 else @if (CurrentLoc == Locations.Linked)
-      {
-        <LinkIndex OnMessage="MessageHandler"></LinkIndex>
-    }
-    else @if (CurrentLoc == Locations.CreateLinked)
   {
-    <CreateLinked OnMessage="MessageHandler"></CreateLinked>
+    <LinkIndex OnMessage="MessageHandler"></LinkIndex>
+}
+else @if (CurrentLoc == Locations.CreateLinked)
+{
+<CreateLinked OnMessage="MessageHandler"></CreateLinked>
 }
 else @if (CurrentLoc == Locations.EditLinked)
-      {
-        <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
-    }
-    else @if (CurrentLoc == Locations.FileList)
-      {
-        <NotesFiles OnMessage="MessageHandler"></NotesFiles>
-    }
+  {
+    <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
+}
+else @if (CurrentLoc == Locations.FileList)
+{
+<NotesFiles OnMessage="MessageHandler"></NotesFiles>
+}
 
-    else if (CurrentLoc == Locations.FileUserIndex)
-    {
-        @if (Model == null)
-        {
-            <div class="loading-section">
-                <h2>@message</h2>
-                <div class="loader mt-5">
-                    <div class="loader-dot dot1"></div>
-                    <div class="loader-dot dot2"></div>
-                    <div class="loader-dot dot3"></div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <AuthorizeView Roles="User,Guest">
-                <Authorized>
-                    @if (newnoteFlag)
-                    {
-                        <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
-                    }
-                    else if (mode == -1)
-                    {
-
-                    }
-                    else if (printfile)
-                    {
-                        <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
-                                      trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
-                                      isSearch="isSearch" SearchResults="results" PrintFile="true" ToolTips="false" />
-                    }
-                    else if (mode == 0)  // index mode
-                    {
-                        if (!string.IsNullOrEmpty(message))
-                        {
-                            <div class="loading-section">
-                                <h2>@message ...</h2>
-                                <div class="loader mt-5">
-                                    <div class="loader-dot dot1"></div>
-                                    <div class="loader-dot dot2"></div>
-                                    <div class="loader-dot dot3"></div>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div><br /></div>
-                            <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
-                            if (!Model.UserData.Pref1)
-                            {
-                                <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
-                            }
-                            else
-                            {
-                                <div class="topmenu">
-                                    <ListMenu Model="@Model" OnClick="ClickHandler" />
-                                </div>
-                                <NoteIndexOld Model="@Model" OnClick="ClickHandler" />
-                            }
-                            <br /><br />
-                            <div class="arrow1">
-                                <div>
-                                    <EditForm Model="@myInput" Context="EditBox">
-                                        <div class="form-group">
-                                            <InputText id="arrow1" autofocus="@myInput.isAutoFocus" style="width: 7em" @onkeypress="KeyPressed"
-                                                       ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                                       Value="@myInput.typedValue"
-                                                       ValueExpression="@( () => myInput.typedValue )" />
-                                        </div>
-                                    </EditForm>
-                                    <input type="submit" value="Navigate" class="btn btn-sm" /> b# | b#.r#
-                                </div>
-                            </div>
-                        }
-                    }
-                    else // note display mode
-                    {
-                        if (Model.myAccess.ReadAccess)
-                        {
-                            <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
-                                          trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
-                                          isSearch="isSearch" SearchResults="results" ToolTips="true" />
-                        }
-                        else
-                        {
-                            <h3>You may not read notes in this file.</h3>
-                        }
-                    }
-                </Authorized>
-                <NotAuthorized>
-                    <p>Access Denied!</p>
-                </NotAuthorized>
-            </AuthorizeView>
-        }
-
-
-    }
-
-
-    else
-    {
-        <div>Routing Error!</div>
-    }
-
+else if (CurrentLoc == Locations.FileUserIndex)
+{
+@if (Model == null)
+{
+    <div class="loading-section">
+        <h2>@message</h2>
+        <div class="loader mt-5">
+            <div class="loader-dot dot1"></div>
+            <div class="loader-dot dot2"></div>
+            <div class="loader-dot dot3"></div>
+        </div>
     </div>
+}
+else
+{
+    <AuthorizeView Roles="User,Guest">
+        <Authorized>
+            @if (newnoteFlag)
+            {
+                <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
+            }
+            else if (mode == -1)
+            {
+
+            }
+            else if (printfile)
+            {
+                <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
+                              trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
+                              isSearch="isSearch" SearchResults="results" PrintFile="true" ToolTips="false" />
+            }
+            else if (mode == 0)  // index mode
+            {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    <div class="loading-section">
+                        <h2>@message ...</h2>
+                        <div class="loader mt-5">
+                            <div class="loader-dot dot1"></div>
+                            <div class="loader-dot dot2"></div>
+                            <div class="loader-dot dot3"></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div><br /></div>
+                    <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
+                    if (!Model.UserData.Pref1)
+                    {
+                        <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                    }
+                    else
+                    {
+                        <div class="topmenu">
+                            <ListMenu Model="@Model" OnClick="ClickHandler" />
+                        </div>
+                        <NoteIndexOld Model="@Model" OnClick="ClickHandler" />
+                    }
+                    <br /><br />
+                    <div class="arrow1">
+                        <div>
+                            <EditForm Model="@myInput" Context="EditBox">
+                                <div class="form-group">
+                                    <InputText id="arrow1" autofocus="@myInput.isAutoFocus" style="width: 7em" @onkeypress="KeyPressed"
+                                               ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                               Value="@myInput.typedValue"
+                                               ValueExpression="@( () => myInput.typedValue )" />
+                                </div>
+                            </EditForm>
+                            <input type="submit" value="Navigate" class="btn btn-sm" /> b# | b#.r#
+                        </div>
+                    </div>
+                }
+            }
+            else // note display mode
+            {
+                if (Model.myAccess.ReadAccess)
+                {
+                    <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
+                                  trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
+                                  isSearch="isSearch" SearchResults="results" ToolTips="true" />
+                }
+                else
+                {
+                    <h3>You may not read notes in this file.</h3>
+                }
+            }
+        </Authorized>
+        <NotAuthorized>
+            <p>Access Denied!</p>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+
+}
+
+
+else
+{
+<div>Routing Error!</div>
+}
+
+</div>
 
 <style>
     .e-menu-wrapper ul {
@@ -418,7 +417,7 @@ else @if (CurrentLoc == Locations.EditLinked)
 
         //ShowMessage("UpdateMenu");
 
-        await topMenu.EnableItems(new string[] { "Recent Notes", "Manage", "Admin"}, false);
+        await topMenu.EnableItems(new string[] { "Recent Notes", "Manage", "Admin" }, false);
 
         if (isUser || isAdmin)
         {
@@ -548,6 +547,7 @@ else @if (CurrentLoc == Locations.EditLinked)
 
     private void Login()
     {
+        Autologin = "x";
         PreviousLoc = CurrentLoc;
         CurrentLoc = Locations.Login;
     }

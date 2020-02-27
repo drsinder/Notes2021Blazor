@@ -192,8 +192,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await OnMessage.InvokeAsync(new Message { Command = Commands.SetPixClass, StringArg = "bigpix" });
-
         Globals.RootUri = ""; // NavigationManager.Uri;
 
         ClaimsPrincipal user = (await authenticationStateTask).User;
@@ -284,9 +282,7 @@
             {
                 if (value == item.NoteFileName)
                 {
-                    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = item.Id/*, StringArg = item.NoteFileName */});
-
-                    //NavigationManager.NavigateTo("notes/main/" + item.Id);
+                    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = item.Id});
                     return;
                 }
             }
@@ -302,7 +298,7 @@
 
     private void Login()
     {
-        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = string.Empty });
+        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = "x" });
     }
 
     private void Logout()

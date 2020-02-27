@@ -74,7 +74,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (string.IsNullOrEmpty(Autologin))
+        if (Autologin.Length < 5)
             return;
 
         loginModel.Email = Autologin;
