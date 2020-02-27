@@ -15,6 +15,7 @@
     <Content Remove="Pages\FetchData.razor" />
     <Content Remove="Pages\Notes\MainList.razor" />
     <Content Remove="Pages\Notes\NoteEditorDlg.razor" />
+    <Content Remove="Pages\Root\Schema.razor" />
     <Content Remove="Shared\NavMenu.razor" />
   </ItemGroup>
 
