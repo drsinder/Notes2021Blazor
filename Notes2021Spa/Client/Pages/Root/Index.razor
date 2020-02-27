@@ -355,6 +355,14 @@ else
         //    CurrentLoc = Locations.FileUserIndex;
         //    return;
         //}
+        //if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("filenum", out var filenum))
+        //{
+        //    fileId = filenum.First();
+        //    await MainEntry();
+        //    PreviousLoc = Locations.Home;
+        //    CurrentLoc = Locations.FileUserIndex;
+        //    return;
+        //}
 
         PreviousLoc = CurrentLoc = Locations.Home;
     }
@@ -454,23 +462,23 @@ else
 
         switch (e.Item.Id)
         {
-            case "MainHelp": 
+            case "MainHelp":
                 CurrentLoc = Locations.MainHelp; break;
-            case "About": 
+            case "About":
                 CurrentLoc = Locations.About; break;
-            case "Preferences": 
+            case "Preferences":
                 CurrentLoc = Locations.Preferences; break;
-            case "MRecent": 
+            case "MRecent":
                 CurrentLoc = Locations.RecentEdit; break;
-            case "Subscriptions": 
+            case "Subscriptions":
                 CurrentLoc = Locations.Subscriptions; break;
-            case "License": 
+            case "License":
                 CurrentLoc = Locations.License; break;
-            case "NoteFiles": 
+            case "NoteFiles":
                 CurrentLoc = Locations.AdminFiles; break;
-            case "Roles": 
+            case "Roles":
                 CurrentLoc = Locations.Roles; break;
-            case "Linked": 
+            case "Linked":
                 CurrentLoc = Locations.Linked; break;
 
             default: break;
