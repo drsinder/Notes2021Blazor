@@ -31,12 +31,14 @@
 @using System.Timers
 @using System.Text
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAuthorizationService AuthorizationService
 @inject ILocalStorageService _localStorage
 @inject IModalService Modal
 @inject IJSRuntime jsRuntime
+@inject NavigationManager navManager
 
 <div>
     <div class="top-row">
@@ -71,10 +73,10 @@
     {
         <Help OnMessage="MessageHandler"></Help>
     }
-    else if (CurrentLoc == Locations.Login)
+    @*else if (CurrentLoc == Locations.Login)
     {
         <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
-    }
+    }*@
     else if (CurrentLoc == Locations.Logout)
     {
         <Logout OnMessage="MessageHandler"></Logout>
@@ -88,40 +90,40 @@
 <Schema OnMessage="MessageHandler"></Schema>
 }
 else @if (CurrentLoc == Locations.Preferences)
-  {
-    <Preferences OnMessage="MessageHandler"></Preferences>
+{
+<Preferences OnMessage="MessageHandler"></Preferences>
 }
 else @if (CurrentLoc == Locations.RecentEdit)
 {
 <Tracker OnMessage="MessageHandler"></Tracker>
 }
 else @if (CurrentLoc == Locations.Subscriptions)
-  {
-    <Subscribe OnMessage="MessageHandler"></Subscribe>
+{
+<Subscribe OnMessage="MessageHandler"></Subscribe>
 }
 else @if (CurrentLoc == Locations.License)
 {
 <License></License>
 }
 else @if (CurrentLoc == Locations.AdminFiles)
-  {
-    <NotesFilesAdmin></NotesFilesAdmin>
+{
+<NotesFilesAdmin></NotesFilesAdmin>
 }
 else @if (CurrentLoc == Locations.Roles)
 {
 <UserList></UserList>
 }
 else @if (CurrentLoc == Locations.Linked)
-  {
-    <LinkIndex OnMessage="MessageHandler"></LinkIndex>
+{
+<LinkIndex OnMessage="MessageHandler"></LinkIndex>
 }
 else @if (CurrentLoc == Locations.CreateLinked)
 {
 <CreateLinked OnMessage="MessageHandler"></CreateLinked>
 }
 else @if (CurrentLoc == Locations.EditLinked)
-  {
-    <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
+{
+<EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
 }
 else @if (CurrentLoc == Locations.FileList)
 {
@@ -283,12 +285,6 @@ else
 
     [Parameter] public EventCallback<Message> OnMessage { get; set; }
 
-    //private bool collapseNavMenu = true;
-
-    //private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    //private string homeclass { get; set; }
-
     private Locations CurrentLoc { get; set; }
     private Locations PreviousLoc { get; set; }
 
@@ -343,6 +339,17 @@ else
     protected async override Task OnInitializedAsync()
     {
         await MakeMenu();
+
+        var uri = navManager.ToAbsoluteUri(navManager.Uri); navManager.ToAbsoluteUri(navManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("show", out var param))
+        {
+            long NoteId = long.Parse(param.First());
+            await EnterAndShow(NoteId);
+            PreviousLoc = Locations.Home;
+            CurrentLoc = Locations.FileUserIndex;
+            return;
+        }
+
         PreviousLoc = CurrentLoc = Locations.Home;
     }
 
@@ -382,7 +389,6 @@ else
         item = new { id = "Linked", text = "Linked Files", parentId = "Admin" };
         menuItemsTop.Add(item);
 
-
         await UpdateMenu();
     }
 
@@ -414,8 +420,6 @@ else
         {
             //ShowMessage(e.Message);
         }
-
-        //ShowMessage("UpdateMenu");
 
         await topMenu.EnableItems(new string[] { "Recent Notes", "Manage", "Admin" }, false);
 
@@ -531,14 +535,32 @@ else
                 Routing = "main";
                 await StartListing();
             }
-            if (Message.Location == Locations.Login)
-                Autologin = Message.StringArg;
+            //if (Message.Location == Locations.Login)
+            //{
+            //    Autologin = Message.StringArg;
+            //}
         }
         else if (Message.Command == Commands.Home)
         {
             PreviousLoc = Locations.Home;
             CurrentLoc = PreviousLoc;
         }
+        else if (Message.Command == Commands.Dialog)
+        {
+            if (Message.Location == Locations.Login)
+            {
+                Autologin = Message.StringArg;
+
+                var parameters = new ModalParameters();
+                StopTimer();
+                parameters.Add("AutoLogin", Autologin);
+                Modal.OnClose += HideDialogLogin;
+                Modal.Show<Login>("", parameters);
+
+
+            }
+        }
+
         //else if (Message.Command == Commands.SetPixClass)
         //{
         //    await OnMessage.InvokeAsync(Message);
@@ -549,7 +571,17 @@ else
     {
         Autologin = "x";
         PreviousLoc = CurrentLoc;
-        CurrentLoc = Locations.Login;
+        var parameters = new ModalParameters();
+        StopTimer();
+        parameters.Add("AutoLogin", Autologin);
+        Modal.OnClose += HideDialogLogin;
+        Modal.Show<Login>("", parameters);
+    }
+
+    void HideDialogLogin(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialogLogin;
+        navManager.NavigateTo(navManager.Uri, true);
     }
 
     private void Register()
