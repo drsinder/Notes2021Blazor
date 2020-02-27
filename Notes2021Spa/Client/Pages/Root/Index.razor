@@ -428,8 +428,6 @@ else
             //ShowMessage(e.Message);
         }
 
-        //ShowMessage("UpdateMenu");
-
         await topMenu.EnableItems(new string[] { "Recent Notes", "Manage", "Admin" }, false);
 
         if (isUser || isAdmin)
@@ -442,75 +440,42 @@ else
         }
     }
 
-    public async Task OnSelectTop(MenuEventArgs e)
+    public async Task OnSelectTop(MenuEventArgs e)  // top level menu event handler
     {
-        if (e.Item.Id == "MainHelp")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.MainHelp;
-        }
-        else if (e.Item.Id == "About")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.About;
-        }
-        else if (e.Item.Id == "Schema")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.Schema;
-        }
-        else if (e.Item.Id == "Recent")
+        PreviousLoc = CurrentLoc;
+
+        if (e.Item.Id == "Recent")
         {
             Routing = "sequence";
-            PreviousLoc = CurrentLoc;
             CurrentLoc = Locations.FileUserIndex;
             await StartListing();
+            return;
         }
-        else if (e.Item.Id == "Preferences")
+
+        switch (e.Item.Id)
         {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.Preferences;
+            case "MainHelp": 
+                CurrentLoc = Locations.MainHelp; break;
+            case "About": 
+                CurrentLoc = Locations.About; break;
+            case "Preferences": 
+                CurrentLoc = Locations.Preferences; break;
+            case "MRecent": 
+                CurrentLoc = Locations.RecentEdit; break;
+            case "Subscriptions": 
+                CurrentLoc = Locations.Subscriptions; break;
+            case "License": 
+                CurrentLoc = Locations.License; break;
+            case "NoteFiles": 
+                CurrentLoc = Locations.AdminFiles; break;
+            case "Roles": 
+                CurrentLoc = Locations.Roles; break;
+            case "Linked": 
+                CurrentLoc = Locations.Linked; break;
+
+            default: break;
         }
-        else if (e.Item.Id == "MRecent")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.RecentEdit;
-        }
-        else if (e.Item.Id == "Subscriptions")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.Subscriptions;
-        }
-        else if (e.Item.Id == "License")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.License;
-        }
-        else if (e.Item.Id == "NoteFiles")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.AdminFiles;
-        }
-        else if (e.Item.Id == "Roles")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.Roles;
-        }
-        else if (e.Item.Id == "Linked")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.Linked;
-        }
-        else if (e.Item.Id == "CreateLinked")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.CreateLinked;
-        }
-        else if (e.Item.Id == "EditLinked")
-        {
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Locations.EditLinked;
-        }
+
     }
 
     public async Task MessageHandler(Message Message)
@@ -544,7 +509,7 @@ else
                 Routing = "main";
                 await StartListing();
             }
-            if (Message.Location == Locations.Login)
+            else if (Message.Location == Locations.Login)
                 Autologin = Message.StringArg;
         }
         else if (Message.Command == Commands.Home)

@@ -250,6 +250,7 @@
             Globals.GuestEmail = model1.GuestEmail;
 
             model = new HomePageModel();
+            model.Message = model1.Message;
             fileList = nameList = new List<localFile>();
             myTime = "";
         }
@@ -295,10 +296,10 @@
         OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = Globals.GuestEmail });
     }
 
-    private void Login()
-    {
-        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = "x" });
-    }
+    //private void Login()
+    //{
+    //    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = "x" });
+    //}
 
     private void Logout()
     {
