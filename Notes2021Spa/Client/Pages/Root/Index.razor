@@ -85,10 +85,10 @@
     {
         <Register OnMessage="MessageHandler"></Register>
     }
-    else @if (CurrentLoc == Locations.Schema)
+    @*else @if (CurrentLoc == Locations.Schema)
 {
 <Schema OnMessage="MessageHandler"></Schema>
-}
+}*@
 else @if (CurrentLoc == Locations.Preferences)
 {
 <Preferences OnMessage="MessageHandler"></Preferences>
