@@ -24,7 +24,6 @@
 
 @using Notes2021Blazor.Shared
 @inject IAuthService AuthService
-@*@inject NavigationManager NavigationManager*@
 
 <h1>Register</h1>
 
@@ -87,8 +86,6 @@
         if (result.Successful)
         {
             await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
-
-            //NavigationManager.NavigateTo("login");
         }
         else
         {

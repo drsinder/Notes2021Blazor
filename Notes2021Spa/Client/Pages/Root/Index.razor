@@ -684,16 +684,6 @@ else
 
     protected async Task StartListing()
     {
-        //if (CurrentLoc == Locations.Home)
-        //    return;
-
-        //ClaimsPrincipal user = (await authenticationStateTask).User;
-        //if (!user.Identity.IsAuthenticated)
-        //{
-        //    await _localStorage.SetItemAsync("ReturnUri", NavigationManager.Uri);
-        //    NavigationManager.NavigateTo("/login", true);
-        //}
-
         scroller = string.Empty;
         seqIndex = -1;
         if (Routing == ("display"))  // display a base note from the main index
@@ -956,9 +946,6 @@ else
     {
         PreviousLoc = CurrentLoc;
         CurrentLoc = Locations.FileList;
-
-
-        //NavigationManager.NavigateTo("notes/notesfiles", true);
     }
 
     protected async Task KeyPressed(KeyboardEventArgs eventArgs)
@@ -1012,7 +999,6 @@ else
                 break;
             case "R":
                 await MainEntry();
-                //NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
                 break;
             case "U":
                 Browse();
@@ -1059,7 +1045,6 @@ else
 
             NoteHeader newNote = (NoteHeader)modalResult.Data;
             EnterAndShow(newNote.Id);
-            //NavigationManager.NavigateTo("notes/enterandshow/" + newNote.Id, true);
         }
         else
         {
@@ -1171,9 +1156,8 @@ else
     {
         Modal.OnClose -= HideDialogArchive;
         StartTimer();
-        if (modalResult.Cancelled)
-            return;
-        //NavigationManager.NavigateTo("notes/main/" + Model.noteFile.Id, true);
+        //if (modalResult.Cancelled)
+        //    return;
     }
 
     private void ShowMessage(string message)

@@ -24,7 +24,6 @@
 
 @using System.Net.Http
 @using Notes2021Blazor.Shared
-@*@inject NavigationManager NavigationManager*@
 @inject HttpClient Http
 @inject IModalService ModalService
 
@@ -54,7 +53,6 @@
         await Http.DeleteAsync("api/newbasenote/" + noteId);
 
         ModalService.Close(ModalResult.Ok($"Delete was submitted successfully."));
-        //NavigationManager.NavigateTo("notes/main/" + fileId, true);
     }
 
     private void Cancel()

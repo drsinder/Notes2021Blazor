@@ -112,8 +112,6 @@ else
     protected void Create()
     {
         OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.CreateLinked });
-
-        //NavigationManager.NavigateTo("admin/createlinked");
     }
 
     protected void DeleteLink(int id)
@@ -125,8 +123,6 @@ else
     protected void EditLink(int id)
     {
         OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.EditLinked, IntArg = id });
-
-        //NavigationManager.NavigateTo("admin/editlinked/" + id);
     }
 
     private void Confirm()
@@ -146,8 +142,6 @@ else
 
         Model = Http.GetJsonAsync<List<LinkedFile>>("api/Linked").GetAwaiter().GetResult();
         StateHasChanged();
-
-        //NavigationManager.NavigateTo("admin/linkedfiles", true);
     }
 
 }

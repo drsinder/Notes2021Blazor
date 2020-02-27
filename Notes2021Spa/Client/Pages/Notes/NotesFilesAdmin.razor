@@ -171,12 +171,11 @@ else
         if (modalResult.Cancelled)
             return;
 
+        GetStuff();
         OnInitializedAsync().GetAwaiter();
 
         message = modalResult.Data.ToString();
         this.StateHasChanged();
-        GetStuff();
-        //NavigationManager.NavigateTo("admin/notefiles2");
     }
 
     void HideDialog2(ModalResult modalResult)
@@ -237,7 +236,6 @@ else
         await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "announce" });
         this.StateHasChanged();
         await GetStuff();
-        //NavigationManager.NavigateTo("admin/notefiles2", true);
     }
 
     private async Task CreatePbnotes()
@@ -245,7 +243,6 @@ else
         await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "pbnotes" });
         this.StateHasChanged();
         await GetStuff();
-        //NavigationManager.NavigateTo("admin/notefiles2", true);
     }
 
     private async Task CreateNotesHelp()
@@ -253,14 +250,12 @@ else
         await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "noteshelp" });
         this.StateHasChanged();
         await GetStuff();
-        //NavigationManager.NavigateTo("admin/notefiles2", true);
     }
 
     private async Task CreatePad()
     {
         await Http.PostJsonAsync("api/NoteFileAdminStd", new Stringy { value = "pad" });
         this.StateHasChanged();
-        await GetStuff();
         //NavigationManager.NavigateTo("admin/notefiles2", true);
     }
 

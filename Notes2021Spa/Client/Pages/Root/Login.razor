@@ -26,7 +26,6 @@
 @using Notes2021Blazor.Shared
 @inject IAuthService AuthService
 @inject ILocalStorageService _localStorage
-@*@inject NavigationManager NavigationManager*@
 
 <h1>Login</h1>
 
@@ -102,15 +101,11 @@
                 if (!string.IsNullOrEmpty(ReturnUri))
                 {
                     await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
-                    //NavigationManager.NavigateTo(ReturnUri, true);
                     return;
                 }
             }
             catch { }
-
             await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
-
-            //NavigationManager.NavigateTo(Globals.RootUri);
         }
         else
         {

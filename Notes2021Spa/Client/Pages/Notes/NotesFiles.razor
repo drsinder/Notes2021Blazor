@@ -102,7 +102,6 @@ else
         _localStorage.SetItemAsync("ArchiveId", 0);
 
         OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = Id });
-        //NavigationManager.NavigateTo("notes/main/" + Id);
     }
 
 

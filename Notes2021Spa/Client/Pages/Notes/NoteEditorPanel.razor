@@ -33,7 +33,6 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ILocalStorageService _localStorage
-@*@inject NavigationManager NavigationManager*@
 @inject IModalService Modal
 @inject IJSRuntime jsRuntime
 
@@ -238,8 +237,6 @@
             NoteHeader nh = await Http.GetJsonAsync<NoteHeader>("api/NewBaseNote2/");
 
             ShowNewNote(nh.Id);
-
-            //            NavigationManager.NavigateTo("notes/enterandshow/" + nh.Id, true);
             return;
         }
         else  // edited note
@@ -249,8 +246,6 @@
             HttpResponseMessage result = await Http.PutAsync("api/NewBaseNote/", stringContent);
 
             ShowNewNote(tvm.NoteHeader.Id);
-
-            //NavigationManager.NavigateTo("notes/enterandshow/" + tvm.NoteHeader.Id, true);
             return;
         }
     }
@@ -262,19 +257,15 @@
             if (tvm.BaseNoteHeaderID != 0)
             {
                 ShowNewNote(tvm.BaseNoteHeaderID);
-
-                //NavigationManager.NavigateTo("notes/enterandshow/" + tvm.BaseNoteHeaderID, true);
             }
             else
             {
                 OnClick.InvokeAsync("CancelEdit");
-                //NavigationManager.NavigateTo("notes/main/" + tvm.NoteFileID, true);
             }
         }
         else  // editing
         {
             ShowNewNote(EditHeader.Id);
-            //NavigationManager.NavigateTo("notes/enterandshow/" + EditHeader.Id, true);
         }
     }
 

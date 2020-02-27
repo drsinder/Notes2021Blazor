@@ -107,7 +107,6 @@ else
     protected void Cancel()
     {
         OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Linked });
-        //NavigationManager.NavigateTo("admin/linkedfiles");
     }
 
     protected async Task Submit()
@@ -139,8 +138,6 @@ else
         await Http.PutJsonAsync("api/Linked", linker);
 
         await OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Linked });
-
-        //NavigationManager.NavigateTo("admin/linkedfiles");
     }
 
     private void ShowMessage(string message)

@@ -25,7 +25,6 @@
 
 @using Notes2021Blazor.Shared
 @inject IAuthService AuthService
-@*@inject NavigationManager NavigationManager*@
 
 @code {
 
@@ -37,7 +36,6 @@
         await AuthService.Logout();
 
         await OnMessage.InvokeAsync(new Message { Command = Commands.Home });
-        //NavigationManager.NavigateTo(Globals.RootUri);
     }
 
 }
