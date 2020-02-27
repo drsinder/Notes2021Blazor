@@ -31,12 +31,14 @@
 @using System.Timers
 @using System.Text
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAuthorizationService AuthorizationService
 @inject ILocalStorageService _localStorage
 @inject IModalService Modal
 @inject IJSRuntime jsRuntime
+@inject NavigationManager navManager
 
 <div>
     <div class="top-row">
@@ -88,40 +90,40 @@
 <Schema OnMessage="MessageHandler"></Schema>
 }
 else @if (CurrentLoc == Locations.Preferences)
-  {
-    <Preferences OnMessage="MessageHandler"></Preferences>
+{
+<Preferences OnMessage="MessageHandler"></Preferences>
 }
 else @if (CurrentLoc == Locations.RecentEdit)
 {
 <Tracker OnMessage="MessageHandler"></Tracker>
 }
 else @if (CurrentLoc == Locations.Subscriptions)
-  {
-    <Subscribe OnMessage="MessageHandler"></Subscribe>
+{
+<Subscribe OnMessage="MessageHandler"></Subscribe>
 }
 else @if (CurrentLoc == Locations.License)
 {
 <License></License>
 }
 else @if (CurrentLoc == Locations.AdminFiles)
-  {
-    <NotesFilesAdmin></NotesFilesAdmin>
+{
+<NotesFilesAdmin></NotesFilesAdmin>
 }
 else @if (CurrentLoc == Locations.Roles)
 {
 <UserList></UserList>
 }
 else @if (CurrentLoc == Locations.Linked)
-  {
-    <LinkIndex OnMessage="MessageHandler"></LinkIndex>
+{
+<LinkIndex OnMessage="MessageHandler"></LinkIndex>
 }
 else @if (CurrentLoc == Locations.CreateLinked)
 {
 <CreateLinked OnMessage="MessageHandler"></CreateLinked>
 }
 else @if (CurrentLoc == Locations.EditLinked)
-  {
-    <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
+{
+<EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
 }
 else @if (CurrentLoc == Locations.FileList)
 {
@@ -343,6 +345,17 @@ else
     protected async override Task OnInitializedAsync()
     {
         await MakeMenu();
+
+        //var uri = navManager.ToAbsoluteUri(navManager.Uri); navManager.ToAbsoluteUri(navManager.Uri);
+        //if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("show", out var param))
+        //{
+        //    long NoteId = long.Parse(param.First());
+        //    await EnterAndShow(NoteId);
+        //    PreviousLoc = Locations.Home;
+        //    CurrentLoc = Locations.FileUserIndex;
+        //    return;
+        //}
+
         PreviousLoc = CurrentLoc = Locations.Home;
     }
 

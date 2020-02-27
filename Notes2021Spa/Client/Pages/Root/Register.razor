@@ -25,78 +25,79 @@
 @using Notes2021Blazor.Shared
 @inject IAuthService AuthService
 
-<h1>Register</h1>
+<div class="dialogs modal-body">
+    <h1>Register</h1>
 
-@if (ShowErrors)
-{
-    <div class="alert alert-danger" role="alert">
-        @foreach (var error in Errors)
-        {
-            <p>@error</p>
-        }
-    </div>
-}
+    @if (ShowErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in Errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Please enter your details</h5>
-        <EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Please enter your details</h5>
+            <EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
-                <ValidationMessage For="@(() => RegisterModel.Email)" />
-            </div>
-            <div class="form-group">
-                <label for="email">Display Name</label>
-                <InputText Id="email" class="form-control" @bind-Value="RegisterModel.DisplayName" />
-                <ValidationMessage For="@(() => RegisterModel.DisplayName)" />
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
-                <ValidationMessage For="@(() => RegisterModel.Password)" />
-            </div>
-            <div class="form-group">
-                <label for="password">Confirm Password</label>
-                <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
-                <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;
-            <button type="button" @onclick="Cancel" class="btn btn-info">Cancel</button>
-        </EditForm>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
+                    <ValidationMessage For="@(() => RegisterModel.Email)" />
+                </div>
+                <div class="form-group">
+                    <label for="email">Display Name</label>
+                    <InputText Id="email" class="form-control" @bind-Value="RegisterModel.DisplayName" />
+                    <ValidationMessage For="@(() => RegisterModel.DisplayName)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
+                    <ValidationMessage For="@(() => RegisterModel.Password)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Confirm Password</label>
+                    <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.ConfirmPassword" />
+                    <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;
+                <button type="button" @onclick="Cancel" class="btn btn-info">Cancel</button>
+            </EditForm>
+        </div>
     </div>
 </div>
+    @code {
+        [Parameter] public EventCallback<Message> OnMessage { get; set; }
 
-@code {
-    [Parameter] public EventCallback<Message> OnMessage { get; set; }
+        private RegisterModel RegisterModel = new RegisterModel();
+        private bool ShowErrors;
+        private IEnumerable<string> Errors;
 
-    private RegisterModel RegisterModel = new RegisterModel();
-    private bool ShowErrors;
-    private IEnumerable<string> Errors;
-
-    private async Task HandleRegistration()
-    {
-        ShowErrors = false;
-
-        var result = await AuthService.Register(RegisterModel);
-
-        if (result.Successful)
+        private async Task HandleRegistration()
         {
-            await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
+            ShowErrors = false;
+
+            var result = await AuthService.Register(RegisterModel);
+
+            if (result.Successful)
+            {
+                await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
+            }
+            else
+            {
+                Errors = result.Errors;
+                ShowErrors = true;
+            }
         }
-        else
+
+        private void Cancel()
         {
-            Errors = result.Errors;
-            ShowErrors = true;
+            OnMessage.InvokeAsync(new Message { Command = Commands.CloseMe });
         }
-    }
 
-    private void Cancel()
-    {
-        OnMessage.InvokeAsync(new Message { Command = Commands.CloseMe });
     }
-
-}
