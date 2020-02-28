@@ -504,7 +504,7 @@ else
 
     public async Task MessageHandler(Message Message)
     {
-        UpdateMenu().GetAwaiter();
+        await UpdateMenu();
 
         if (Message.Command == Commands.CloseMe)
         {
@@ -513,7 +513,7 @@ else
         }
         else if (Message.Command == Commands.CloseMeAndRefresh)
         {
-            UpdateMenu().GetAwaiter();
+            await UpdateMenu();
 
             CurrentLoc = PreviousLoc;
             PreviousLoc = Locations.Home;
