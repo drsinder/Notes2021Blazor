@@ -296,25 +296,12 @@
         OnMessage.InvokeAsync(new Message { Command = Commands.Dialog, Location = Locations.Login, StringArg = Globals.GuestEmail });
     }
 
-    //private void Login()
-    //{
-    //    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = "x" });
-    //}
-
-    private void Logout()
-    {
-        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Logout });
-    }
 }
 
 @code {
 
     public class localFile : NoteFile
     {
-        //public int Id { get; set; }
-        //public string NoteFileName { get; set; }
-        //public string NoteFileTitle { get; set; }
-
     }
 
 }
