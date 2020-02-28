@@ -106,8 +106,8 @@ else
 
         if (myId < 0)
             myId = 0;
-        _localStorage.SetItemAsync("ArchiveId", myId);
-        ModalService.Close(ModalResult.Ok<string>("Ok"));
+        _localStorage.SetItemAsync("ArchiveId", myId).GetAwaiter();
+        ModalService.Close(ModalResult.Ok<int>(myId));
     }
 
     private void Cancel()

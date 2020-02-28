@@ -48,7 +48,7 @@
                 </EjsMenu>
                 &nbsp;&nbsp;
             </div>
-            
+
             <AuthorizeView>
                 <Authorized>
                     <button type="button" class="btn btn-info btn-sm" @onclick="Logout">Logout</button>
@@ -60,7 +60,6 @@
             </AuthorizeView>
             &nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" @onclick="Home">Notes 2021 Home</button>&nbsp;&nbsp;
         </div>
-
 
         @if (CurrentLoc == Locations.Home)
         {
@@ -91,10 +90,10 @@
         <Schema OnMessage="MessageHandler"></Schema>
         }*@
         else @if (CurrentLoc == Locations.Preferences)
-      {
-        <Preferences OnMessage="MessageHandler"></Preferences>
-    }
-    else @if (CurrentLoc == Locations.RecentEdit)
+  {
+    <Preferences OnMessage="MessageHandler"></Preferences>
+}
+else @if (CurrentLoc == Locations.RecentEdit)
   {
     <Tracker OnMessage="MessageHandler"></Tracker>
 }
@@ -131,14 +130,14 @@ else @if (CurrentLoc == Locations.FileList)
     <NotesFiles OnMessage="MessageHandler"></NotesFiles>
 }
 else @if (CurrentLoc == Locations.Temp)
-{
-    CurrentLoc = PreviousLoc;
-    UpdateMenu();
-    navManager.NavigateTo(navManager.Uri, true);
-}
+  {
+      CurrentLoc = PreviousLoc;
+      UpdateMenu();
+      navManager.NavigateTo(navManager.Uri, true);
+  }
 
-else if (CurrentLoc == Locations.FileUserIndex)
-{
+  else if (CurrentLoc == Locations.FileUserIndex)
+  {
     @if (Model == null)
     {
         <div class="loading-section">
@@ -374,6 +373,7 @@ else
                 return;
 
             fileId = x.Id.ToString();
+            archiveID = 0;
             await MainEntry();
             PreviousLoc = Locations.Home;
             CurrentLoc = Locations.FileUserIndex;
@@ -722,6 +722,7 @@ else
         }
         if (Routing == "main")     // show the main index
         {
+            archiveID = 0;
             await MainEntry();
         }
         if (Routing == ("enterandshow")) // load the index data and then display a note
@@ -795,7 +796,7 @@ else
     protected async Task MainEntry()
     {
         Id = int.Parse(fileId);
-        archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
+        //archiveID = await _localStorage.GetItemAsync<int>("ArchiveId");
 
         mode = 0;  // index mode
 
@@ -836,6 +837,7 @@ else
 
         basenoteCount = Model.Notes.Count;
 
+        StateHasChanged();
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -1182,8 +1184,13 @@ else
     {
         Modal.OnClose -= HideDialogArchive;
         StartTimer();
-        //if (modalResult.Cancelled)
-        //    return;
+        if (modalResult.Cancelled)
+            return;
+
+        archiveID = (int)modalResult.Data;
+
+        MainEntry().GetAwaiter();
+        StateHasChanged();
     }
 
     private void ShowMessage(string message)
