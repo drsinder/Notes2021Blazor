@@ -360,6 +360,7 @@ else
             await EnterAndShow(NoteId);
             PreviousLoc = Locations.Home;
             CurrentLoc = Locations.FileUserIndex;
+            StateHasChanged();
             return;
         }
         else if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("filename", out var filename))
