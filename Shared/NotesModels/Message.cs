@@ -33,7 +33,8 @@ namespace Notes2021Blazor.Shared
         Linked,
         CreateLinked,
         EditLinked,
-        FileList
+        FileList,
+        Temp
 
     }
 

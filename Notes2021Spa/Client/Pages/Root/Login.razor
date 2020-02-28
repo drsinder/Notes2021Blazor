@@ -26,6 +26,7 @@
 @using Notes2021Blazor.Shared
 @inject IAuthService AuthService
 @inject ILocalStorageService _localStorage
+@inject IModalService Modal
 
 <div class="dialogs modal-body medium-input">
     <h1>Login</h1>
@@ -55,65 +56,60 @@
                     <ValidationMessage For="@(() => loginModel.Password)" />
                 </div>
                 @*<div class="form-group">
-                        <label for="rememberme">Remember me</label>
-                        <InputCheckbox Id="rememberme" Class="form-control checkbox" @bind-Value="loginModel.RememberMe" />
-                    </div>*@
-                <button type="submit" class="btn btn-primary btn-info">Submit</button>
+            <label for="rememberme">Remember me</label>
+            <InputCheckbox Id="rememberme" Class="form-control checkbox" @bind-Value="loginModel.RememberMe" />
+        </div>*@
+                <button type="submit" class="btn btn-primary btn-sm">Submit</button>&nbsp;&nbsp;<button type="button"@onclick="Cancel" class="btn btn-info btn-sm">Cancel</button>
             </EditForm>
         </div>
     </div>
 </div>
 
-    @code {
-        [Parameter] public EventCallback<Message> OnMessage { get; set; }
+@code {
+    [CascadingParameter] ModalParameters Parameters { get; set; }
 
-        [Parameter] public string Autologin { get; set; } = string.Empty;
+    public string Autologin { get; set; } = string.Empty;
 
-        private LoginModel loginModel = new LoginModel();
-        private bool ShowErrors;
-        private string Error = "";
+    private LoginModel loginModel = new LoginModel();
+    private bool ShowErrors;
+    private string Error = "";
 
-        protected override async Task OnInitializedAsync()
-        {
-            if (Autologin.Length < 5)
-                return;
+    protected override async Task OnInitializedAsync()
+    {
+        Autologin = Parameters.Get<string>("Autologin");
 
-            loginModel.Email = Autologin;
-            loginModel.Password = "Notes123";
+        if (Autologin.Length < 5)
+            return;
 
-            var result = await AuthService.Login(loginModel);
+        loginModel.Email = Autologin;
+        loginModel.Password = "Notes123";
 
-            if (result.Successful)
-                await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
-        }
+        var result = await AuthService.Login(loginModel);
 
-
-        private async Task HandleLogin()
-        {
-            ShowErrors = false;
-
-            var result = await AuthService.Login(loginModel);
-
-            if (result.Successful)
-            {
-                try
-                {
-                    string ReturnUri = await _localStorage.GetItemAsync<string>("ReturnUri");
-                    await _localStorage.RemoveItemAsync("ReturnUri");
-                    if (!string.IsNullOrEmpty(ReturnUri))
-                    {
-                        await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
-                        return;
-                    }
-                }
-                catch { }
-                await OnMessage.InvokeAsync(new Message { Command = Commands.CloseMeAndRefresh });
-            }
-            else
-            {
-                Error = result.Error;
-                ShowErrors = true;
-            }
-        }
-
+        if (result.Successful)
+            Modal.Close();
     }
+
+    private async Task HandleLogin()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
+        {
+            Modal.Close();
+        }
+        else
+        {
+            Error = result.Error;
+            ShowErrors = true;
+        }
+    }
+
+    private void Cancel()
+    {
+        Modal.Cancel();
+    }
+
+}

@@ -293,7 +293,7 @@
 
     private void Autologin()
     {
-        OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.Login, StringArg = Globals.GuestEmail });
+        OnMessage.InvokeAsync(new Message { Command = Commands.Dialog, Location = Locations.Login, StringArg = Globals.GuestEmail });
     }
 
     //private void Login()

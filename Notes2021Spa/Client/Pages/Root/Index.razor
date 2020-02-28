@@ -40,190 +40,197 @@
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navManager
 
-<div>
-    <div class="top-row">
-        <div class="keep-center">
-            <EjsMenu Items="@menuItemsTop" @ref="@topMenu">
-                <MenuEvents ItemSelected="OnSelectTop"></MenuEvents>
-            </EjsMenu>
-            &nbsp;&nbsp;
+    <div>
+        <div class="top-row">
+            <div class="keep-center">
+                <EjsMenu Items="@menuItemsTop" @ref="@topMenu">
+                    <MenuEvents ItemSelected="OnSelectTop"></MenuEvents>
+                </EjsMenu>
+                &nbsp;&nbsp;
+            </div>
+            
+            <AuthorizeView>
+                <Authorized>
+                    <button type="button" class="btn btn-info btn-sm" @onclick="Logout">Logout</button>
+                </Authorized>
+                <NotAuthorized>
+                    <button type="button" class="btn btn-info btn-sm" @onclick="Register">Register</button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-info btn-sm" @onclick="Login">Login</button>
+                </NotAuthorized>
+            </AuthorizeView>
+            &nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" @onclick="Home">Notes 2021 Home</button>&nbsp;&nbsp;
         </div>
-        <AuthorizeView>
-            <Authorized>
-                <button type="button" class="btn btn-info btn-sm" @onclick="Logout">Logout</button>
-            </Authorized>
-            <NotAuthorized>
-                <button type="button" class="btn btn-info btn-sm" @onclick="Register">Register</button>&nbsp;&nbsp;
-                <button type="button" class="btn btn-info btn-sm" @onclick="Login">Login</button>
-            </NotAuthorized>
-        </AuthorizeView>
-        &nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" @onclick="Home">Notes 2021 Home</button>&nbsp;&nbsp;
-    </div>
 
 
-    @if (CurrentLoc == Locations.Home)
-    {
-        <Home OnMessage="MessageHandler"></Home>
+        @if (CurrentLoc == Locations.Home)
+        {
+            <Home OnMessage="MessageHandler"></Home>
+        }
+        else if (CurrentLoc == Locations.About)
+        {
+            <About OnMessage="MessageHandler"></About>
+        }
+        else if (CurrentLoc == Locations.MainHelp)
+        {
+            <Help OnMessage="MessageHandler"></Help>
+        }
+        @*else if (CurrentLoc == Locations.Login)
+        {
+            <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
+        }*@
+        else if (CurrentLoc == Locations.Logout)
+        {
+            <Logout OnMessage="MessageHandler"></Logout>
+        }
+        else if (CurrentLoc == Locations.Register)
+        {
+            <Register OnMessage="MessageHandler"></Register>
+        }
+        @*else @if (CurrentLoc == Locations.Schema)
+        {
+        <Schema OnMessage="MessageHandler"></Schema>
+        }*@
+        else @if (CurrentLoc == Locations.Preferences)
+      {
+        <Preferences OnMessage="MessageHandler"></Preferences>
     }
-    else if (CurrentLoc == Locations.About)
-    {
-        <About OnMessage="MessageHandler"></About>
-    }
-    else if (CurrentLoc == Locations.MainHelp)
-    {
-        <Help OnMessage="MessageHandler"></Help>
-    }
-    else if (CurrentLoc == Locations.Login)
-    {
-        <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
-    }
-    else if (CurrentLoc == Locations.Logout)
-    {
-        <Logout OnMessage="MessageHandler"></Logout>
-    }
-    else if (CurrentLoc == Locations.Register)
-    {
-        <Register OnMessage="MessageHandler"></Register>
-    }
-    @*else @if (CurrentLoc == Locations.Schema)
-{
-<Schema OnMessage="MessageHandler"></Schema>
-}*@
-else @if (CurrentLoc == Locations.Preferences)
-{
-<Preferences OnMessage="MessageHandler"></Preferences>
-}
-else @if (CurrentLoc == Locations.RecentEdit)
-{
-<Tracker OnMessage="MessageHandler"></Tracker>
+    else @if (CurrentLoc == Locations.RecentEdit)
+  {
+    <Tracker OnMessage="MessageHandler"></Tracker>
 }
 else @if (CurrentLoc == Locations.Subscriptions)
-{
-<Subscribe OnMessage="MessageHandler"></Subscribe>
+  {
+    <Subscribe OnMessage="MessageHandler"></Subscribe>
 }
 else @if (CurrentLoc == Locations.License)
-{
-<License></License>
+  {
+    <License></License>
 }
 else @if (CurrentLoc == Locations.AdminFiles)
-{
-<NotesFilesAdmin></NotesFilesAdmin>
+  {
+    <NotesFilesAdmin></NotesFilesAdmin>
 }
 else @if (CurrentLoc == Locations.Roles)
-{
-<UserList></UserList>
+  {
+    <UserList></UserList>
 }
 else @if (CurrentLoc == Locations.Linked)
-{
-<LinkIndex OnMessage="MessageHandler"></LinkIndex>
+  {
+    <LinkIndex OnMessage="MessageHandler"></LinkIndex>
 }
 else @if (CurrentLoc == Locations.CreateLinked)
-{
-<CreateLinked OnMessage="MessageHandler"></CreateLinked>
+  {
+    <CreateLinked OnMessage="MessageHandler"></CreateLinked>
 }
 else @if (CurrentLoc == Locations.EditLinked)
-{
-<EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
+  {
+    <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
 }
 else @if (CurrentLoc == Locations.FileList)
+  {
+    <NotesFiles OnMessage="MessageHandler"></NotesFiles>
+}
+else @if (CurrentLoc == Locations.Temp)
 {
-<NotesFiles OnMessage="MessageHandler"></NotesFiles>
+    CurrentLoc = PreviousLoc;
+    UpdateMenu();
+    navManager.NavigateTo(navManager.Uri, true);
 }
 
 else if (CurrentLoc == Locations.FileUserIndex)
 {
-@if (Model == null)
-{
-    <div class="loading-section">
-        <h2>@message</h2>
-        <div class="loader mt-5">
-            <div class="loader-dot dot1"></div>
-            <div class="loader-dot dot2"></div>
-            <div class="loader-dot dot3"></div>
+    @if (Model == null)
+    {
+        <div class="loading-section">
+            <h2>@message</h2>
+            <div class="loader mt-5">
+                <div class="loader-dot dot1"></div>
+                <div class="loader-dot dot2"></div>
+                <div class="loader-dot dot3"></div>
+            </div>
         </div>
-    </div>
-}
-else
-{
-    <AuthorizeView Roles="User,Guest">
-        <Authorized>
-            @if (newnoteFlag)
-            {
-                <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
-            }
-            else if (mode == -1)
-            {
+    }
+    else
+    {
+        <AuthorizeView Roles="User,Guest">
+            <Authorized>
+                @if (newnoteFlag)
+                {
+                    <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
+                }
+                else if (mode == -1)
+                {
 
-            }
-            else if (printfile)
-            {
-                <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
-                              trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
-                              isSearch="isSearch" SearchResults="results" PrintFile="true" ToolTips="false" />
-            }
-            else if (mode == 0)  // index mode
-            {
-                if (!string.IsNullOrEmpty(message))
-                {
-                    <div class="loading-section">
-                        <h2>@message ...</h2>
-                        <div class="loader mt-5">
-                            <div class="loader-dot dot1"></div>
-                            <div class="loader-dot dot2"></div>
-                            <div class="loader-dot dot3"></div>
-                        </div>
-                    </div>
                 }
-                else
-                {
-                    <div><br /></div>
-                    <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
-                    if (!Model.UserData.Pref1)
-                    {
-                        <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
-                    }
-                    else
-                    {
-                        <div class="topmenu">
-                            <ListMenu Model="@Model" OnClick="ClickHandler" />
-                        </div>
-                        <NoteIndexOld Model="@Model" OnClick="ClickHandler" />
-                    }
-                    <br /><br />
-                    <div class="arrow1">
-                        <div>
-                            <EditForm Model="@myInput" Context="EditBox">
-                                <div class="form-group">
-                                    <InputText id="arrow1" autofocus="@myInput.isAutoFocus" style="width: 7em" @onkeypress="KeyPressed"
-                                               ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                               Value="@myInput.typedValue"
-                                               ValueExpression="@( () => myInput.typedValue )" />
-                                </div>
-                            </EditForm>
-                            <input type="submit" value="Navigate" class="btn btn-sm" /> b# | b#.r#
-                        </div>
-                    </div>
-                }
-            }
-            else // note display mode
-            {
-                if (Model.myAccess.ReadAccess)
+                else if (printfile)
                 {
                     <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
                                   trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
-                                  isSearch="isSearch" SearchResults="results" ToolTips="true" />
+                                  isSearch="isSearch" SearchResults="results" PrintFile="true" ToolTips="false" />
                 }
-                else
+                else if (mode == 0)  // index mode
                 {
-                    <h3>You may not read notes in this file.</h3>
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        <div class="loading-section">
+                            <h2>@message ...</h2>
+                            <div class="loader mt-5">
+                                <div class="loader-dot dot1"></div>
+                                <div class="loader-dot dot2"></div>
+                                <div class="loader-dot dot3"></div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div><br /></div>
+                        <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
+                        if (!Model.UserData.Pref1)
+                        {
+                            <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                        }
+                        else
+                        {
+                            <div class="topmenu">
+                                <ListMenu Model="@Model" OnClick="ClickHandler" />
+                            </div>
+                            <NoteIndexOld Model="@Model" OnClick="ClickHandler" />
+                        }
+                        <br /><br />
+                        <div class="arrow1">
+                            <div>
+                                <EditForm Model="@myInput" Context="EditBox">
+                                    <div class="form-group">
+                                        <InputText id="arrow1" autofocus="@myInput.isAutoFocus" style="width: 7em" @onkeypress="KeyPressed"
+                                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                                   Value="@myInput.typedValue"
+                                                   ValueExpression="@( () => myInput.typedValue )" />
+                                    </div>
+                                </EditForm>
+                                <input type="submit" value="Navigate" class="btn btn-sm" /> b# | b#.r#
+                            </div>
+                        </div>
+                    }
                 }
-            }
-        </Authorized>
-        <NotAuthorized>
-            <p>Access Denied!</p>
-        </NotAuthorized>
-    </AuthorizeView>
-}
+                else // note display mode
+                {
+                    if (Model.myAccess.ReadAccess)
+                    {
+                        <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
+                                      trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
+                                      isSearch="isSearch" SearchResults="results" ToolTips="true" />
+                    }
+                    else
+                    {
+                        <h3>You may not read notes in this file.</h3>
+                    }
+                }
+            </Authorized>
+            <NotAuthorized>
+                <p>Access Denied!</p>
+            </NotAuthorized>
+        </AuthorizeView>
+    }
 
 
 }
@@ -231,10 +238,10 @@ else
 
 else
 {
-<div>Routing Error!</div>
+    <div>Routing Error!</div>
 }
 
-</div>
+    </div>
 
 <style>
     .e-menu-wrapper ul {
@@ -346,25 +353,33 @@ else
     {
         await MakeMenu();
 
-        //var uri = navManager.ToAbsoluteUri(navManager.Uri); navManager.ToAbsoluteUri(navManager.Uri);
-        //if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("show", out var param))
-        //{
-        //    long NoteId = long.Parse(param.First());
-        //    await EnterAndShow(NoteId);
-        //    PreviousLoc = Locations.Home;
-        //    CurrentLoc = Locations.FileUserIndex;
-        //    return;
-        //}
-        //if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("filenum", out var filenum))
-        //{
-        //    fileId = filenum.First();
-        //    await MainEntry();
-        //    PreviousLoc = Locations.Home;
-        //    CurrentLoc = Locations.FileUserIndex;
-        //    return;
-        //}
+        var uri = navManager.ToAbsoluteUri(navManager.Uri); navManager.ToAbsoluteUri(navManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("show", out var param))
+        {
+            long NoteId = long.Parse(param.First());
+            await EnterAndShow(NoteId);
+            PreviousLoc = Locations.Home;
+            CurrentLoc = Locations.FileUserIndex;
+            return;
+        }
+        else if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("filename", out var filename))
+        {
+            string myfile = filename.First();
 
-        PreviousLoc = CurrentLoc = Locations.Home;
+            HomePageModel files = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
+
+            NoteFile x = files.NoteFiles.Find(p => p.NoteFileName == myfile);
+            if (x == null)
+                return;
+
+            fileId = x.Id.ToString();
+            await MainEntry();
+            PreviousLoc = Locations.Home;
+            CurrentLoc = Locations.FileUserIndex;
+            return;
+        }
+        else
+            PreviousLoc = CurrentLoc = Locations.Home;
     }
 
 
@@ -517,21 +532,49 @@ else
                 Routing = "main";
                 await StartListing();
             }
-            else if (Message.Location == Locations.Login)
-                Autologin = Message.StringArg;
+            //else if (Message.Location == Locations.Login)
+            //    Autologin = Message.StringArg;
         }
         else if (Message.Command == Commands.Home)
         {
             PreviousLoc = Locations.Home;
             CurrentLoc = PreviousLoc;
         }
+        else if (Message.Command == Commands.Dialog)
+        {
+            if (Message.Location == Locations.Login)
+            {
+                Autologin = Message.StringArg;
+
+                var parameters = new ModalParameters();
+                parameters.Add("Autologin", Autologin);
+                Modal.OnClose += HideDialogLogin;
+                Modal.Show<Login>("", parameters);
+
+            }
+        }
     }
 
     private void Login()
     {
         Autologin = "x";
-        PreviousLoc = CurrentLoc;
-        CurrentLoc = Locations.Login;
+
+        var parameters = new ModalParameters();
+        parameters.Add("Autologin", Autologin);
+        Modal.OnClose += HideDialogLogin;
+        Modal.Show<Login>("", parameters);
+
+    }
+
+    private void HideDialogLogin(ModalResult modalResult)
+    {
+        Modal.OnClose -= HideDialogLogin;
+
+        //PreviousLoc = CurrentLoc;
+        CurrentLoc = Locations.Temp;
+
+        StateHasChanged();
+
     }
 
     private void Register()
