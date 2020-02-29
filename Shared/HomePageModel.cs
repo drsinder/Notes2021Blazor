@@ -35,7 +35,7 @@ namespace Notes2021Blazor.Shared
 
         public TZone TimeZone { get; set; }
 
-        public HomePageMessage Message { get; set; }
+        public string Message { get; set; }
 
         public UserData UserData { get; set; }
 

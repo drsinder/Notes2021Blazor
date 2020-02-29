@@ -53,7 +53,18 @@ namespace Notes2021Blazor.Server.Controllers
         {
             HomePageModel model = new HomePageModel();
 
-            model.Message = _db.HomePageMessage.FirstOrDefault();
+            //model.Message = _db.HomePageMessage.FirstOrDefault();
+
+            NoteFile hpmf = _db.NoteFile.Where(p => p.NoteFileName == "homepagemessages").FirstOrDefault();
+            if (hpmf != null)
+            {
+                NoteHeader hpmh = _db.NoteHeader.Where(p => p.NoteFileId == hpmf.Id).OrderByDescending(p => p.CreateDate).FirstOrDefault();
+                if (hpmh != null)
+                {
+                    model.Message = _db.NoteContent.Where(p => p.NoteHeaderId == hpmh.Id).FirstOrDefault().NoteBody;
+                }
+            }
+
             model.NoteFiles = _db.NoteFile
                 .OrderBy(p => p.NoteFileName).ToList();
 

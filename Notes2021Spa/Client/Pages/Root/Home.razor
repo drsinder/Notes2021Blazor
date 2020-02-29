@@ -35,147 +35,146 @@
 @inject ILocalStorageService _localStorage
 @inject IJSRuntime jsRuntime
 
-    <div>
-        <h2 class="center">Welcome to Notes 2021 Blazor Edition <img src="favicon.ico" width="32" /></h2>
-        <div id="container"></div>
-        <EjsSpinner @ref="SpinnerObj" Target="#container" CssClass="e-spin-overlay" Width="70px">
-        </EjsSpinner>
-        @if (model == null)
+<div>
+    <h2 class="center">Welcome to Notes 2021 Blazor Edition <img src="favicon.ico" width="32" /></h2>
+    <div id="container"></div>
+    <EjsSpinner @ref="SpinnerObj" Target="#container" CssClass="e-spin-overlay" Width="70px">
+    </EjsSpinner>
+    @if (model == null)
+    {
+        <p class="center"><em>Loading...</em></p>
+    }
+    else
+    {
+        <h5 class="center">
+            <span id="homepagetime">
+                @myTime
+            </span>
+        </h5>
+
+        @if (!string.IsNullOrEmpty(model.Message))
         {
-            <p class="center"><em>Loading...</em></p>
+            <div>@((MarkupString)@model.Message)</div>
         }
-        else
-        {
-            <h5 class="center">
-                <span id="homepagetime">
-                    @myTime
-                </span>
-            </h5>
+    }
 
-            @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
-            {
-                <h5 class="keep-center">@model.Message.Message</h5>
-            }
-        }
-
-
-        @if (fileList == null || nameList == null)
-        {
-            <div class="keep-center">
-                <div class="loading-section">
-                    <h2>Loading....</h2>
-                    <div class="loader mt-5">
-                        <div class="loader-dot dot1"></div>
-                        <div class="loader-dot dot2"></div>
-                        <div class="loader-dot dot3"></div>
-                    </div>
+    @if (fileList == null || nameList == null)
+    {
+        <div class="keep-center">
+            <div class="loading-section">
+                <h2>Loading....</h2>
+                <div class="loader mt-5">
+                    <div class="loader-dot dot1"></div>
+                    <div class="loader-dot dot2"></div>
+                    <div class="loader-dot dot3"></div>
                 </div>
             </div>
-        }
-        else
-        {
-            <AuthorizeView Roles="Guest">
-                <Authorized>
-                    <h5 class="keep-center">You are a guest and my not write to any files.</h5>
-                </Authorized>
-            </AuthorizeView>
-            <AuthorizeView>
-                <Authorized Context="Outer">
-                    <div class="row">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4 roundedindex keep-center">
-                            <EditForm Model="@dummyFile">
-                                <p>
-                                    <label>
-                                        <strong>Enter a NoteFile Name and press Enter:</strong>
-                                        <InputText class="form-control short-input"
-                                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                                   Value="@dummyFile.NoteFileName"
-                                                   ValueExpression="@( () => dummyFile.NoteFileName )" />
-                                    </label>
-                                </p>
-                                Or select a file<br />
-                                <InputSelect id="select1" class="btn btn-file dropdown-toggle form-control short-input"
-                                             ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                             Value="@dummyFile.NoteFileName"
-                                             ValueExpression="@( () => dummyFile.NoteFileName )">
-                                    <option value="none" selected="selected">-- Select from list --</option>
-                                    @foreach (var item in fileList)
-                                    {
-                                        <option value=@item.NoteFileName>@item.NoteFileName</option>
-                                    }
-                                </InputSelect>
-                                <br />Or select a title<br />
-                                <InputSelect id="select2" class="btn btn-title dropdown-toggle form-control short-input"
-                                             ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                             Value="@dummyFile.NoteFileName"
-                                             ValueExpression="@( () => dummyFile.NoteFileName )">
-                                    <option value="none" selected="selected">-- Select from list --</option>
-                                    @foreach (var item in nameList)
-                                    {
-                                        <option value=@item.NoteFileName>@item.NoteFileTitle</option>
-                                    }
-                                </InputSelect>
-                            </EditForm>
-                            <LinkToAllFiles OnMessage="OnMessage"></LinkToAllFiles>
-                            @*<h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>*@
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                        </div>
-                        <div class="col-md-4">
-                            <h4>Important Files</h4>
-                            <ul>
-                                @foreach (localFile x in impfileList)
+        </div>
+    }
+    else
+    {
+        <AuthorizeView Roles="Guest">
+            <Authorized>
+                <h5 class="keep-center">You are a guest and my not write to any files.</h5>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView>
+            <Authorized Context="Outer">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 roundedindex keep-center">
+                        <EditForm Model="@dummyFile">
+                            <p>
+                                <label>
+                                    <strong>Enter a NoteFile Name and press Enter:</strong>
+                                    <InputText class="form-control short-input"
+                                               ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                               Value="@dummyFile.NoteFileName"
+                                               ValueExpression="@( () => dummyFile.NoteFileName )" />
+                                </label>
+                            </p>
+                            Or select a file<br />
+                            <InputSelect id="select1" class="btn btn-file dropdown-toggle form-control short-input"
+                                         ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                         Value="@dummyFile.NoteFileName"
+                                         ValueExpression="@( () => dummyFile.NoteFileName )">
+                                <option value="none" selected="selected">-- Select from list --</option>
+                                @foreach (var item in fileList)
                                 {
-                                    <li>
-                                        <FileButton NoteFile="@x" OnMessage="MessageHandler"></FileButton>
-                                    </li>
+                                    <option value=@item.NoteFileName>@item.NoteFileName</option>
                                 }
-                            </ul>
-                        </div>
-                        <div class="col-md-4">
-                            <h4>History Files</h4>
-                            <ul>
-                                @foreach (localFile x in histfileList)
+                            </InputSelect>
+                            <br />Or select a title<br />
+                            <InputSelect id="select2" class="btn btn-title dropdown-toggle form-control short-input"
+                                         ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                         Value="@dummyFile.NoteFileName"
+                                         ValueExpression="@( () => dummyFile.NoteFileName )">
+                                <option value="none" selected="selected">-- Select from list --</option>
+                                @foreach (var item in nameList)
                                 {
-                                    <li>
-                                        <FileButton NoteFile="@x" OnMessage="MessageHandler"></FileButton>
-                                    </li>
+                                    <option value=@item.NoteFileName>@item.NoteFileTitle</option>
                                 }
-                            </ul>
-                        </div>
-
+                            </InputSelect>
+                        </EditForm>
+                        <LinkToAllFiles OnMessage="OnMessage"></LinkToAllFiles>
+                        @*<h4><a href="notes/notesfiles" class=" keep-center">See All Files</a></h4>*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Important Files</h4>
+                        <ul>
+                            @foreach (localFile x in impfileList)
+                            {
+                                <li>
+                                    <FileButton NoteFile="@x" OnMessage="MessageHandler"></FileButton>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>History Files</h4>
+                        <ul>
+                            @foreach (localFile x in histfileList)
+                            {
+                                <li>
+                                    <FileButton NoteFile="@x" OnMessage="MessageHandler"></FileButton>
+                                </li>
+                            }
+                        </ul>
                     </div>
 
-                    @*<div class="keep-center"><button type="button" @onclick="Logout">Logout</button></div>*@
-                </Authorized>
-                <NotAuthorized>
-                    <div class="keep-center">
-                        <h2>Not Logged In!</h2>
-                        <h4>Please register if you have not already.  Then login.  Thanks.</h4>
+                </div>
 
-                        @if (Globals.GuestId != "*none*")
-                        {
-                            <h5>Or you may <button type="button" class="linkblue" @onclick="Autologin">login as Guest</button> to browse.</h5>
-                        }
+                @*<div class="keep-center"><button type="button" @onclick="Logout">Logout</button></div>*@
+            </Authorized>
+            <NotAuthorized>
+                <div class="keep-center">
+                    <h2>Not Logged In!</h2>
+                    <h4>Please register if you have not already.  Then login.  Thanks.</h4>
 
-                        @if (model.Message != null && !string.IsNullOrEmpty(model.Message.Message))
-                        {
-                            <h5 class="keep-center">@model.Message.Message</h5>
-                        }
+                    @if (Globals.GuestId != "*none*")
+                    {
+                        <h5>Or you may <button type="button" class="linkblue" @onclick="Autologin">login as Guest</button> to browse.</h5>
+                    }
 
-                    </div>
-                </NotAuthorized>
-            </AuthorizeView>
-            <AuthorizeView Roles="Guest">
-                <Authorized>
-                    <h5 class="keep-center">You are a guest and my not write to any files.</h5>
-                </Authorized>
-            </AuthorizeView>
-        }
-    </div>
+                    @if (!string.IsNullOrEmpty(model.Message))
+                    {
+                        <div>@((MarkupString)@model.Message)</div>
+                    }
+
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Guest">
+            <Authorized>
+                <h5 class="keep-center">You are a guest and my not write to any files.</h5>
+            </Authorized>
+        </AuthorizeView>
+    }
+</div>
 
 @functions {
     [Parameter] public EventCallback<Message> OnMessage { get; set; }
@@ -289,7 +288,7 @@
                 if (value == item.NoteFileName)
                 {
                     SpinnerObj.ShowSpinner(target);
-                    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = item.Id});
+                    OnMessage.InvokeAsync(new Message { Command = Commands.Show, Location = Locations.FileUserIndex, IntArg = item.Id });
                     return;
                 }
             }
