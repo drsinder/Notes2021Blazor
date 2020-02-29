@@ -61,185 +61,180 @@
             &nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" @onclick="Home">Notes 2021 Home</button>&nbsp;&nbsp;
         </div>
 
-        @if (CurrentLoc == Locations.Home)
-        {
-            <Home OnMessage="MessageHandler"></Home>
-        }
-        else if (CurrentLoc == Locations.About)
-        {
-            <About OnMessage="MessageHandler"></About>
-        }
-        else if (CurrentLoc == Locations.MainHelp)
-        {
-            <Help OnMessage="MessageHandler"></Help>
-        }
-        @*else if (CurrentLoc == Locations.Login)
+        <div>
+            @if (CurrentLoc == Locations.Home)
+            {
+                <Home OnMessage="MessageHandler"></Home>
+            }
+            else if (CurrentLoc == Locations.About)
+            {
+                <About OnMessage="MessageHandler"></About>
+            }
+            else if (CurrentLoc == Locations.MainHelp)
+            {
+                <Help OnMessage="MessageHandler"></Help>
+            }
+            @*else if (CurrentLoc == Locations.Login)
         {
             <Login OnMessage="MessageHandler" Autologin="@Autologin"></Login>
         }*@
-        else if (CurrentLoc == Locations.Logout)
-        {
-            <Logout OnMessage="MessageHandler"></Logout>
-        }
-        else if (CurrentLoc == Locations.Register)
-        {
-            <Register OnMessage="MessageHandler"></Register>
-        }
-        @*else @if (CurrentLoc == Locations.Schema)
+            else if (CurrentLoc == Locations.Logout)
+            {
+                <Logout OnMessage="MessageHandler"></Logout>
+            }
+            else if (CurrentLoc == Locations.Register)
+            {
+                <Register OnMessage="MessageHandler"></Register>
+            }
+            @*else @if (CurrentLoc == Locations.Schema)
         {
         <Schema OnMessage="MessageHandler"></Schema>
         }*@
-        else @if (CurrentLoc == Locations.Preferences)
-  {
-    <Preferences OnMessage="MessageHandler"></Preferences>
-}
-else @if (CurrentLoc == Locations.RecentEdit)
-  {
-    <Tracker OnMessage="MessageHandler"></Tracker>
-}
-else @if (CurrentLoc == Locations.Subscriptions)
-  {
-    <Subscribe OnMessage="MessageHandler"></Subscribe>
-}
-else @if (CurrentLoc == Locations.License)
-  {
-    <License></License>
-}
-else @if (CurrentLoc == Locations.AdminFiles)
-  {
-    <NotesFilesAdmin></NotesFilesAdmin>
-}
-else @if (CurrentLoc == Locations.Roles)
-  {
-    <UserList></UserList>
-}
-else @if (CurrentLoc == Locations.Linked)
-  {
-    <LinkIndex OnMessage="MessageHandler"></LinkIndex>
-}
-else @if (CurrentLoc == Locations.CreateLinked)
-  {
-    <CreateLinked OnMessage="MessageHandler"></CreateLinked>
-}
-else @if (CurrentLoc == Locations.EditLinked)
-  {
-    <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
-}
-else @if (CurrentLoc == Locations.FileList)
-  {
-    <NotesFiles OnMessage="MessageHandler"></NotesFiles>
-}
-else @if (CurrentLoc == Locations.Temp)
-  {
-      CurrentLoc = PreviousLoc;
-      UpdateMenu();
-      navManager.NavigateTo(navManager.Uri, true);
-  }
-
-  else if (CurrentLoc == Locations.FileUserIndex)
-  {
-    @if (Model == null)
-    {
-        <div class="loading-section">
-            <h2>@message</h2>
-            <div class="loader mt-5">
-                <div class="loader-dot dot1"></div>
-                <div class="loader-dot dot2"></div>
-                <div class="loader-dot dot3"></div>
-            </div>
-        </div>
+            else @if (CurrentLoc == Locations.Preferences)
+      {
+        <Preferences OnMessage="MessageHandler"></Preferences>
     }
+    else @if (CurrentLoc == Locations.RecentEdit)
+          {
+            <Tracker OnMessage="MessageHandler"></Tracker>
+        }
+        else @if (CurrentLoc == Locations.Subscriptions)
+      {
+        <Subscribe OnMessage="MessageHandler"></Subscribe>
+    }
+    else @if (CurrentLoc == Locations.License)
+      {
+        <License></License>
+    }
+    else @if (CurrentLoc == Locations.AdminFiles)
+      {
+        <NotesFilesAdmin></NotesFilesAdmin>
+    }
+    else @if (CurrentLoc == Locations.Roles)
+      {
+        <UserList></UserList>
+    }
+    else @if (CurrentLoc == Locations.Linked)
+      {
+        <LinkIndex OnMessage="MessageHandler"></LinkIndex>
+    }
+    else @if (CurrentLoc == Locations.CreateLinked)
+      {
+        <CreateLinked OnMessage="MessageHandler"></CreateLinked>
+    }
+    else @if (CurrentLoc == Locations.EditLinked)
+      {
+        <EditLinked OnMessage="MessageHandler" id="@IntArg.ToString()"></EditLinked>
+    }
+    else @if (CurrentLoc == Locations.FileList)
+      {
+        <NotesFiles OnMessage="MessageHandler"></NotesFiles>
+    }
+    else @if (CurrentLoc == Locations.Temp)
+      {
+          CurrentLoc = PreviousLoc;
+          UpdateMenu();
+          navManager.NavigateTo(navManager.Uri, true);
+      }
+
+      else if (CurrentLoc == Locations.FileUserIndex)
+      {
+        @if (Model == null)
+        {
+            <div class="loading-section">
+                <h2>@message</h2>
+                <div class="loader mt-5">
+                    <div class="loader-dot dot1"></div>
+                    <div class="loader-dot dot2"></div>
+                    <div class="loader-dot dot3"></div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <AuthorizeView Roles="User,Guest">
+                <Authorized>
+                    <div>
+                        @if (newnoteFlag)
+                        {
+                            <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
+                        }
+                        else if (mode == -1)
+                        {
+
+                        }
+                        else if (printfile)
+                        {
+                            <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
+                                          trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
+                                          isSearch="isSearch" SearchResults="results" PrintFile="true" ToolTips="false" />
+                        }
+                        else if (mode == 0)  // index mode
+                        {
+                            if (!string.IsNullOrEmpty(message))
+                            {
+                                <div class="loading-section">
+                                    <h2>@message ...</h2>
+                                    <div class="loader mt-5">
+                                        <div class="loader-dot dot1"></div>
+                                        <div class="loader-dot dot2"></div>
+                                        <div class="loader-dot dot3"></div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <button @onkeypress="KeyPressed">
+                                    <div><br /></div>
+                                    <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
+                                    <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                                    @*<br /><br />*@
+                                    <div class="arrow1">
+                                        <div>
+                                            <EditForm Model="@myInput" Context="EditBox">
+                                                <div class="form-group">
+                                                    <InputText id="arrow1" autofocus="@myInput.isAutoFocus" style="width: 7em"
+                                                               ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                                               Value="@myInput.typedValue"
+                                                               ValueExpression="@( () => myInput.typedValue )" />
+                                                </div>
+                                            </EditForm>
+                                            <input type="submit" value="Navigate" class="btn btn-sm" /> b# | b#.r#
+                                        </div>
+                                    </div>
+                                </button>
+                            }
+                        }
+                        else // note display mode
+                        {
+                            if (Model.myAccess.ReadAccess)
+                            {
+                                <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
+                                              trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
+                                              isSearch="isSearch" SearchResults="results" ToolTips="true" />
+                            }
+                            else
+                            {
+                                <h3>You may not read notes in this file.</h3>
+                            }
+                        }
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <p>Access Denied!</p>
+                </NotAuthorized>
+            </AuthorizeView>
+        }
+
+
+    }
+
+
     else
     {
-        <AuthorizeView Roles="User,Guest">
-            <Authorized>
-                @if (newnoteFlag)
-                {
-                    <NoteEditorPanel Model="@Model" BaseNoteId=0 OnClick="ClickHandler" />
-                }
-                else if (mode == -1)
-                {
-
-                }
-                else if (printfile)
-                {
-                    <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
-                                  trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
-                                  isSearch="isSearch" SearchResults="results" PrintFile="true" ToolTips="false" />
-                }
-                else if (mode == 0)  // index mode
-                {
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        <div class="loading-section">
-                            <h2>@message ...</h2>
-                            <div class="loader mt-5">
-                                <div class="loader-dot dot1"></div>
-                                <div class="loader-dot dot2"></div>
-                                <div class="loader-dot dot3"></div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div><br /></div>
-                        <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
-                        if (!Model.UserData.Pref1)
-                        {
-                            <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
-                        }
-                        else
-                        {
-                            <div class="topmenu">
-                                <ListMenu Model="@Model" OnClick="ClickHandler" />
-                            </div>
-                            <NoteIndexOld Model="@Model" OnClick="ClickHandler" />
-                        }
-                        <br /><br />
-                        <div class="arrow1">
-                            <div>
-                                <EditForm Model="@myInput" Context="EditBox">
-                                    <div class="form-group">
-                                        <InputText id="arrow1" autofocus="@myInput.isAutoFocus" style="width: 7em" @onkeypress="KeyPressed"
-                                                   ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                                   Value="@myInput.typedValue"
-                                                   ValueExpression="@( () => myInput.typedValue )" />
-                                    </div>
-                                </EditForm>
-                                <input type="submit" value="Navigate" class="btn btn-sm" /> b# | b#.r#
-                            </div>
-                        </div>
-                    }
-                }
-                else // note display mode
-                {
-                    if (Model.myAccess.ReadAccess)
-                    {
-                        <DisplayPanel Model="Model" currentHeader="currentHeader" Id="Id" SeqBases="seqBases"
-                                      trackers="trackers" seqIndx="seqIndex" OnClick="ClickHandler"
-                                      isSearch="isSearch" SearchResults="results" ToolTips="true" />
-                    }
-                    else
-                    {
-                        <h3>You may not read notes in this file.</h3>
-                    }
-                }
-            </Authorized>
-            <NotAuthorized>
-                <p>Access Denied!</p>
-            </NotAuthorized>
-        </AuthorizeView>
+        <div>Routing Error!</div>
     }
-
-
-}
-
-
-else
-{
-    <div>Routing Error!</div>
-}
-
+        </div>
     </div>
 
 <style>
@@ -291,12 +286,6 @@ else
 
     [Parameter] public EventCallback<Message> OnMessage { get; set; }
 
-    //private bool collapseNavMenu = true;
-
-    //private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    //private string homeclass { get; set; }
-
     private Locations CurrentLoc { get; set; }
     private Locations PreviousLoc { get; set; }
 
@@ -311,7 +300,7 @@ else
 
     public string fileId { get; set; }
 
-    public string Routing { get; set; }
+    //public string Routing { get; set; }
 
     private bool newnoteFlag { get; set; }
     public long headerId { get; set; }
@@ -326,8 +315,8 @@ else
 
     private string scroller { get; set; }
 
-    private Timer timer { get; set; }
-    private Timer timer2 { get; set; }
+    //private Timer timer { get; set; }
+    //private Timer timer2 { get; set; }
     private Timer timerAccess1Trigger { get; set; }
     private Timer timerAccess2Trigger { get; set; }
 
@@ -348,10 +337,12 @@ else
 
     private EjsMenu topMenu { get; set; }
 
+    #region SPA Stuff
     protected async override Task OnInitializedAsync()
     {
         await MakeMenu();
 
+        // check for parameters to show a note or a filename
         var uri = navManager.ToAbsoluteUri(navManager.Uri); navManager.ToAbsoluteUri(navManager.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("show", out var param))
         {
@@ -383,7 +374,10 @@ else
             PreviousLoc = CurrentLoc = Locations.Home;
     }
 
-
+    /// <summary>
+    /// Create the elements of the always present menu
+    /// </summary>
+    /// <returns></returns>
     protected async Task MakeMenu()
     {
         menuItemsTop = new List<object>();
@@ -419,18 +413,19 @@ else
         item = new { id = "Linked", text = "Linked Files", parentId = "Admin" };
         menuItemsTop.Add(item);
 
-
         await UpdateMenu();
     }
 
+    /// <summary>
+    /// Enable only items available to logged in user
+    /// </summary>
+    /// <returns></returns>
     private async Task UpdateMenu()
     {
         bool isAdmin = false;
         bool isUser = false;
-
         try
         {
-
             UserData udata = await Http.GetJsonAsync<UserData>("api/User");
             string uid = udata.UserId;
             EditUserViewModel Umodel = await Http.GetJsonAsync<EditUserViewModel>("api/UserEdit/" + uid);
@@ -451,9 +446,7 @@ else
         {
             //ShowMessage(e.Message);
         }
-
         await topMenu.EnableItems(new string[] { "Recent Notes", "Manage", "Admin" }, false);
-
         if (isUser || isAdmin)
         {
             await topMenu.EnableItems(new string[] { "Recent Notes", "Manage" }, true);
@@ -464,17 +457,15 @@ else
         }
     }
 
+    /// <summary>
+    /// Handle always present menu item selections.
+    /// Convert menu item Ids to actions (sub-pages)
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
     public async Task OnSelectTop(MenuEventArgs e)  // top level menu event handler
     {
         PreviousLoc = CurrentLoc;
-
-        if (e.Item.Id == "Recent")
-        {
-            Routing = "sequence";
-            CurrentLoc = Locations.FileUserIndex;
-            await StartListing();
-            return;
-        }
 
         switch (e.Item.Id)
         {
@@ -496,11 +487,20 @@ else
                 CurrentLoc = Locations.Roles; break;
             case "Linked":
                 CurrentLoc = Locations.Linked; break;
+            case "Recent":
+                CurrentLoc = Locations.FileUserIndex;
+                await StartListing("sequence");
+                break;
 
             default: break;
         }
     }
 
+    /// <summary>
+    /// Index (SPA) message handler - show different sub-pages
+    /// </summary>
+    /// <param name="Message"></param>
+    /// <returns></returns>
     public async Task MessageHandler(Message Message)
     {
         await UpdateMenu();
@@ -525,8 +525,7 @@ else
                 if (Message.Location == Locations.FileUserIndex)
                 {
                     fileId = IntArg.ToString();
-                    Routing = "main";
-                    await StartListing();
+                    await StartListing("main");
                 }
                 break;
             case Commands.Home:
@@ -556,7 +555,6 @@ else
     private void Login()
     {
         Autologin = "x";
-
         var parameters = new ModalParameters();
         parameters.Add("Autologin", Autologin);
         Modal.OnClose += HideDialogLogin;
@@ -589,16 +587,23 @@ else
         CurrentLoc = Locations.Home;
     }
 
-    /// <summary>
-    /// /////////////////////////////////////////////
-    /// </summary>
+    #endregion
 
+    // 
+    // Above here related to SPA Index (menu, routing)
+    // 
+    // Below here related to the Note Listing for a file
+    // 
+
+    #region Notes List And Display
+    /// <summary>
+    /// Notes Listing message handler.  Other messages from other pages related to display of index
+    /// and notes content bubble to here.
+    /// </summary>
+    /// <param name="newMessage">Indicates what should happen</param>
+    /// <returns></returns>
     protected async Task ClickHandler(string newMessage)
     {
-        //await UpdateMenu();
-
-
-        //message = "*" + newMessage + "*";
         if (newMessage.StartsWith("Done:"))
         {
             mode = 0;
@@ -655,9 +660,6 @@ else
                 case "SeqFileDone":
                     var stringContent = new StringContent(JsonConvert.SerializeObject(trackers[seqIndex]), Encoding.UTF8, "application/json");
                     HttpResponseMessage result = await Http.PutAsync("api/Sequencer/", stringContent);
-
-
-
                     //NavigationManager.NavigateTo("notes/sequence", true);
                     break;
                 case "HtmlFromIndex": HtmlFromIndex(); break;
@@ -700,27 +702,32 @@ else
         }
     }
 
-    protected async Task StartListing()
+    /// <summary>
+    /// Does the appropriate startup thing based on the value of Routing
+    /// </summary>
+    /// <param name="Routing">Indicates what to do</param>
+    /// <returns></returns>
+    protected async Task StartListing(string Routing)
     {
         scroller = string.Empty;
         seqIndex = -1;
-        if (Routing == ("display"))  // display a base note from the main index
-        {
-            headerId = long.Parse(fileId);
-            currentHeader = Model.Notes.Find(p => p.Id == headerId);
+        //if (Routing == ("display"))  // display a base note from the main index
+        //{
+        //    headerId = long.Parse(fileId);
+        //    currentHeader = Model.Notes.Find(p => p.Id == headerId);
 
-            mode = currentHeader.Id;
-            this.StateHasChanged();
-        }
+        //    mode = currentHeader.Id;
+        //    this.StateHasChanged();
+        //}
         if (Routing == "main")     // show the main index
         {
             archiveID = 0;
             await MainEntry();
         }
-        if (Routing == ("enterandshow")) // load the index data and then display a note
-        {
-            await EnterAndShow(0);
-        }
+        //if (Routing == ("enterandshow")) // load the index data and then display a note
+        //{
+        //    await EnterAndShow(0);
+        //}
         if (Routing == ("sequence"))
         {
             trackers = await Http.GetJsonAsync<List<Sequencer>>("api/sequencer");
@@ -733,11 +740,15 @@ else
                 Home();
                 return;
             }
-
             await StartFileSequence();
         }
     }
 
+    /// <summary>
+    /// Load file headers and show a note
+    /// </summary>
+    /// <param name="it">Id of note to show</param>
+    /// <returns></returns>
     protected async Task EnterAndShow(long it)
     {
         // fileId is really noteId so use it to get base note header
@@ -785,6 +796,10 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Load file headers and show listing of notes
+    /// </summary>
+    /// <returns></returns>
     protected async Task MainEntry()
     {
         Id = int.Parse(fileId);
@@ -832,61 +847,75 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Set a timer to focus type in box
+    /// </summary>
+    /// <param name="firstRender"></param>
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
+        if (CurrentLoc == Locations.FileUserIndex)
         {
-            timer = new Timer(1000);        // we can not put focus in the nav box here so defer it
-            timer.Elapsed += TimerTick;
-            timer.Enabled = true;
+            if (firstRender)
+            {
+                //timer = new Timer(1000);        // we can not put focus in the nav box here so defer it
+                //timer.Elapsed += TimerTick;
+                //timer.Enabled = true;
 
-            timer2 = new Timer(1000);
-            timer2.Elapsed += TimerTick2;
-            timer2.Enabled = true;
-
+                //timer2 = new Timer(1000);
+                //timer2.Elapsed += TimerTick2;
+                //timer2.Enabled = true;
+            }
         }
     }
 
-    protected void TimerTick(Object source, ElapsedEventArgs e)
-    {
-        printfile = false;
-        timer.Interval = 5000;
-        timer.Stop();
-        timer.Enabled = false;
-        jsRuntime.InvokeAsync<object>("setfocus", "arrow1");
-    }
+    /// <summary>
+    /// Clear print flag in rare case it is set and focus the type in box
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="e"></param>
+    //protected void TimerTick(Object source, ElapsedEventArgs e)
+    //{
+    //    printfile = false;
+    //    //timer.Interval = 5000;
+    //    timer.Stop();
+    //    timer.Enabled = false;
+    //    jsRuntime.InvokeAsync<object>("setfocus", "arrow1");
+    //}
 
-    protected void TimerTick2(Object source, ElapsedEventArgs e)
-    {
-        if (!string.IsNullOrEmpty(scroller))
-        {
-            jsRuntime.InvokeAsync<object>("setlocation", scroller);
-            scroller = string.Empty;
-        }
-    }
-
+    //protected void TimerTick2(Object source, ElapsedEventArgs e)
+    //{
+    //    if (!string.IsNullOrEmpty(scroller))
+    //    {
+    //        jsRuntime.InvokeAsync<object>("setlocation", scroller);
+    //        scroller = string.Empty;
+    //    }
+    //}
 
     protected void StartTimer()
     {
-        timer = new Timer(1000);
-        timer.Elapsed += TimerTick;
-        timer.Enabled = true;
+        //timer = new Timer(1000);
+        //timer.Elapsed += TimerTick;
+        //timer.Enabled = true;
     }
 
     protected void StopTimer()
     {
-        timer.Enabled = false;
-        timer.Stop();
+        //timer.Enabled = false;
+        //timer.Stop();
     }
 
+    /// <summary>
+    /// Start looking the new notes since last the user did this
+    /// </summary>
+    /// <returns></returns>
     protected async Task StartFileSequence()
     {
         seqBases = null;
         while ((++seqIndex < trackers.Count) && (seqBases == null || seqBases.Count == 0))
         {
             NoteFile nf = await PreLoadSeqFile();
-            if (nf.LastEdited < trackers[seqIndex].LastTime)
-                continue;
+            if (nf.LastEdited < trackers[seqIndex].LastTime)  // quick check when file last changed
+                continue;       // nothing new here
 
             await LoadSeqFile();
             seqBases = SearchForTrackedBaseNotes(trackers[seqIndex]);
@@ -910,6 +939,10 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Loads the NoetFile object for a file to be sequenced
+    /// </summary>
+    /// <returns></returns>
     protected async Task<NoteFile> PreLoadSeqFile()
     {
         Sequencer tr = trackers[seqIndex];
@@ -920,6 +953,10 @@ else
         return await Http.GetJsonAsync<NoteFile>("api/NoteIndexFile/" + Id);
     }
 
+    /// <summary>
+    /// load the file data to search during sequence
+    /// </summary>
+    /// <returns></returns>
     protected async Task LoadSeqFile()
     {
         Sequencer tr = trackers[seqIndex];
@@ -956,18 +993,31 @@ else
         basenoteCount = Model.Notes.Count;
     }
 
+    /// <summary>
+    /// Do the check for a note written since last visit
+    /// </summary>
+    /// <param name="tr">Sequencer/tracker item we are working on</param>
+    /// <returns></returns>
     protected List<NoteHeader> SearchForTrackedBaseNotes(Sequencer tr)
     {
         List<NoteHeader> bnh = Model.Notes.Where(p => p.ThreadLastEdited > tr.LastTime).OrderBy(p => p.NoteOrdinal).ToList();
         return bnh;
     }
 
+    /// <summary>
+    /// Show list of files
+    /// </summary>
     protected void ListFiles()
     {
         PreviousLoc = CurrentLoc;
         CurrentLoc = Locations.FileList;
     }
 
+    /// <summary>
+    /// Handle a keyboard key press
+    /// </summary>
+    /// <param name="eventArgs"></param>
+    /// <returns></returns>
     protected async Task KeyPressed(KeyboardEventArgs eventArgs)
     {
         switch (eventArgs.Key)
@@ -1030,48 +1080,22 @@ else
             default:
                 break;
         }
-
     }
 
+    /// <summary>
+    /// Start a new Note
+    /// </summary>
     void NewBaseNote()
     {
         StopTimer();
-
-        //if (Model.UserData.Pref2)
-        {
-            newnoteFlag = true;
-            this.StateHasChanged();
-            return;
-        }
-
-
-        //var parameters = new ModalParameters();
-        //parameters.Add("Editing", false);
-        //parameters.Add("Model", Model);
-        //long bnid = 0;
-        //parameters.Add("BaseNoteId", bnid);
-        //Modal.OnClose += HideEditDialog;
-        //Modal.Show<NoteEditorDlg>("", parameters);
+        newnoteFlag = true;
+        this.StateHasChanged();
     }
 
-    void HideEditDialog(ModalResult modalResult)
-    {
-        Modal.OnClose -= HideEditDialog;
-        newnoteFlag = false;
-        StartTimer();
-        if (!modalResult.Cancelled)
-        {
-            // new base note saved.  Now show it.
-
-            NoteHeader newNote = (NoteHeader)modalResult.Data;
-            EnterAndShow(newNote.Id);
-        }
-        else
-        {
-            // nothing else to do
-        }
-    }
-
+    /// <summary>
+    /// Handle typed input for navigation
+    /// </summary>
+    /// <param name="typedInput"></param>
     private void TextHasChanged(string typedInput)
     {
         typedInput = typedInput.Trim().Replace("'\n", "").Replace("'\r", "").Trim();
@@ -1121,7 +1145,9 @@ else
         this.StateHasChanged();
     }
 
-
+    /// <summary>
+    /// Cancel whatever we were doing and show the note file listing
+    /// </summary>
     private void Done()
     {
         mode = 0;
@@ -1129,22 +1155,18 @@ else
         this.StateHasChanged();
     }
 
+    /// <summary>
+    /// Print the entire file
+    /// </summary>
     private void PrintFile()
     {
         StopTimer();
         currentHeader = Model.Notes[0];
         printfile = true;
-        timer = new Timer(3000);
-        timer.Elapsed += TimerTick;
-        timer.Enabled = true;
-
+        //timer = new Timer(3000);
+        //timer.Elapsed += TimerTick;
+        //timer.Enabled = true;
         StateHasChanged();
-    }
-
-    private void SetFocus()
-    {
-        message = "SetFocus";
-        this.StateHasChanged();
     }
 
     private void ShowHelp()
@@ -1161,6 +1183,9 @@ else
         Modal.OnClose -= HideDialog;
     }
 
+    /// <summary>
+    /// Select archive dialog
+    /// </summary>
     void ShowArchive()
     {
         if (Model.noteFile.NumberArchives == 0)
@@ -1193,6 +1218,9 @@ else
         Modal.Show<MessageBox>("", parameters);
     }
 
+    /// <summary>
+    /// Access list editor (show dialog)
+    /// </summary>
     private void EditAccess()
     {
         var parameters = new ModalParameters();
@@ -1204,6 +1232,10 @@ else
 
     private List<UserData> udata;
 
+    /// <summary>
+    /// Cancel out of access editor or create a new entry
+    /// </summary>
+    /// <param name="modalResult"></param>
     protected void HideDialogAccess(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogAccess;
@@ -1222,6 +1254,11 @@ else
 
     }
 
+    /// <summary>
+    /// Show create a new user for access dialog
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="e"></param>
     protected void TriggerCreateAccess(Object source, ElapsedEventArgs e)
     {
         timerAccess1Trigger.Stop();
@@ -1234,6 +1271,10 @@ else
         Modal.Show<AddAccessDlg>("", parameters);
     }
 
+    /// <summary>
+    /// set up for return to access list editor
+    /// </summary>
+    /// <param name="modalResult"></param>
     void HideDialogNewAccess(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogNewAccess;
@@ -1243,6 +1284,11 @@ else
         timerAccess2Trigger.Elapsed += EditAccess0;
     }
 
+    /// <summary>
+    /// return to access list editor
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="e"></param>
     void EditAccess0(Object source, ElapsedEventArgs e)
     {
         timerAccess2Trigger.Stop();
@@ -1250,6 +1296,9 @@ else
         EditAccess();
     }
 
+    /// <summary>
+    /// Make a Json representation of the file for output
+    /// </summary>
     private void DoJson()
     {
         var parameters = new ModalParameters();
@@ -1264,6 +1313,13 @@ else
         Modal.Show<ExportJson>("", parameters);
     }
 
+    /// <summary>
+    /// Export whole file as text, html, or email to someone
+    /// </summary>
+    /// <param name="isHtml">As Html if true, else text</param>
+    /// <param name="isCollapsible">Fancy expandable/collapsible html</param>
+    /// <param name="isEmail">Shoud email?</param>
+    /// <param name="emailaddr">Email address</param>
     private void DoExport(bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = null)
     {
         var parameters = new ModalParameters();
@@ -1284,6 +1340,15 @@ else
         Modal.Show<ExportUtil1>("", parameters);
     }
 
+    /// <summary>
+    /// Export Note string as text, html, or email to someone
+    /// </summary>
+    /// <param name="NoteOrd">Note number to export</param>
+    /// <param name="isHtml">As Html if true, else text</param>
+    /// <param name="isCollapsible">Fancy expandable/collapsible html</param>
+    /// <param name="isEmail">Shoud email?</param>
+    /// <param name="emailaddr">Email address</param>
+    /// <summary>
     private void DoExport1(int NoteOrd, bool isHtml, bool isCollapsible, bool isEmail = false, string emailaddr = null)
     {
         var parameters = new ModalParameters();
@@ -1303,6 +1368,8 @@ else
         Modal.OnClose += HideDialog;
         Modal.Show<ExportUtil1>("", parameters);
     }
+
+    /// Several diffent simple setups for export follow...
 
     private void HtmlFromIndex()
     {
@@ -1351,7 +1418,9 @@ else
             DoExport1(mailOrd, true, true, true, modalResult.Data.ToString());
     }
 
-
+    /// <summary>
+    /// Dialog to set up a search
+    /// </summary>
     void Search()
     {
         StopTimer();
@@ -1367,6 +1436,10 @@ else
         Modal.Show<SearchDlg>("", parameters);
     }
 
+    /// <summary>
+    /// Start search based on specs collected
+    /// </summary>
+    /// <param name="modalResult"></param>
     void HideDialogSearch(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogSearch;
@@ -1379,7 +1452,11 @@ else
         DoSearch(target).GetAwaiter();
     }
 
-
+    /// <summary>
+    /// Perform the search
+    /// </summary>
+    /// <param name="target">Search specs</param>
+    /// <returns></returns>
     private async Task DoSearch(Search target)
     {
         message = "Searching... Please Wait...";
@@ -1408,6 +1485,10 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Search header for info...
+    /// </summary>
+    /// <param name="target"></param>
     protected void SearchHeader(Search target)
     {
         results = new List<NoteHeader>();
@@ -1448,6 +1529,11 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Search Content for info...
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     protected async Task SearchContents(Search target)
     {
         results = new List<NoteHeader>();
@@ -1486,6 +1572,11 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Search tags for a match...
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     protected async Task SearchTags(Search target)
     {
         List<Tags> tags = await Http.GetJsonAsync<List<Tags>>("api/Tags/" + Model.noteFile.Id);
@@ -1515,6 +1606,10 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Mark notes involving this user for later output
+    /// </summary>
+    /// <returns></returns>
     private async Task MarkMine()
     {
         List<Mark> list = await Http.GetJsonAsync<List<Mark>>("api/Mark");
@@ -1570,6 +1665,9 @@ else
 
     }
 
+    /// <summary>
+    /// Dialog to ask format of output
+    /// </summary>
     private void OutputMarkedAsk()
     {
         StopTimer();
@@ -1578,6 +1676,10 @@ else
         Modal.Show<OutputDlg>("", parameters);
     }
 
+    /// <summary>
+    /// Start output of marked notes
+    /// </summary>
+    /// <param name="modalResult"></param>
     private void HideDialogOutputAsk(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogOutputAsk;
@@ -1585,11 +1687,18 @@ else
         if (!modalResult.Cancelled)
         {
             MarkedOutputModel mo = (MarkedOutputModel)modalResult.Data;
-
             OutputMarked(mo.isHtml, mo.isCollapsible, mo.isEmail, mo.Email);
         }
     }
 
+    /// <summary>
+    /// Do toe marked note output
+    /// </summary>
+    /// <param name="isHtml"></param>
+    /// <param name="isCollapsible"></param>
+    /// <param name="isEmail"></param>
+    /// <param name="Email"></param>
+    /// <returns></returns>
     private async Task OutputMarked(bool isHtml, bool isCollapsible, bool isEmail, string Email)
     {
         List<Mark> marks = await Http.GetJsonAsync<List<Mark>>("api/Mark");
@@ -1619,7 +1728,6 @@ else
     void HideDialogOutput(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogOutput;
-
         OutputCleanup();
     }
 
@@ -1637,6 +1745,9 @@ else
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Browse image datebase
+    /// </summary>
     private void Browse()
     {
         StopTimer();
@@ -1645,14 +1756,13 @@ else
         Modal.Show<ImageDlg>("", parameters);
     }
 
-
     protected class LocalInput
     {
         [StringLength(10)]
         public string typedValue { get; set; }
         public bool isAutoFocus { get; set; }
     }
-
+    #endregion
 }
 
 
