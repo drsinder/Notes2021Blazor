@@ -130,7 +130,7 @@
                                 @foreach (localFile x in impfileList)
                                 {
                                     <li>
-                                        <FileButton NoteFile="@x" OnMessage="OnMessage"></FileButton>
+                                        <FileButton NoteFile="@x" OnMessage="MessageHandler"></FileButton>
                                     </li>
                                 }
                             </ul>
@@ -141,7 +141,7 @@
                                 @foreach (localFile x in histfileList)
                                 {
                                     <li>
-                                        <FileButton NoteFile="@x" OnMessage="OnMessage"></FileButton>
+                                        <FileButton NoteFile="@x" OnMessage="MessageHandler"></FileButton>
                                     </li>
                                 }
                             </ul>
@@ -296,6 +296,12 @@
         }
         catch
         { }
+    }
+
+    private void MessageHandler(Message message)
+    {
+        SpinnerObj.ShowSpinner(target);
+        OnMessage.InvokeAsync(message);
     }
 
     private void Autologin()
