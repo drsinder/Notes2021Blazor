@@ -45,21 +45,25 @@ else
             <p>
                 <button @onclick="@(() => CreateNoteFile(0))" class="btn-file">Create Note File</button>
                 @if (todo.Contains("announce"))
-                    {
-                        <button @onclick="CreateAnnounce" class="btn-file">Create Announce</button>
-                    }
-                    @if (todo.Contains("pbnotes"))
-                    {
-                        <button @onclick="CreatePbnotes" class="btn-file">Create Pbnotes</button>
-                    }
-                    @if (todo.Contains("noteshelp"))
-                    {
-                        <button @onclick="CreateNotesHelp" class="btn-file">Create Noteshelp</button>
-                    }
-                    @if (todo.Contains("pad"))
-                    {
-                        <button @onclick="CreatePad" class="btn-file">Create Pad</button>
-                    }
+                {
+                    <button @onclick="CreateAnnounce" class="btn-file">Create Announce</button>
+                }
+                @if (todo.Contains("pbnotes"))
+                {
+                    <button @onclick="CreatePbnotes" class="btn-file">Create Pbnotes</button>
+                }
+                @if (todo.Contains("noteshelp"))
+                {
+                    <button @onclick="CreateNotesHelp" class="btn-file">Create Noteshelp</button>
+                }
+                @if (todo.Contains("pad"))
+                {
+                    <button @onclick="CreatePad" class="btn-file">Create Pad</button>
+                }
+                @if (todo.Contains("homepagemessages"))
+                {
+                    <button @onclick="CreateHomePageMessages" class="btn-file">Create Home Page Messages</button>
+                }
             </p>
             <table class="table">
                 <thead>
@@ -137,7 +141,7 @@ else
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/AdminPageData");
         timeZone = model.TimeZone;
 
-        todo = new List<string> { "announce", "pbnotes", "noteshelp", "pad" };
+        todo = new List<string> { "announce", "pbnotes", "noteshelp", "pad", "homepagemessages" };
 
         foreach (NoteFile file in model.NoteFiles)
         {
@@ -149,9 +153,20 @@ else
                 todo.Remove("noteshelp");
             if (file.NoteFileName == "pad")
                 todo.Remove("pad");
-
+            if (file.NoteFileName == "homepagemessages")
+                todo.Remove("homepagemessages");
         }
         files = model.NoteFiles;
+    }
+
+    private async Task CreateHomePageMessages()
+    {
+        CreateFileModel crm = new CreateFileModel { NoteFileName = "homepagemessages", NoteFileTitle = "Home Page Messages" };
+
+        await Http.PostJsonAsync("api/NoteFileAdmin", crm);
+
+        await GetStuff();
+        await OnInitializedAsync();
     }
 
     void CreateNoteFile(int Id)
@@ -171,7 +186,7 @@ else
         if (modalResult.Cancelled)
             return;
 
-        GetStuff();
+        GetStuff().GetAwaiter();
         OnInitializedAsync().GetAwaiter();
 
         message = modalResult.Data.ToString();
@@ -181,7 +196,7 @@ else
     void HideDialog2(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialog2;
-        GetStuff();
+        GetStuff().GetAwaiter();
     }
 
     void NoteFileDetails(int Id)
