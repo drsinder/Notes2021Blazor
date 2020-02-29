@@ -13,6 +13,7 @@
   <ItemGroup>
     <Content Remove="Pages\Counter.razor" />
     <Content Remove="Pages\FetchData.razor" />
+    <Content Remove="Pages\Notes\DisplayPanelMini.razor" />
     <Content Remove="Pages\Notes\MainList.razor" />
     <Content Remove="Pages\Notes\NoteEditorDlg.razor" />
     <Content Remove="Pages\Notes\NoteIndexOld.razor" />

@@ -46,131 +46,133 @@
 }
 else
 {
-<div>
-    @if (editing)
-    {
-    <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId EditHeader="@currentHeader" NoteContent="@currentContent" OnClick="ClickHandler" />
-    }
-    else if (newnoteFlag)
-    {
-    <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId OnClick="ClickHandler" />
-    }
-    <div class="dialognote modal-body">
-        <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
-        <hr id="premenu" />
-        <div>
+    <div>
+        @if (editing)
+        {
+            <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId EditHeader="@currentHeader" NoteContent="@currentContent" OnClick="ClickHandler" />
+        }
+        else if (newnoteFlag)
+        {
+            <NoteEditorPanel Model="@Model" BaseNoteId=@currentHeader.BaseNoteId OnClick="ClickHandler" />
+        }
+        <div class="dialognote modal-body">
+            @if (ToolTips)
+            {
+                <h4 class="text-center">@Model.noteFile.NoteFileTitle</h4>
+                <hr id="premenu" />
+            }
+            <div>
+                @if (!PrintFile)
+                {
+                    @if (ToolTips)
+                    {
+                        <div style="z-index:50;">
+                            <DisplayMenu Model="@Model" OnClick="ClickHandler" ToolTips="@ToolTips" />
+                        </div>
+                    }
+                    <div class="noteheader">
+                        <p>
+                            <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        </p>
+
+                        <h4>
+                            Subject: @currentHeader.NoteSubject <br />
+                            Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
+                            @(Globals.LocalTimeBlazor(currentHeader.LastEdited).ToLongDateString()) @Globals.LocalTimeBlazor(currentHeader.LastEdited).ToShortTimeString() @*@Model.tZone.Abbreviation*@
+                            @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
+                            {
+                                <br /><span>Director Message: @currentContent.DirectorMessage</span>
+                            }
+                            @if (tags != null && tags.Count > 0)
+                            {
+                                string tl = "Tags: ";
+                                foreach (Tags tag in tags)
+                                    tl += tag.Tag + " ";
+                                <br /><span>@tl</span>
+                            }
+                        </h4>
+                    </div>
+                }
+                else
+                {
+                    <div class="keep-center"><h4>Printing...  Please Wait...</h4></div>
+                }
+            </div>
+
             @if (!PrintFile)
             {
-                if (currentHeader.ResponseOrdinal == 0 || !SubNotes)
+                <div>
+                    <div class="notebody" @onmousedown="StopTimer">
+                        @((MarkupString)currentContent.NoteBody)
+                    </div>
+                </div>
+                @if (FocusTimer)
                 {
-
-                }
-                <div style="z-index:50;">
-                    <DisplayMenu Model="@Model" OnClick="ClickHandler" ToolTips="@ToolTips" />
-                </div>
-                <div class="noteheader">
-                    <p>
-                        <span class="keep-right">Note: @currentHeader.NoteOrdinal @respX&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    </p>
-
-                    <h4>
-                        Subject: @currentHeader.NoteSubject <br />
-                        Author: @currentHeader.AuthorName &nbsp;&nbsp;&nbsp;
-                        @(Globals.LocalTimeBlazor(currentHeader.LastEdited).ToLongDateString()) @Globals.LocalTimeBlazor(currentHeader.LastEdited).ToShortTimeString() @*@Model.tZone.Abbreviation*@
-                        @if (!string.IsNullOrEmpty(currentContent.DirectorMessage))
-                        {
-                            <br /><span>Director Message: @currentContent.DirectorMessage</span>
+                    <div class="arrow2">
+                        <div>
+                            <EditForm Model="@myInput" Context="EditBox">
+                                <InputText id="arrow2" @onkeypress="KeyPressed"
+                                           ValueChanged="@( (string val) => TextHasChanged(val) )"
+                                           Value="@myInput.typedValue"
+                                           ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
+                                    </EditForm>
+                                    <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
+                                </div>
+                            </div>
                         }
-                        @if (tags != null && tags.Count > 0)
-                        {
-                            string tl = "Tags: ";
-                            foreach (Tags tag in tags)
-                                tl += tag.Tag + " ";
-                            <br /><span>@tl</span>
-                        }
-                    </h4>
-                </div>
             }
             else
             {
-                <div class="keep-center"><h4>Printing...  Please Wait...</h4></div>
+                <div class="control-section keep-center">
+                    <h4>Progress: @sliderValueText</h4>
+                    <EjsLinearGauge Orientation="Syncfusion.EJ2.Blazor.LinearGauge.Orientation.Horizontal" Height="50px">
+                        <LinearGaugeContainer Width="30"
+                                              Offset="0"
+                                              BackgroundColor="#CCC">
+                        </LinearGaugeContainer>
+                        <LinearGaugeAxes>
+                            <LinearGaugeAxis Maximum="@baseNotes">
+                                <LinearGaugeMajorTicks Color="white" Height="5">
+                                </LinearGaugeMajorTicks>
+                                <LinearGaugeMinorTicks Color="white" Height="2">
+                                </LinearGaugeMinorTicks>
+                                <LinearGaugeLine Width="0"></LinearGaugeLine>
+                                <LinearGaugeAxisLabelStyle Offset="-55">
+                                </LinearGaugeAxisLabelStyle>
+                                <LinearGaugePointers>
+                                    <LinearGaugePointer Value="@currNote"
+                                                        Height="30"
+                                                        Type="Point.Bar"
+                                                        Color="#3C0">
+                                    </LinearGaugePointer>
+                                </LinearGaugePointers>
+                            </LinearGaugeAxis>
+                        </LinearGaugeAxes>
+                    </EjsLinearGauge>
+                </div>
             }
         </div>
-
-        @if (!PrintFile)
-        {
-            <div>
-                <div class="notebody" @onmousedown="StopTimer">
-                    @((MarkupString)currentContent.NoteBody)
-                </div>
-            </div>
-            @if (FocusTimer)
+        <div>
+            @if (!PrintFile)
             {
-                <div class="arrow2">
-                    <div>
-                        <EditForm Model="@myInput" Context="EditBox">
-                            <InputText id="arrow2" @onkeypress="KeyPressed"
-                                       ValueChanged="@( (string val) => TextHasChanged(val) )"
-                                       Value="@myInput.typedValue"
-                                       ValueExpression="@( () => myInput.typedValue )" /> #= <strong>@curN</strong>
-                                </EditForm>
-                                <br /><input type="submit" value="Navigate" class="btn btn-sm" /> b#.r#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-)b#&nbsp;&nbsp;|&nbsp;&nbsp;(+/-).r#
-                            </div>
-                        </div>
-                    }
-        }
-        else
-        {
-            <div class="control-section keep-center">
-                <h4>Progress: @sliderValueText</h4>
-                <EjsLinearGauge Orientation="Syncfusion.EJ2.Blazor.LinearGauge.Orientation.Horizontal" Height="50px">
-                    <LinearGaugeContainer Width="30"
-                                          Offset="0"
-                                          BackgroundColor="#CCC">
-                    </LinearGaugeContainer>
-                    <LinearGaugeAxes>
-                        <LinearGaugeAxis Maximum="@baseNotes">
-                            <LinearGaugeMajorTicks Color="white" Height="5">
-                            </LinearGaugeMajorTicks>
-                            <LinearGaugeMinorTicks Color="white" Height="2">
-                            </LinearGaugeMinorTicks>
-                            <LinearGaugeLine Width="0"></LinearGaugeLine>
-                            <LinearGaugeAxisLabelStyle Offset="-55">
-                            </LinearGaugeAxisLabelStyle>
-                            <LinearGaugePointers>
-                                <LinearGaugePointer Value="@currNote"
-                                                    Height="30"
-                                                    Type="Point.Bar"
-                                                    Color="#3C0">
-                                </LinearGaugePointer>
-                            </LinearGaugePointers>
-                        </LinearGaugeAxis>
-                    </LinearGaugeAxes>
-                </EjsLinearGauge>
-            </div>
-        }
-    </div>
-    <div>
-        @if (!PrintFile)
-        {
-            <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
-            <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
-            @if (currentHeader.ResponseCount > 0)
-            {
-                <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
-                <span>Show @currentHeader.ResponseCount Reponses <EjsSwitch @bind-Checked="@SubNotes"></EjsSwitch></span>
-                if (SubNotes)
+                <button @onclick="Done" class="btn btn-info btn-sm">Done Reading</button>
+                <button @onclick="Print" class="btn btn-success btn-sm">Print</button>
+                @if (currentHeader.ResponseCount > 0)
                 {
-                    <span> | Expandable Responses <EjsSwitch @bind-Checked="@Expandable"></EjsSwitch></span>
-                    if (Expandable && currentHeader.ResponseCount > 1)
+                    <button @onclick="PrintString" class="btn btn-success btn-sm">Print String</button>
+                    <span>Show @currentHeader.ResponseCount Reponses <EjsSwitch @bind-Checked="@SubNotes"></EjsSwitch></span>
+                    if (SubNotes)
                     {
-                        <span> | Allow Multiple Expanded <EjsSwitch @bind-Checked="@Multiple"></EjsSwitch></span>
+                        <span> | Expandable Responses <EjsSwitch @bind-Checked="@Expandable"></EjsSwitch></span>
+                        if (Expandable && currentHeader.ResponseCount > 1)
+                        {
+                            <span> | Allow Multiple Expanded <EjsSwitch @bind-Checked="@Multiple"></EjsSwitch></span>
+                        }
                     }
                 }
             }
-        }
+        </div>
     </div>
-</div>
 
     if (currentHeader.ResponseCount > 0 && SubNotes && !PrintFile)
     {
@@ -207,17 +209,11 @@ else
             foreach (NoteHeader response in responses)
             {
                 <DisplayPanel Model="@Model" currentHeader="@response" Id="@Id" SeqBases="@SeqBases" trackers="@trackers" seqIndx="@seqIndx" OnClick="@ClickHandler"
-                              isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false" ></DisplayPanel>
+                              isSearch="@isSearch" SearchResults="@SearchResults" FocusTimer="false"></DisplayPanel>
             }
         }
     }
 }
-                       
-@*<style>
-        .e-copy::before {
-            content: '\e280';
-        }
-    </style>*@
 
 @functions
     {
@@ -232,7 +228,7 @@ else
     [Parameter] public List<NoteHeader> SearchResults { get; set; }
     [Parameter] public bool PrintFile { get; set; } = false;  // set to true by parent to print the file
     [Parameter] public bool FocusTimer { get; set; } = true;  // set to false by parent to inhibit focus timer
-    [Parameter] public bool ToolTips { get; set; }
+    [Parameter] public bool ToolTips { get; set; }            // false if in expanded note
 
     public bool SubNotes { get; set; } = false;
 
@@ -264,11 +260,10 @@ else
 
     private bool Expandable { get; set; }
 
-    //public List<MenuItem> MenuItems = new List<MenuItem>
-    //{
-    //    new MenuItem { Text="New Response" }
-    //};
-
+    /// <summary>
+    /// Initialize everything
+    /// </summary>
+    /// <returns></returns>
     protected async override Task OnParametersSetAsync()
     {
         Multiple = Model.UserData.Pref4;
@@ -319,7 +314,7 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) // we can not set focus to the nav box right away so defer it 1 second
+        if (firstRender && ToolTips) // we can not set focus to the nav box right away so defer it 1 second
         {
             if (FocusTimer)
             {
@@ -453,7 +448,6 @@ else
         Modal.Show<PrintDlg>("", parameters);   // invloke print dialog with our output
     }
 
-
     protected void StartTimer()
     {
         if (!FocusTimer)
@@ -476,7 +470,7 @@ else
     }
 
     /// <summary>
-    /// Handles messages form children
+    /// Handles messages from children
     /// </summary>
     /// <param name="newMessage">Text of message</param>
     public async Task ClickHandler(string newMessage)
@@ -542,53 +536,15 @@ else
     private async Task NewResponse()
     {
         StopTimer();
-        //if (Model.UserData.Pref2)
-        {
-            newnoteFlag = true;
-            StateHasChanged();
-            return;
-        }
-
-        //var parameters = new ModalParameters();
-        //parameters.Add("Editing", false);
-        //parameters.Add("Model", Model);
-        //long bnid = currentHeader.BaseNoteId;
-        //parameters.Add("BaseNoteId", bnid);
-        //Modal.OnClose += HideEditDialog;
-        //Modal.Show<NoteEditorDlg>("", parameters);
+        newnoteFlag = true;
+        StateHasChanged();
     }
 
     private async Task EditNote()
     {
         StopTimer();
-        //if (Model.UserData.Pref2)
-        {
-            editing = true;
-            StateHasChanged();
-            return;
-        }
-
-        //var parameters = new ModalParameters();
-        //parameters.Add("Editing", true);
-        //parameters.Add("Model", Model);
-        //long bnid = currentHeader.BaseNoteId;
-        //parameters.Add("BaseNoteId", bnid);
-        //parameters.Add("EditHeader", currentHeader);
-        //parameters.Add("NoteContent", currentContent);
-        //Modal.OnClose += HideEditDialog;
-        //Modal.Show<NoteEditorDlg>("", parameters);
-
-    }
-
-    void HideEditDialog(ModalResult modalResult)
-    {
-        Modal.OnClose -= HideEditDialog;
-        StartTimer();
-        if (!modalResult.Cancelled)
-        {
-            NoteHeader newNote = (NoteHeader)modalResult.Data;
-            OnClick.InvokeAsync("EnterAndShow:" + newNote.Id);
-        }
+        editing = true;
+        StateHasChanged();
     }
 
     protected void DeleteNote()
@@ -690,7 +646,6 @@ else
             case "C":
                 Copy(currentHeader);
                 break;
-
 
             default:
                 //var parameters = new ModalParameters();
@@ -805,7 +760,7 @@ else
     }
 
     /// <summary>
-    /// Handle typing in navigation box format of actions
+    /// Handle typing in navigation box. Format of actions:
     /// n = goto note n
     /// n.r goto note n response r
     /// +n go forward n notes
