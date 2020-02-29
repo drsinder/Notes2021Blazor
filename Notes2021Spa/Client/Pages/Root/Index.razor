@@ -499,60 +499,57 @@ else
 
             default: break;
         }
-
     }
 
     public async Task MessageHandler(Message Message)
     {
         await UpdateMenu();
 
-        if (Message.Command == Commands.CloseMe)
+        switch (Message.Command)
         {
-            CurrentLoc = PreviousLoc;
-            PreviousLoc = Locations.Home;
-        }
-        else if (Message.Command == Commands.CloseMeAndRefresh)
-        {
-            await UpdateMenu();
+            case Commands.CloseMe:
+                CurrentLoc = PreviousLoc;
+                PreviousLoc = Locations.Home;
+                break;
+            case Commands.CloseMeAndRefresh:
+                await UpdateMenu();
+                CurrentLoc = PreviousLoc;
+                PreviousLoc = Locations.Home;
+                StateHasChanged();
+                break;
+            case Commands.Show:
+                IntArg = Message.IntArg;
+                StringArg = Message.StringArg;
+                PreviousLoc = CurrentLoc;
+                CurrentLoc = Message.Location;
+                if (Message.Location == Locations.FileUserIndex)
+                {
+                    fileId = IntArg.ToString();
+                    Routing = "main";
+                    await StartListing();
+                }
+                break;
+            case Commands.Home:
+                PreviousLoc = Locations.Home;
+                CurrentLoc = PreviousLoc;
+                break;
+            case Commands.Dialog:
+                if (Message.Location == Locations.Login)
+                {
+                    Autologin = Message.StringArg;
 
-            CurrentLoc = PreviousLoc;
-            PreviousLoc = Locations.Home;
-            StateHasChanged();
-        }
-        else if (Message.Command == Commands.Show)
-        {
-            IntArg = Message.IntArg;
-            StringArg = Message.StringArg;
-
-            PreviousLoc = CurrentLoc;
-            CurrentLoc = Message.Location;
-
-            if (Message.Location == Locations.FileUserIndex)
-            {
-                fileId = IntArg.ToString();
-                Routing = "main";
-                await StartListing();
-            }
-            //else if (Message.Location == Locations.Login)
-            //    Autologin = Message.StringArg;
-        }
-        else if (Message.Command == Commands.Home)
-        {
-            PreviousLoc = Locations.Home;
-            CurrentLoc = PreviousLoc;
-        }
-        else if (Message.Command == Commands.Dialog)
-        {
-            if (Message.Location == Locations.Login)
-            {
-                Autologin = Message.StringArg;
-
-                var parameters = new ModalParameters();
-                parameters.Add("Autologin", Autologin);
-                Modal.OnClose += HideDialogLogin;
-                Modal.Show<Login>("", parameters);
-
-            }
+                    var parameters = new ModalParameters();
+                    parameters.Add("Autologin", Autologin);
+                    Modal.OnClose += HideDialogLogin;
+                    Modal.Show<Login>("", parameters);
+                }
+                break;
+            case Commands.Refresh:
+                await UpdateMenu();
+                StateHasChanged();
+                break;
+            default:
+                break;
         }
     }
 
@@ -564,18 +561,13 @@ else
         parameters.Add("Autologin", Autologin);
         Modal.OnClose += HideDialogLogin;
         Modal.Show<Login>("", parameters);
-
     }
 
     private void HideDialogLogin(ModalResult modalResult)
     {
         Modal.OnClose -= HideDialogLogin;
-
-        //PreviousLoc = CurrentLoc;
         CurrentLoc = Locations.Temp;
-
         StateHasChanged();
-
     }
 
     private void Register()

@@ -11,8 +11,7 @@ namespace Notes2021Blazor.Shared
         Dialog,
         Refresh,
         CloseMeAndRefresh,
-        Home,
-        SetPixClass
+        Home
     }
 
     public enum Locations
@@ -35,7 +34,6 @@ namespace Notes2021Blazor.Shared
         EditLinked,
         FileList,
         Temp
-
     }
 
     public class Message
@@ -44,6 +42,5 @@ namespace Notes2021Blazor.Shared
         public Locations Location { get; set; }
         public int IntArg { get; set; }
         public string StringArg { get; set; }
-
     }
 }
