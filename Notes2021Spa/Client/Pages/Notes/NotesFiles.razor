@@ -81,14 +81,14 @@ else
     EjsGrid<NoteFile> MyGrid;
 
     private List<NoteFile> files { get; set; }
-    private TZone timeZone { get; set; }
+    //private TZone timeZone { get; set; }
     private UserData UserData { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
         files = model.NoteFiles;
-        timeZone = model.TimeZone;
+        //timeZone = model.TimeZone;
         UserData = model.UserData;
     }
 

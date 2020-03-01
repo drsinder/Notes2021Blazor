@@ -122,7 +122,7 @@ namespace Notes2021Blazor.Server.Controllers
                 model.UserData = new UserData { TimeZoneID = Globals.TimeZoneDefaultID };
             }
 
-            model.TimeZone = _db.TZone.Single(p => p.Id == model.UserData.TimeZoneID);
+            //model.TimeZone = _db.TZone.Single(p => p.Id == model.UserData.TimeZoneID);
 
             Globals.GuestId = model.GuestId = "*none*";
             UserData Gdata = _db.UserData.Where(p => p.DisplayName == "Guest").FirstOrDefault();

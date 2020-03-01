@@ -128,7 +128,7 @@ else
     private List<string> todo { get; set; }
 
     private List<NoteFile> files { get; set; }
-    private TZone timeZone { get; set; }
+    //private TZone timeZone { get; set; }
     private string message;
 
     protected override async Task OnInitializedAsync()
@@ -139,7 +139,7 @@ else
     protected async Task GetStuff()
     {
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/AdminPageData");
-        timeZone = model.TimeZone;
+        //timeZone = model.TimeZone;
 
         todo = new List<string> { "announce", "pbnotes", "noteshelp", "pad", "homepagemessages" };
 

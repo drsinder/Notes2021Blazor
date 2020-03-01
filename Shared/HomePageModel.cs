@@ -33,7 +33,7 @@ namespace Notes2021Blazor.Shared
 
         public List<NoteAccess> NoteAccesses { get; set; }
 
-        public TZone TimeZone { get; set; }
+        //public TZone TimeZone { get; set; }
 
         public string Message { get; set; }
 

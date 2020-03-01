@@ -95,7 +95,7 @@ else
     private List<string> todo { get; set; }
 
     private List<NoteFile> files { get; set; }
-    private TZone timeZone { get; set; }
+    //private TZone timeZone { get; set; }
     private List<Sequencer> trackers { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -103,7 +103,7 @@ else
         trackers = await Http.GetJsonAsync<List<Sequencer>>("api/sequencer");
 
         HomePageModel model = await Http.GetJsonAsync<HomePageModel>("api/HomePageData");
-        timeZone = model.TimeZone;
+        //timeZone = model.TimeZone;
 
         files = model.NoteFiles;
     }
