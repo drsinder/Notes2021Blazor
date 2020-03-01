@@ -187,7 +187,10 @@
                                 <button @onkeypress="KeyPressed">
                                     <div><br /></div>
                                     <IndexHeader Model="@Model" BasenoteCount="@basenoteCount" arcId="@archiveID" />
-                                    <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                                    @if (ShowIndex)
+                                    {
+                                        <NoteIndex Model="@Model" FirstOrdinal="@currentHeader.NoteOrdinal" OnClick="ClickHandler" />
+                                    }
                                     @*<br /><br />*@
                                     <div class="arrow1">
                                         <div>
@@ -289,6 +292,8 @@
     private Locations CurrentLoc { get; set; }
     private Locations PreviousLoc { get; set; }
 
+    private bool ShowIndex { get; set; }
+
     private string Autologin { get; set; }
 
     private List<object> menuItemsTop { get; set; }
@@ -340,6 +345,8 @@
     #region SPA Stuff
     protected async override Task OnInitializedAsync()
     {
+        ShowIndex = true;
+
         await MakeMenu();
 
         // check for parameters to show a note or a filename
@@ -689,8 +696,11 @@
                     DoJson();
                     break;
                 case "Done":
+                    ShowIndex = false;
+                    StateHasChanged();
                     await MainEntry();
                     StateHasChanged();
+                    ShowIndex = true;
                     Done();
                     break;
 
