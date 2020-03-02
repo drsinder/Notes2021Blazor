@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2021Spa.Server", "Note
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notes2021Spa.Client", "Notes2021Spa\Client\Notes2021Spa.Client.csproj", "{A535EFD7-09B3-4AAE-B0EE-C44C30C05868}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes2021Spa.RCL", "Notes2021Spa.RCL\Notes2021Spa.RCL.csproj", "{B8D62BAF-8BC8-4CF7-9E39-564014A68B70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{A535EFD7-09B3-4AAE-B0EE-C44C30C05868}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A535EFD7-09B3-4AAE-B0EE-C44C30C05868}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A535EFD7-09B3-4AAE-B0EE-C44C30C05868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8D62BAF-8BC8-4CF7-9E39-564014A68B70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8D62BAF-8BC8-4CF7-9E39-564014A68B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8D62BAF-8BC8-4CF7-9E39-564014A68B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8D62BAF-8BC8-4CF7-9E39-564014A68B70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

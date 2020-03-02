@@ -33,7 +33,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Notes2021Spa.Client
+namespace Notes2021Spa.RCL
 {
     public class ApiAuthenticationStateProvider : AuthenticationStateProvider
     {

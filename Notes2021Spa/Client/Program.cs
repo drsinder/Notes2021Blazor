@@ -31,6 +31,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.EJ2.Blazor;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Notes2021Spa.RCL;
 
 namespace Notes2021Spa.Client
 {

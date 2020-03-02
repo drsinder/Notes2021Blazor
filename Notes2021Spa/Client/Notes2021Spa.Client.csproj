@@ -7,146 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Notes\**" />
+    <Compile Remove="Shared\**" />
+    <Content Remove="Pages\Notes\**" />
+    <Content Remove="Shared\**" />
+    <EmbeddedResource Remove="Pages\Notes\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <None Remove="Pages\Notes\**" />
+    <None Remove="Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ApiAuthenticationStateProvider.cs" />
+    <Compile Remove="AuthService.cs" />
+    <Compile Remove="Globals.cs" />
     <Compile Remove="Startup.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\Counter.razor" />
-    <Content Remove="Pages\FetchData.razor" />
-    <Content Remove="Pages\Notes\DisplayPanelMini.razor" />
-    <Content Remove="Pages\Notes\MainList.razor" />
-    <Content Remove="Pages\Notes\NoteEditorDlg.razor" />
-    <Content Remove="Pages\Notes\NoteIndexOld.razor" />
-    <Content Remove="Pages\Root\Schema.razor" />
-    <Content Remove="Shared\NavMenu.razor" />
-    <Content Remove="wwwroot\css\prism.css" />
-    <Content Remove="wwwroot\css\prism.min.css" />
-    <Content Remove="wwwroot\js\prism.js" />
-    <Content Remove="wwwroot\js\prism.min.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\icons\glyphicons-basic-11-envelope.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-145-folder-open.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-17-bin.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-197-circle-empty-alert.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-199-save.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-238-chat-message.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-28-search.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-435-forward-email.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-546-cloud-download.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-603-user-flag.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-614-copy.svg" />
-    <None Include="wwwroot\icons\glyphicons-basic-638-triangle-alert.svg" />
-    <None Include="wwwroot\js\AutoFocus.js" />
-    <None Include="wwwroot\js\prism2.js" />
-    <None Include="wwwroot\js\site.js" />
-    <None Include="wwwroot\tinymce4\jquery.tinymce.js" />
-    <None Include="wwwroot\tinymce4\jquery.tinymce.min.js" />
-    <None Include="wwwroot\tinymce4\langs\readme.md" />
-    <None Include="wwwroot\tinymce4\plugins\advlist\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\advlist\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\anchor\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\anchor\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\autolink\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\autolink\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\autoresize\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\autoresize\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\autosave\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\autosave\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\bbcode\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\bbcode\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\charmap\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\charmap\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\codesample\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\codesample\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\code\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\code\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\colorpicker\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\colorpicker\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\tiny_mce_popup.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\utils\editable_selects.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\utils\form_utils.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\utils\mctabs.js" />
-    <None Include="wwwroot\tinymce4\plugins\compat3x\utils\validate.js" />
-    <None Include="wwwroot\tinymce4\plugins\contextmenu\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\contextmenu\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\directionality\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\directionality\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\emoticons\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\emoticons\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\fullpage\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\fullpage\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\fullscreen\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\fullscreen\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\help\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\help\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\hr\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\hr\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\imagetools\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\imagetools\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\image\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\image\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\importcss\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\importcss\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\insertdatetime\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\insertdatetime\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\legacyoutput\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\legacyoutput\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\link\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\link\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\lists\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\lists\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\media\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\media\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\nonbreaking\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\nonbreaking\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\noneditable\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\noneditable\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\pagebreak\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\pagebreak\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\paste\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\paste\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\preview\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\preview\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\print\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\print\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\save\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\save\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\searchreplace\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\searchreplace\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\spellchecker\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\spellchecker\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\tabfocus\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\tabfocus\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\table\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\table\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\template\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\template\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\textcolor\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\textcolor\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\textpattern\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\textpattern\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\toc\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\toc\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\visualblocks\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\visualblocks\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\visualchars\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\visualchars\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\plugins\wordcount\plugin.js" />
-    <None Include="wwwroot\tinymce4\plugins\wordcount\plugin.min.js" />
-    <None Include="wwwroot\tinymce4\skins\lightgray\fonts\tinymce-small.svg" />
-    <None Include="wwwroot\tinymce4\skins\lightgray\fonts\tinymce.svg" />
-    <None Include="wwwroot\tinymce4\themes\inlite\theme.js" />
-    <None Include="wwwroot\tinymce4\themes\inlite\theme.min.js" />
-    <None Include="wwwroot\tinymce4\themes\mobile\theme.js" />
-    <None Include="wwwroot\tinymce4\themes\mobile\theme.min.js" />
-    <None Include="wwwroot\tinymce4\themes\modern\theme.js" />
-    <None Include="wwwroot\tinymce4\themes\modern\theme.min.js" />
-    <None Include="wwwroot\tinymce4\tinymce.js" />
-    <None Include="wwwroot\tinymce4\tinymce.min.js" />
+    <None Include="Pages\Indexstart.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -162,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Notes2021Spa.RCL\Notes2021Spa.RCL.csproj" />
     <ProjectReference Include="..\..\Shared\Notes2021Blazor.Shared.csproj" />
   </ItemGroup>
 
