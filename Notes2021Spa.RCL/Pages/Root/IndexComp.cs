@@ -8,8 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.JSInterop;
 using Blazored.Modal;
 using Blazored.Modal.Services;
 using Blazored.LocalStorage;
