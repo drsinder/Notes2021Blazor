@@ -62,7 +62,6 @@ else
 
     [CascadingParameter] ModalParameters Parameters { get; set; }
 
-
     public NoteFile noteFile { get; set; }
     public int myId { get; set; }
     public LocalInput locals { get; set; }
@@ -92,8 +91,6 @@ else
         {
             checkArchive.Add(new CList { arcnum = item.ArchiveId, ischecked = false, CreateDate = item.CreateDate });
         }
-
-
     }
 
     protected void Submit()
