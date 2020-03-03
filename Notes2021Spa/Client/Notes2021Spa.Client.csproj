@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Notes2021Spa.RCL\Notes2021Spa.RCL.csproj" />
-    <ProjectReference Include="..\..\Shared\Notes2021Blazor.Shared.csproj" />
   </ItemGroup>
 
 </Project>
